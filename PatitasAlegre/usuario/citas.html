@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Mis citas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+
+<header class="encabezado">
+    <h2>🐾 VetCare</h2>
+    <p>Programación de citas veterinarias</p>
+</header>
+
+<main class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3>Mis citas</h3>
+            <p class="text-secondary mb-0">
+                Solicita una atención para tu mascota.
+            </p>
+        </div>
+        <a href="dashboard.html" class="btn btn-outline-secondary">
+            Volver
+        </a>
+    </div>
+
+    <section class="card mb-4">
+        <div class="card-body">
+            <h5 class="mb-3">Solicitar una cita</h5>
+
+            <form id="formCita">
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label for="mascota" class="form-label">
+                            Nombre de la mascota
+                        </label>
+                        <input type="text" id="mascota" class="form-control"
+                               placeholder="Ej. Max" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="tipo" class="form-label">
+                            Tipo de atención
+                        </label>
+                        <select id="tipo" class="form-select" required>
+                            <option value="">Seleccionar</option>
+                            <option value="Consulta general">Consulta general</option>
+                            <option value="Vacunación">Vacunación</option>
+                            <option value="Cirugía">Cirugía</option>
+                            <option value="Estética">Estética</option>
+                            <option value="Control">Control médico</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="fecha" class="form-label">Fecha</label>
+                        <input type="date" id="fecha" class="form-control"
+                               required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="hora" class="form-label">Hora preferida</label>
+                        <select id="hora" class="form-select" required>
+                            <option value="">Seleccionar</option>
+                            <option value="09:00">09:00</option>
+                            <option value="10:00">10:00</option>
+                            <option value="11:00">11:00</option>
+                            <option value="14:00">14:00</option>
+                            <option value="15:00">15:00</option>
+                            <option value="16:00">16:00</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label for="motivo" class="form-label">
+                            Motivo de la consulta
+                        </label>
+                        <textarea id="motivo" class="form-control" rows="3"
+                                  placeholder="Describe brevemente el motivo"></textarea>
+                    </div>
+
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-vetcare">
+                            Solicitar cita
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
+            <div id="mensaje" class="mt-3" role="status"
+                 aria-live="polite"></div>
+        </div>
+    </section>
+
+    <section class="card">
+        <div class="card-body">
+            <h5 class="mb-3">Solicitudes de cita de esta sesión</h5>
+
+            <div class="table-responsive">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Mascota</th>
+                            <th>Atención</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaCitas">
+                        <tr>
+                            <td colspan="5"
+                                class="text-center text-secondary">
+                                Todavía no hay solicitudes.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <p>VetCare © 2026 · Cuidado y bienestar animal</p>
+</footer>
+
+<script>
+    const formulario = document.getElementById("formCita");
+    const tabla = document.getElementById("tablaCitas");
+    const mensaje = document.getElementById("mensaje");
+    const campoFecha = document.getElementById("fecha");
+
+    // Impedir la selección de fechas anteriores al día actual.
+    const hoy = new Date();
+    const fechaLocal = [
+        hoy.getFullYear(),
+        String(hoy.getMonth() + 1).padStart(2, "0"),
+        String(hoy.getDate()).padStart(2, "0")
+    ].join("-");
+
+    campoFecha.min = fechaLocal;
+
+    formulario.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const mascota = document.getElementById("mascota").value.trim();
+        const tipo = document.getElementById("tipo").value;
+        const fecha = campoFecha.value;
+        const hora = document.getElementById("hora").value;
+
+        if (fecha < fechaLocal) {
+            mensaje.textContent = "Selecciona una fecha válida.";
+            return;
+        }
+
+        if (fecha === fechaLocal && hora <=
+            `${String(hoy.getHours()).padStart(2, "0")}:${String(hoy.getMinutes()).padStart(2, "0")}`) {
+            mensaje.textContent = "Selecciona una hora posterior a la actual.";
+            return;
+        }
+
+        const fila = document.createElement("tr");
+
+        [mascota, tipo, fecha, hora, "Pendiente de confirmación"]
+            .forEach(function(valor) {
+                const celda = document.createElement("td");
+                celda.textContent = valor;
+                fila.appendChild(celda);
+            });
+
+        if (tabla.querySelector("td[colspan]")) {
+            tabla.innerHTML = "";
+        }
+
+        tabla.appendChild(fila);
+        formulario.reset();
+        mensaje.textContent =
+            "Solicitud añadida temporalmente. La cita aún no está confirmada por la veterinaria.";
+        campoFecha.min = fechaLocal;
+    });
+</script>
+
+</body>
+</html>
