@@ -1,4 +1,4 @@
-package main.java.com.clinica.farmacia.controller;
+package com.clinica.farmacia.controller;
 
 import java.util.LinkedHashMap;
 import java.util.List;
