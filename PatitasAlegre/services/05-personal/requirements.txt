@@ -1,0 +1,6 @@
+Flask==3.0.3
+mysql-connector-python==8.4.0
+python-dotenv==1.0.1
+lxml>=6.0.0,<7
+requests==2.32.3
+pytest==8.2.2
