@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<process name="ProcesoCrearCita"
+         targetNamespace="http://clinica.com/bpel/citas"
+         suppressJoinFailure="yes"
+         xmlns="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+         xmlns:tns="http://clinica.com/bpel/citas">
+  <partnerLinks>
+    <partnerLink name="cliente" partnerLinkType="tns:ClientePLT" myRole="proceso"/>
+    <partnerLink name="propietarios" partnerLinkType="tns:PropietariosPLT" partnerRole="servicio"/>
+    <partnerLink name="veterinarios" partnerLinkType="tns:VeterinariosPLT" partnerRole="servicio"/>
+    <partnerLink name="citas" partnerLinkType="tns:CitasPLT" partnerRole="servicio"/>
+    <partnerLink name="notificaciones" partnerLinkType="tns:NotificacionesPLT" partnerRole="servicio"/>
+  </partnerLinks>
+  <variables>
+    <variable name="crearCitaRequest" messageType="tns:CrearCitaRequestMessage"/>
+    <variable name="propietarioResponse" messageType="tns:ConsultarPropietarioResponseMessage"/>
+    <variable name="veterinarioResponse" messageType="tns:ConsultarVeterinarioResponseMessage"/>
+    <variable name="crearCitaResponse" messageType="tns:CrearCitaResponseMessage"/>
+  </variables>
+  <sequence name="CrearCita">
+    <receive name="RecibirSolicitud" partnerLink="cliente" operation="crearCita" variable="crearCitaRequest" createInstance="yes"/>
+    <invoke name="VerificarPropietario" partnerLink="propietarios" operation="consultarPropietario" inputVariable="crearCitaRequest" outputVariable="propietarioResponse"/>
+    <invoke name="VerificarVeterinario" partnerLink="veterinarios" operation="consultarVeterinario" inputVariable="crearCitaRequest" outputVariable="veterinarioResponse"/>
+    <invoke name="CrearCitaBackend" partnerLink="citas" operation="crearCita" inputVariable="crearCitaRequest" outputVariable="crearCitaResponse"/>
+    <invoke name="EnviarNotificacion" partnerLink="notificaciones" operation="enviarNotificacion" inputVariable="crearCitaResponse"/>
+    <reply name="ResponderSolicitud" partnerLink="cliente" operation="crearCita" variable="crearCitaResponse"/>
+  </sequence>
+</process>

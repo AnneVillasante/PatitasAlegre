@@ -1,0 +1,15 @@
+<proxy name="PropietariosProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Propietarios"/></log>
+            <validate source="//*[local-name()='registrarPropietarioRequest' or local-name()='consultarPropietarioRequest' or local-name()='listarPropietariosRequest' or local-name()='actualizarPropietarioRequest' or local-name()='eliminarPropietarioRequest']">
+                <schema key="conf:/xsd/propietarios.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de propietarios inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='registrarPropietarioRequest'])"><then><send><endpoint><address uri="http://localhost:8003/propietarios/registrar"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='consultarPropietarioRequest'])"><then><send><endpoint><address uri="http://localhost:8003/propietarios/consultar"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='listarPropietariosRequest'])"><then><send><endpoint><address uri="http://localhost:8003/propietarios/listar"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='actualizarPropietarioRequest'])"><then><send><endpoint><address uri="http://localhost:8003/propietarios/actualizar"/></endpoint></send></then><else><send><endpoint><address uri="http://localhost:8003/propietarios/eliminar"/></endpoint></send></else></filter></else></filter></else></filter></else></filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Propietarios response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

@@ -1,0 +1,15 @@
+<proxy name="FarmaciaProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Farmacia"/></log>
+            <validate source="//*[local-name()='iniciarVentaRequest']">
+                <schema key="conf:/xsd/farmacia.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de farmacia inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <send><endpoint><address uri="http://localhost:8008/farmacia/ventas/iniciar"/></endpoint></send>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Farmacia response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

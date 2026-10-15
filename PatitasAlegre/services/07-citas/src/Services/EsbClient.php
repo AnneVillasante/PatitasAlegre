@@ -59,6 +59,11 @@ class EsbClient
         return $respuesta;
     }
 
+    public function estaHabilitado(): bool
+    {
+        return $this->habilitado;
+    }
+
     public static function respuestaAArray(string $xmlString): array
     {
         libxml_use_internal_errors(true);

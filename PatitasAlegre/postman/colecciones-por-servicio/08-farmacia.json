@@ -1,0 +1,8 @@
+{
+  "info": {"name": "Patitas Alegre - 08 Farmacia", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8008"}],
+  "item": [
+    {"name": "Listar productos", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/farmacia/productos"}, "event": [{"listen": "test", "script": {"exec": ["pm.test('Respuesta XML', function () { pm.expect(pm.response.headers.get('Content-Type')).to.include('xml'); });"]}}]},
+    {"name": "Iniciar venta sin items", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/xml"}], "body": {"mode": "raw", "raw": "<iniciarVentaRequest><idPropietario>1</idPropietario></iniciarVentaRequest>"}, "url": "{{baseUrl}}/farmacia/ventas/iniciar"}, "event": [{"listen": "test", "script": {"exec": ["pm.test('Error de negocio', function () { pm.expect(pm.response.text()).to.include('ERROR-NEGOCIO'); });"]}}]}
+  ]
+}

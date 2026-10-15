@@ -1,0 +1,9 @@
+{
+  "info": {"name": "Patitas Alegre - 10 Notificaciones", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},
+  "variable": [{"key": "baseUrl", "value": "http://localhost:8010"}, {"key": "codigo", "value": ""}],
+  "item": [
+    {"name": "Enviar notificación simulada", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/xml"}], "body": {"mode": "raw", "raw": "<enviarNotificacionRequest><idPropietario>105</idPropietario><destinatario>paciente@clinica.test</destinatario><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><asunto>Prueba</asunto><mensaje>Notificación de prueba</mensaje></enviarNotificacionRequest>"}, "url": "{{baseUrl}}/notificaciones/enviar"}, "event": [{"listen": "test", "script": {"exec": ["const match = pm.response.text().match(/<codigo>([^<]+)<\\/codigo>/);", "if (match) pm.collectionVariables.set('codigo', match[1]);", "pm.test('Notificación enviada', function () { pm.expect(pm.response.text()).to.include('<estado>ENVIADO</estado>'); });"]}}]},
+    {"name": "Consultar notificación", "request": {"method": "GET", "header": [], "url": "{{baseUrl}}/notificaciones/consultar/{{codigo}}"}},
+    {"name": "Datos incompletos", "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/xml"}], "body": {"mode": "raw", "raw": "<enviarNotificacionRequest><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><mensaje>Falta destinatario</mensaje></enviarNotificacionRequest>"}, "url": "{{baseUrl}}/notificaciones/enviar"}, "event": [{"listen": "test", "script": {"exec": ["pm.test('Error de validación', function () { pm.expect(pm.response.status).to.eql('Bad Request'); });"]}}]}
+  ]
+}

@@ -1,0 +1,15 @@
+<proxy name="CitasProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Citas"/></log>
+            <validate source="//*[local-name()='crearCitaRequest' or local-name()='consultarCitaRequest' or local-name()='listarCitasRequest' or local-name()='cancelarCitaRequest']">
+                <schema key="conf:/xsd/citas.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de citas inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='crearCitaRequest'])"><then><send><endpoint><address uri="http://localhost:8007/citas/crear"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='consultarCitaRequest'])"><then><send><endpoint><address uri="http://localhost:8007/citas/consultar"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='listarCitasRequest'])"><then><send><endpoint><address uri="http://localhost:8007/citas/listar"/></endpoint></send></then><else><send><endpoint><address uri="http://localhost:8007/citas/cancelar"/></endpoint></send></else></filter></else></filter></else></filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Citas response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

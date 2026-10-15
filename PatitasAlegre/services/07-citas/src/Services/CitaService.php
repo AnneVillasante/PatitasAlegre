@@ -19,11 +19,18 @@ class CitaService
 
     public function crear(array $datos): array
     {
-        $propietario = $this->verificarPropietario($datos['dniPropietario']);
-        $this->verificarVeterinario($datos['idVeterinario']);
+        if ($this->esb->estaHabilitado()) {
+            $propietario = $this->verificarPropietario($datos['dniPropietario']);
+            $this->verificarVeterinario($datos['idVeterinario']);
+            $datos['id_propietario'] = $this->extraerId($propietario, 'id_propietario', 'Propietario');
+        } else {
+            $datos['id_propietario'] = (int) ($datos['idPropietario'] ?? 0);
+            if ($datos['id_propietario'] <= 0) {
+                throw new RuntimeException('idPropietario es obligatorio cuando el ESB está deshabilitado');
+            }
+        }
         $this->verificarDisponibilidadHorario($datos['idVeterinario'], $datos['fecha'], $datos['hora']);
 
-        $datos['id_propietario'] = $this->extraerId($propietario, 'id_propietario', 'Propietario');
         $datos['id_mascota'] = (int) $datos['idMascota'];
         $datos['id_veterinario'] = (int) $datos['idVeterinario'];
         $datos['id_tipo'] = isset($datos['id_tipo']) ? (int) $datos['id_tipo'] : null;

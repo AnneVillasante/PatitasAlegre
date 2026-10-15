@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:choice>
+    <xs:element name="registrarVeterinarioRequest"><xs:complexType><xs:sequence><xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="consultarVeterinarioRequest"><xs:complexType><xs:sequence><xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="listarVeterinariosRequest" type="xs:anyType"/>
+    <xs:element name="listarDisponiblesRequest"><xs:complexType><xs:sequence><xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/></xs:sequence></xs:complexType></xs:element>
+    <xs:element name="listarEspecialidadesRequest" type="xs:anyType"/>
+    <xs:element name="actualizarDisponibilidadRequest"><xs:complexType><xs:sequence><xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/></xs:sequence></xs:complexType></xs:element>
+  </xs:choice>
+</xs:schema>

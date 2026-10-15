@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_CrearCita" targetNamespace="http://clinica.com/bpmn/citas">
+  <process id="ProcesoCrearCita" name="Proceso Crear Cita" isExecutable="true">
+    <startEvent id="StartEvent_CrearCita" name="Solicitud recibida"/>
+    <serviceTask id="Task_VerificarPropietario" name="Verificar propietario vía ESB"/>
+    <exclusiveGateway id="Gateway_Propietario" name="¿Propietario válido?"/>
+    <serviceTask id="Task_VerificarVeterinario" name="Verificar veterinario vía ESB"/>
+    <exclusiveGateway id="Gateway_Veterinario" name="¿Veterinario disponible?"/>
+    <serviceTask id="Task_CrearCita" name="Crear cita"/>
+    <serviceTask id="Task_Notificar" name="Notificar confirmación"/>
+    <endEvent id="EndEvent_Exito" name="Cita confirmada"/>
+    <endEvent id="EndEvent_Error" name="Solicitud rechazada"/>
+    <sequenceFlow id="Flow_1" sourceRef="StartEvent_CrearCita" targetRef="Task_VerificarPropietario"/>
+    <sequenceFlow id="Flow_2" sourceRef="Task_VerificarPropietario" targetRef="Gateway_Propietario"/>
+    <sequenceFlow id="Flow_3" name="Sí" sourceRef="Gateway_Propietario" targetRef="Task_VerificarVeterinario"/>
+    <sequenceFlow id="Flow_4" name="No" sourceRef="Gateway_Propietario" targetRef="EndEvent_Error"/>
+    <sequenceFlow id="Flow_5" sourceRef="Task_VerificarVeterinario" targetRef="Gateway_Veterinario"/>
+    <sequenceFlow id="Flow_6" name="Sí" sourceRef="Gateway_Veterinario" targetRef="Task_CrearCita"/>
+    <sequenceFlow id="Flow_7" name="No" sourceRef="Gateway_Veterinario" targetRef="EndEvent_Error"/>
+    <sequenceFlow id="Flow_8" sourceRef="Task_CrearCita" targetRef="Task_Notificar"/>
+    <sequenceFlow id="Flow_9" sourceRef="Task_Notificar" targetRef="EndEvent_Exito"/>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ProcesoCrearCita">
+    <bpmndi:BPMNPlane id="BPMNPlane_ProcesoCrearCita" bpmnElement="ProcesoCrearCita"/>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -12,8 +12,15 @@ class CitaValidator
         self::validarEnteroPositivo($datos['idVeterinario'] ?? null, 'El veterinario es obligatorio');
         self::validarEnteroPositivo($datos['idMascota'] ?? null, 'La mascota es obligatoria');
 
-        if (empty($datos['dniPropietario'])) {
-            throw new InvalidArgumentException('El DNI del propietario es obligatorio');
+        $esbHabilitado = filter_var($_ENV['ESB_HABILITADO'] ?? 'true', FILTER_VALIDATE_BOOLEAN);
+        if ($esbHabilitado && empty($datos['dniPropietario'])) {
+            throw new InvalidArgumentException('El DNI del propietario es obligatorio cuando el ESB está habilitado');
+        }
+        if (!$esbHabilitado && empty($datos['idPropietario'])) {
+            throw new InvalidArgumentException('El idPropietario es obligatorio cuando el ESB está deshabilitado');
+        }
+        if (!$esbHabilitado && !empty($datos['idPropietario'])) {
+            self::validarEnteroPositivo($datos['idPropietario'], 'El propietario debe ser un ID positivo');
         }
         if (empty($datos['fecha'])) {
             throw new InvalidArgumentException('La fecha es obligatoria');

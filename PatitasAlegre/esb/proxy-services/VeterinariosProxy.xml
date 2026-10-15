@@ -1,0 +1,15 @@
+<proxy name="VeterinariosProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Veterinarios"/></log>
+            <validate source="//*[local-name()='registrarVeterinarioRequest' or local-name()='consultarVeterinarioRequest' or local-name()='listarVeterinariosRequest' or local-name()='listarDisponiblesRequest' or local-name()='listarEspecialidadesRequest' or local-name()='actualizarDisponibilidadRequest']">
+                <schema key="conf:/xsd/veterinarios.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de veterinarios inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='registrarVeterinarioRequest'])"><then><send><endpoint><address uri="http://localhost:8005/veterinarios/registrar"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='consultarVeterinarioRequest'])"><then><send><endpoint><address uri="http://localhost:8005/veterinarios/consultar"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='listarDisponiblesRequest'])"><then><send><endpoint><address uri="http://localhost:8005/veterinarios/disponibles"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='listarEspecialidadesRequest'])"><then><send><endpoint><address uri="http://localhost:8005/veterinarios/especialidades"/></endpoint></send></then><else><filter xpath="boolean(//*[local-name()='actualizarDisponibilidadRequest'])"><then><send><endpoint><address uri="http://localhost:8005/veterinarios/disponibilidad"/></endpoint></send></then><else><send><endpoint><address uri="http://localhost:8005/veterinarios/listar"/></endpoint></send></else></filter></else></filter></else></filter></else></filter></else></filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Veterinarios response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

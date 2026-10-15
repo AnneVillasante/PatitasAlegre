@@ -2,6 +2,9 @@ package com.clinica.farmacia.eventos;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+@JacksonXmlRootElement(localName = "Evento")
 public class Evento implements Serializable {
     private static final long serialVersionUID = 1L;
 
