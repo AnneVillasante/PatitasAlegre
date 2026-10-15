@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Gestión de Propietarios</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div>
+        <h1>🐾 VetCare</h1>
+        <p>Directorio y registro de dueños de mascotas</p>
+    </div>
+    <div class="acciones">
+        <a href="dashboard.html" class="btn-header">← Volver al Panel</a>
+    </div>
+</header>
+
+<nav class="barra-navegacion">
+    <a href="dashboard.html">Inicio</a>
+    <a href="mascotas.html">Mis Mascotas</a>
+    <a href="citas.html">Mis Citas</a>
+    <a href="historial.html">Historial</a>
+    <a href="propietarios.html" class="activo">Propietarios</a>
+    <a href="veterinarios.html">Veterinarios</a>
+    <a href="farmacia.html">Farmacia</a>
+    <a href="accesorios.html">Tienda</a>
+    <a href="notificaciones.html">Notificaciones</a>
+</nav>
+
+<main>
+    <div class="principal">
+
+        <!-- LISTADO DE PROPIETARIOS -->
+        <section class="panel">
+            <h2>Propietarios registrados</h2>
+            <p>Consulta la lista de dueños y filtra por DNI o nombres.</p>
+
+            <label for="buscador">Buscar propietario:</label>
+            <input type="search" id="buscador" placeholder="Ej. 72345678, Carlos, Ana..." oninput="filtrarPropietarios()">
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DNI</th>
+                            <th>Nombres y Apellidos</th>
+                            <th>Contacto</th>
+                            <th>Dirección</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPropietarios">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="contadorPropietarios" style="color: #66716e; font-size: 13px; margin-top: 15px;">Total: 0 propietarios</p>
+        </section>
+
+        <!-- FORMULARIO DE REGISTRO / EDICIÓN -->
+        <aside class="panel">
+            <h2 id="formTitle">Registrar propietario</h2>
+            <p>Ingresa los datos para registrar o actualizar al dueño.</p>
+
+            <form id="formPropietario" onsubmit="guardarPropietario(event)">
+                <label for="dni">DNI / Documento *</label>
+                <input type="text" id="dni" placeholder="Ej. 72345678" maxlength="8" pattern="[0-9]{8}" required>
+
+                <label for="nombres">Nombres *</label>
+                <input type="text" id="nombres" placeholder="Ej. Carlos Eduardo" required>
+
+                <label for="apellidos">Apellidos *</label>
+                <input type="text" id="apellidos" placeholder="Ej. Mendoza Quispe" required>
+
+                <label for="telefono">Teléfono / Celular *</label>
+                <input type="tel" id="telefono" placeholder="Ej. 987654321" required>
+
+                <label for="email">Correo electrónico *</label>
+                <input type="email" id="email" placeholder="Ej. carlos@example.com" required>
+
+                <label for="direccion">Dirección</label>
+                <input type="text" id="direccion" placeholder="Ej. Av. Los Próceres 123">
+
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit" id="btnGuardar" style="flex: 1;">Guardar propietario</button>
+                    <button type="button" class="btn-cancelar" onclick="limpiarFormulario()">Limpiar</button>
+                </div>
+            </form>
+
+            <div id="mensajeAlerta" style="display: none; margin-top: 15px;"></div>
+        </aside>
+
+    </div>
+</main>
+
+<footer>
+    <p>VetCare © 2026 · Cuidado y bienestar animal · Clínica Patitas Alegre</p>
+</footer>
+
+<script src="js/roles.js"></script>
+<script>
+const URL_SERVICIO = "http://localhost:8003/propietarios";
+
+let propietarios = JSON.parse(localStorage.getItem("vetcare_propietarios")) || [
+    { id: 1, dni: "72345678", nombres: "Ana María", apellidos: "Villasante", telefono: "987112233", email: "ana.v@example.com", direccion: "Av. Las Flores 450, Lima" },
+    { id: 2, dni: "45678912", nombres: "Carlos Alberto", apellidos: "Ramírez Soto", telefono: "984556677", email: "carlos.r@example.com", direccion: "Jr. Huancavelica 220" },
+    { id: 3, dni: "87654321", nombres: "Lucía Fernanda", apellidos: "Gómez Cruz", telefono: "991223344", email: "lucia.f@example.com", direccion: "Calle Los Pinos 104" },
+    { id: 4, dni: "12345678", nombres: "Roberto", apellidos: "Hernández Díaz", telefono: "981778899", email: "roberto.h@example.com", direccion: "Urb. Primavera Mz. B Lt. 4" }
+];
+
+function renderizarTabla(lista = propietarios) {
+    const tbody = document.getElementById("tablaPropietarios");
+    const contador = document.getElementById("contadorPropietarios");
+    contador.textContent = `Total: ${lista.length} propietarios`;
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 24px; color: #66716e;">No se encontraron propietarios con ese criterio.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = lista.map(p => `
+        <tr>
+            <td><strong>${p.dni}</strong></td>
+            <td><strong>${p.nombres} ${p.apellidos}</strong></td>
+            <td>
+                <div>📞 ${p.telefono}</div>
+                <div style="font-size: 12px; color: #5b6663;">✉️ ${p.email}</div>
+            </td>
+            <td>${p.direccion || '<span style="color:#889;">-</span>'}</td>
+            <td>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-secundario" style="padding: 5px 10px; font-size: 12px;" onclick="editarPropietario('${p.dni}')">Editar</button>
+                    <button type="button" class="btn-eliminar" style="padding: 5px 10px; font-size: 12px;" onclick="eliminarPropietario('${p.dni}')">Eliminar</button>
+                </div>
+            </td>
+        </tr>
+    `).join("");
+}
+
+function filtrarPropietarios() {
+    const q = document.getElementById("buscador").value.toLowerCase().trim();
+    const filtrados = propietarios.filter(p => 
+        p.dni.toLowerCase().includes(q) || 
+        p.nombres.toLowerCase().includes(q) || 
+        p.apellidos.toLowerCase().includes(q) ||
+        p.telefono.includes(q)
+    );
+    renderizarTabla(filtrados);
+}
+
+async function guardarPropietario(event) {
+    event.preventDefault();
+
+    const dni = document.getElementById("dni").value.trim();
+    const nombres = document.getElementById("nombres").value.trim();
+    const apellidos = document.getElementById("apellidos").value.trim();
+    const telefono = document.getElementById("telefono").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const direccion = document.getElementById("direccion").value.trim();
+
+    const xmlPayload = `
+        <registrarPropietarioRequest>
+            <dni>${dni}</dni>
+            <nombres>${nombres}</nombres>
+            <apellidos>${apellidos}</apellidos>
+            <telefono>${telefono}</telefono>
+            <email>${email}</email>
+            <direccion>${direccion}</direccion>
+        </registrarPropietarioRequest>
+    `;
+
+    try {
+        await fetch(`${URL_SERVICIO}/registrar`, {
+            method: "POST",
+            headers: { "Content-Type": "text/xml" },
+            body: xmlPayload
+        });
+    } catch (e) {
+        console.warn("Backend 8003 no disponible o CORS, guardando localmente.");
+    }
+
+    const index = propietarios.findIndex(p => p.dni === dni);
+    if (index >= 0) {
+        propietarios[index] = { ...propietarios[index], nombres, apellidos, telefono, email, direccion };
+    } else {
+        propietarios.unshift({ id: Date.now(), dni, nombres, apellidos, telefono, email, direccion });
+    }
+
+    localStorage.setItem("vetcare_propietarios", JSON.stringify(propietarios));
+    limpiarFormulario();
+    renderizarTabla();
+    mostrarMensaje("¡Propietario guardado exitosamente!", "exito");
+}
+
+function editarPropietario(dni) {
+    const p = propietarios.find(item => item.dni === dni);
+    if (!p) return;
+
+    document.getElementById("dni").value = p.dni;
+    document.getElementById("nombres").value = p.nombres;
+    document.getElementById("apellidos").value = p.apellidos;
+    document.getElementById("telefono").value = p.telefono;
+    document.getElementById("email").value = p.email;
+    document.getElementById("direccion").value = p.direccion || "";
+
+    document.getElementById("formTitle").textContent = "Editar propietario";
+    document.getElementById("btnGuardar").textContent = "Actualizar datos";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function eliminarPropietario(dni) {
+    if (!confirm(`¿Estás seguro de eliminar al propietario con DNI ${dni}?`)) return;
+
+    propietarios = propietarios.filter(p => p.dni !== dni);
+    localStorage.setItem("vetcare_propietarios", JSON.stringify(propietarios));
+    renderizarTabla();
+    mostrarMensaje("Propietario eliminado.", "info");
+}
+
+function limpiarFormulario() {
+    document.getElementById("formPropietario").reset();
+    document.getElementById("formTitle").textContent = "Registrar propietario";
+    document.getElementById("btnGuardar").textContent = "Guardar propietario";
+}
+
+function mostrarMensaje(texto, tipo) {
+    const box = document.getElementById("mensajeAlerta");
+    box.textContent = texto;
+    box.style.display = "block";
+    box.className = tipo === "exito" ? "mensaje mensaje-exito" : "mensaje mensaje-info";
+    setTimeout(() => { box.style.display = "none"; }, 3500);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarRolesUI("propietarios");
+    renderizarTabla();
+});
+</script>
+
+</body>
+</html>

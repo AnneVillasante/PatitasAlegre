@@ -1,4 +1,3 @@
-
 package com.vetcare.registro.repository;
 
 import com.vetcare.registro.model.Usuario;

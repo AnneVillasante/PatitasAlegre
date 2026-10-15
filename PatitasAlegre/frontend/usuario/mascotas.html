@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,7 +66,8 @@
             margin: 15px 0 20px;
         }
 
-        button, select {
+        button,
+        select {
             border: 0;
             border-radius: 7px;
             padding: 10px 13px;
@@ -193,314 +194,311 @@
 
 <body>
 
-<header>
-    <div>
-        <h1>🐾 VetCare</h1>
-        <p>Todo para consentir a tu mascota</p>
-    </div>
+    <header>
+        <div>
+            <h1>🐾 VetCare</h1>
+            <p>Todo para consentir a tu mascota</p>
+        </div>
 
-    <button onclick="irAlCarrito()">
-        🛒 Carrito (<span id="contador">0</span>)
-    </button>
-</header>
+        <button onclick="irAlCarrito()">
+            🛒 Carrito (<span id="contador">0</span>)
+        </button>
+    </header>
 
-<main>
-    <div class="principal">
+    <main>
+        <div class="principal">
 
-        <section class="panel">
-            <h2>Accesorios para tu mascota</h2>
-            <p>Explora nuestros productos y elige tus favoritos.</p>
+            <section class="panel">
+                <h2>Accesorios para tu mascota</h2>
+                <p>Explora nuestros productos y elige tus favoritos.</p>
 
-            <label for="busqueda">Buscar producto:</label>
-            <input
-                id="busqueda"
-                type="search"
-                placeholder="Ej. pelota, collar..."
-                style="padding:10px;width:100%;margin-top:8px;border:1px solid #ccc;border-radius:7px"
-            >
+                <label for="busqueda">Buscar producto:</label>
+                <input id="busqueda" type="search" placeholder="Ej. pelota, collar..."
+                    style="padding:10px;width:100%;margin-top:8px;border:1px solid #ccc;border-radius:7px">
 
-            <h3>Categorías</h3>
-            <div id="filtros" class="filtros">
-                <button class="activo" data-categoria="Todas">Todas</button>
-            </div>
+                <h3>Categorías</h3>
+                <div id="filtros" class="filtros">
+                    <button class="activo" data-categoria="Todas">Todas</button>
+                </div>
 
-            <div id="catalogo" class="catalogo">
-                <p class="vacio">Cargando productos...</p>
-            </div>
-        </section>
+                <div id="catalogo" class="catalogo">
+                    <p class="vacio">Cargando productos...</p>
+                </div>
+            </section>
 
-        <aside class="panel" id="carrito">
-            <h2>🛒 Mi carrito</h2>
-            <div id="listaCarrito">
-                <p class="vacio">Tu carrito está vacío.</p>
-            </div>
+            <aside class="panel" id="carrito">
+                <h2>🛒 Mi carrito</h2>
+                <div id="listaCarrito">
+                    <p class="vacio">Tu carrito está vacío.</p>
+                </div>
 
-            <p class="total">
-                Total: S/ <span id="total">0.00</span>
-            </p>
+                <p class="total">
+                    Total: S/ <span id="total">0.00</span>
+                </p>
 
-            <button class="vaciar" onclick="vaciarCarrito()">
-                Vaciar carrito
-            </button>
+                <button class="vaciar" onclick="vaciarCarrito()">
+                    Vaciar carrito
+                </button>
 
-            <button onclick="comprar()">
-                Continuar compra
-            </button>
+                <button onclick="comprar()">
+                    Continuar compra
+                </button>
 
-            <p id="mensaje" class="mensaje"></p>
-        </aside>
+                <p id="mensaje" class="mensaje"></p>
+            </aside>
 
-    </div>
-</main>
+        </div>
+    </main>
 
-<script>
-    const API = "http://localhost:3000/api/productos";
+    <script>
+        const API = "http://localhost:3000/api/productos";
 
-    let productos = [];
-    let carrito = [];
-    let categoriaActual = "Todas";
+        let productos = [];
+        let carrito = [];
+        let categoriaActual = "Todas";
 
-    async function iniciarTienda() {
-        try {
-            const [respuestaProductos, respuestaCategorias] =
-                await Promise.all([
-                    fetch(API),
-                    fetch(API + "/categorias")
-                ]);
+        async function iniciarTienda() {
+            try {
+                const [respuestaProductos, respuestaCategorias] =
+                    await Promise.all([
+                        fetch(API),
+                        fetch(API + "/categorias")
+                    ]);
 
-            if (!respuestaProductos.ok || !respuestaCategorias.ok) {
-                throw new Error("Error al consultar la API");
-            }
+                if (!respuestaProductos.ok || !respuestaCategorias.ok) {
+                    throw new Error("Error al consultar la API");
+                }
 
-            productos = await respuestaProductos.json();
-            const categorias = await respuestaCategorias.json();
+                productos = await respuestaProductos.json();
+                const categorias = await respuestaCategorias.json();
 
-            mostrarCategorias(categorias);
-            mostrarProductos();
-        } catch (error) {
-            document.getElementById("catalogo").textContent =
-                "No se pudo conectar. Comprueba que Node.js esté ejecutándose.";
-        }
-    }
-
-    function mostrarCategorias(categorias) {
-        const filtros = document.getElementById("filtros");
-        filtros.innerHTML = "";
-
-        const nombres = ["Todas", ...categorias.map(c => c.nombre)];
-
-        nombres.forEach(nombre => {
-            const boton = document.createElement("button");
-            boton.textContent = nombre;
-            boton.dataset.categoria = nombre;
-
-            if (nombre === categoriaActual) {
-                boton.classList.add("activo");
-            }
-
-            boton.addEventListener("click", () => {
-                categoriaActual = nombre;
-
-                document.querySelectorAll("#filtros button")
-                    .forEach(b => b.classList.remove("activo"));
-
-                boton.classList.add("activo");
+                mostrarCategorias(categorias);
                 mostrarProductos();
+            } catch (error) {
+                document.getElementById("catalogo").textContent =
+                    "No se pudo conectar. Comprueba que Node.js esté ejecutándose.";
+            }
+        }
+
+        function mostrarCategorias(categorias) {
+            const filtros = document.getElementById("filtros");
+            filtros.innerHTML = "";
+
+            const nombres = ["Todas", ...categorias.map(c => c.nombre)];
+
+            nombres.forEach(nombre => {
+                const boton = document.createElement("button");
+                boton.textContent = nombre;
+                boton.dataset.categoria = nombre;
+
+                if (nombre === categoriaActual) {
+                    boton.classList.add("activo");
+                }
+
+                boton.addEventListener("click", () => {
+                    categoriaActual = nombre;
+
+                    document.querySelectorAll("#filtros button")
+                        .forEach(b => b.classList.remove("activo"));
+
+                    boton.classList.add("activo");
+                    mostrarProductos();
+                });
+
+                filtros.appendChild(boton);
+            });
+        }
+
+        function mostrarProductos() {
+            const catalogo = document.getElementById("catalogo");
+            const busqueda = document.getElementById("busqueda")
+                .value.trim().toLowerCase();
+
+            catalogo.innerHTML = "";
+
+            const filtrados = productos.filter(p => {
+                const coincideCategoria =
+                    categoriaActual === "Todas" ||
+                    p.categoria === categoriaActual;
+
+                const coincideBusqueda =
+                    p.nombre.toLowerCase().includes(busqueda) ||
+                    (p.descripcion || "").toLowerCase().includes(busqueda);
+
+                return p.estado === "ACTIVO" &&
+                    Number(p.stock) > 0 &&
+                    coincideCategoria &&
+                    coincideBusqueda;
             });
 
-            filtros.appendChild(boton);
-        });
-    }
+            if (filtrados.length === 0) {
+                catalogo.innerHTML =
+                    '<p class="vacio">No hay productos para mostrar en esta categoría.</p>';
+                return;
+            }
 
-    function mostrarProductos() {
-        const catalogo = document.getElementById("catalogo");
-        const busqueda = document.getElementById("busqueda")
-            .value.trim().toLowerCase();
+            filtrados.forEach(p => {
+                const tarjeta = document.createElement("article");
+                tarjeta.className = "producto";
 
-        catalogo.innerHTML = "";
+                const nombre = document.createElement("h3");
+                nombre.textContent = p.nombre;
 
-        const filtrados = productos.filter(p => {
-            const coincideCategoria =
-                categoriaActual === "Todas" ||
-                p.categoria === categoriaActual;
+                const categoria = document.createElement("p");
+                categoria.textContent = p.categoria || "Sin categoría";
 
-            const coincideBusqueda =
-                p.nombre.toLowerCase().includes(busqueda) ||
-                (p.descripcion || "").toLowerCase().includes(busqueda);
+                const descripcion = document.createElement("p");
+                descripcion.textContent = p.descripcion || "Accesorio para mascotas";
 
-            return p.estado === "ACTIVO" &&
-                Number(p.stock) > 0 &&
-                coincideCategoria &&
-                coincideBusqueda;
-        });
+                const precio = document.createElement("p");
+                precio.className = "precio";
+                precio.textContent = "S/ " + Number(p.precio).toFixed(2);
 
-        if (filtrados.length === 0) {
-            catalogo.innerHTML =
-                '<p class="vacio">No hay productos para mostrar en esta categoría.</p>';
-            return;
+                const stock = document.createElement("p");
+                stock.className = "stock";
+                stock.textContent = "Disponibles: " + p.stock;
+
+                const boton = document.createElement("button");
+                boton.textContent = "Agregar al carrito";
+                boton.addEventListener("click", () => agregar(p.idProducto));
+
+                tarjeta.append(nombre, categoria, descripcion, precio, stock, boton);
+                catalogo.appendChild(tarjeta);
+            });
         }
 
-        filtrados.forEach(p => {
-            const tarjeta = document.createElement("article");
-            tarjeta.className = "producto";
+        function agregar(id) {
+            const producto = productos.find(p => p.idProducto === id);
+            if (!producto) return;
 
-            const nombre = document.createElement("h3");
-            nombre.textContent = p.nombre;
+            const item = carrito.find(p => p.idProducto === id);
 
-            const categoria = document.createElement("p");
-            categoria.textContent = p.categoria || "Sin categoría";
+            if (item) {
+                if (item.cantidad >= Number(producto.stock)) {
+                    alert("No hay suficiente stock.");
+                    return;
+                }
+                item.cantidad++;
+            } else {
+                carrito.push({ ...producto, cantidad: 1 });
+            }
 
-            const descripcion = document.createElement("p");
-            descripcion.textContent = p.descripcion || "Accesorio para mascotas";
+            document.getElementById("mensaje").textContent = "";
+            mostrarCarrito();
+        }
 
-            const precio = document.createElement("p");
-            precio.className = "precio";
-            precio.textContent = "S/ " + Number(p.precio).toFixed(2);
+        function cambiarCantidad(id, cambio) {
+            const item = carrito.find(p => p.idProducto === id);
+            const producto = productos.find(p => p.idProducto === id);
 
-            const stock = document.createElement("p");
-            stock.className = "stock";
-            stock.textContent = "Disponibles: " + p.stock;
+            if (!item || !producto) return;
 
-            const boton = document.createElement("button");
-            boton.textContent = "Agregar al carrito";
-            boton.addEventListener("click", () => agregar(p.idProducto));
+            const nuevaCantidad = item.cantidad + cambio;
 
-            tarjeta.append(nombre, categoria, descripcion, precio, stock, boton);
-            catalogo.appendChild(tarjeta);
-        });
-    }
-
-    function agregar(id) {
-        const producto = productos.find(p => p.idProducto === id);
-        if (!producto) return;
-
-        const item = carrito.find(p => p.idProducto === id);
-
-        if (item) {
-            if (item.cantidad >= Number(producto.stock)) {
+            if (nuevaCantidad > Number(producto.stock)) {
                 alert("No hay suficiente stock.");
                 return;
             }
-            item.cantidad++;
-        } else {
-            carrito.push({ ...producto, cantidad: 1 });
+
+            if (nuevaCantidad <= 0) {
+                carrito = carrito.filter(p => p.idProducto !== id);
+            } else {
+                item.cantidad = nuevaCantidad;
+            }
+
+            mostrarCarrito();
         }
 
-        document.getElementById("mensaje").textContent = "";
-        mostrarCarrito();
-    }
+        function mostrarCarrito() {
+            const lista = document.getElementById("listaCarrito");
+            lista.innerHTML = "";
 
-    function cambiarCantidad(id, cambio) {
-        const item = carrito.find(p => p.idProducto === id);
-        const producto = productos.find(p => p.idProducto === id);
+            let total = 0;
+            let unidades = 0;
 
-        if (!item || !producto) return;
+            if (carrito.length === 0) {
+                lista.innerHTML = '<p class="vacio">Tu carrito está vacío.</p>';
+            }
 
-        const nuevaCantidad = item.cantidad + cambio;
+            carrito.forEach(item => {
+                const subtotal = Number(item.precio) * item.cantidad;
+                total += subtotal;
+                unidades += item.cantidad;
 
-        if (nuevaCantidad > Number(producto.stock)) {
-            alert("No hay suficiente stock.");
-            return;
+                const div = document.createElement("div");
+                div.className = "carrito-item";
+
+                const nombre = document.createElement("strong");
+                nombre.textContent = item.nombre;
+
+                const detalle = document.createElement("p");
+                detalle.textContent =
+                    `S/ ${Number(item.precio).toFixed(2)} por unidad`;
+
+                const subtotalTexto = document.createElement("p");
+                subtotalTexto.textContent = "Subtotal: S/ " + subtotal.toFixed(2);
+
+                const controles = document.createElement("div");
+                controles.className = "cantidad";
+
+                const menos = document.createElement("button");
+                menos.textContent = "−";
+                menos.onclick = () => cambiarCantidad(item.idProducto, -1);
+
+                const cantidad = document.createElement("span");
+                cantidad.textContent = item.cantidad;
+
+                const mas = document.createElement("button");
+                mas.textContent = "+";
+                mas.onclick = () => cambiarCantidad(item.idProducto, 1);
+
+                const eliminar = document.createElement("button");
+                eliminar.textContent = "Eliminar";
+                eliminar.className = "eliminar";
+                eliminar.onclick = () => {
+                    carrito = carrito.filter(p => p.idProducto !== item.idProducto);
+                    mostrarCarrito();
+                };
+
+                controles.append(menos, cantidad, mas);
+                div.append(nombre, detalle, subtotalTexto, controles, eliminar);
+                lista.appendChild(div);
+            });
+
+            document.getElementById("total").textContent = total.toFixed(2);
+            document.getElementById("contador").textContent = unidades;
         }
 
-        if (nuevaCantidad <= 0) {
-            carrito = carrito.filter(p => p.idProducto !== id);
-        } else {
-            item.cantidad = nuevaCantidad;
+        function vaciarCarrito() {
+            carrito = [];
+            mostrarCarrito();
+            document.getElementById("mensaje").textContent = "";
         }
 
-        mostrarCarrito();
-    }
-
-    function mostrarCarrito() {
-        const lista = document.getElementById("listaCarrito");
-        lista.innerHTML = "";
-
-        let total = 0;
-        let unidades = 0;
-
-        if (carrito.length === 0) {
-            lista.innerHTML = '<p class="vacio">Tu carrito está vacío.</p>';
+        function irAlCarrito() {
+            document.getElementById("carrito").scrollIntoView({
+                behavior: "smooth"
+            });
         }
 
-        carrito.forEach(item => {
-            const subtotal = Number(item.precio) * item.cantidad;
-            total += subtotal;
-            unidades += item.cantidad;
+        function comprar() {
+            const mensaje = document.getElementById("mensaje");
 
-            const div = document.createElement("div");
-            div.className = "carrito-item";
+            if (carrito.length === 0) {
+                mensaje.textContent = "Primero agrega productos al carrito.";
+                return;
+            }
 
-            const nombre = document.createElement("strong");
-            nombre.textContent = item.nombre;
-
-            const detalle = document.createElement("p");
-            detalle.textContent =
-                `S/ ${Number(item.precio).toFixed(2)} por unidad`;
-
-            const subtotalTexto = document.createElement("p");
-            subtotalTexto.textContent = "Subtotal: S/ " + subtotal.toFixed(2);
-
-            const controles = document.createElement("div");
-            controles.className = "cantidad";
-
-            const menos = document.createElement("button");
-            menos.textContent = "−";
-            menos.onclick = () => cambiarCantidad(item.idProducto, -1);
-
-            const cantidad = document.createElement("span");
-            cantidad.textContent = item.cantidad;
-
-            const mas = document.createElement("button");
-            mas.textContent = "+";
-            mas.onclick = () => cambiarCantidad(item.idProducto, 1);
-
-            const eliminar = document.createElement("button");
-            eliminar.textContent = "Eliminar";
-            eliminar.className = "eliminar";
-            eliminar.onclick = () => {
-                carrito = carrito.filter(p => p.idProducto !== item.idProducto);
-                mostrarCarrito();
-            };
-
-            controles.append(menos, cantidad, mas);
-            div.append(nombre, detalle, subtotalTexto, controles, eliminar);
-            lista.appendChild(div);
-        });
-
-        document.getElementById("total").textContent = total.toFixed(2);
-        document.getElementById("contador").textContent = unidades;
-    }
-
-    function vaciarCarrito() {
-        carrito = [];
-        mostrarCarrito();
-        document.getElementById("mensaje").textContent = "";
-    }
-
-    function irAlCarrito() {
-        document.getElementById("carrito").scrollIntoView({
-            behavior: "smooth"
-        });
-    }
-
-    function comprar() {
-        const mensaje = document.getElementById("mensaje");
-
-        if (carrito.length === 0) {
-            mensaje.textContent = "Primero agrega productos al carrito.";
-            return;
+            mensaje.textContent =
+                "Carrito listo. En el siguiente paso conectaremos la compra con el backend.";
         }
 
-        mensaje.textContent =
-            "Carrito listo. En el siguiente paso conectaremos la compra con el backend.";
-    }
+        document.getElementById("busqueda")
+            .addEventListener("input", mostrarProductos);
 
-    document.getElementById("busqueda")
-        .addEventListener("input", mostrarProductos);
-
-    iniciarTienda();
-</script>
+        iniciarTienda();
+    </script>
 
 </body>
+
 </html>

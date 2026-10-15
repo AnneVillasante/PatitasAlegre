@@ -1,470 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Tienda de accesorios</title>
+    <link rel="stylesheet" href="css/estilos.css">
 
-const API_URL = "http://localhost:8081/api/mascotas";
-
-const form = document.getElementById("formMascota");
-const selectEspecie = document.getElementById("idEspecie");
-const selectRaza = document.getElementById("idRaza");
-const listaMascotas = document.getElementById("listaMascotas");
-const mensaje = document.getElementById("mensaje");
-const btnGuardar = document.getElementById("btnGuardar");
-const connection = document.querySelector(".connection");
-
-let mascotas = [];
-let especies = [];
-let razas = [];
-
-function mostrarMensaje(texto, tipo = "info") {
-    mensaje.textContent = texto;
-    mensaje.className = `message ${tipo}`;
-    mensaje.hidden = false;
-}
-
-function ocultarMensaje() {
-    mensaje.hidden = true;
-}
-
-async function solicitar(url, opciones = {}) {
-    const respuesta = await fetch(url, {
-        ...opciones,
-        headers: {
-            "Content-Type": "application/json",
-            ...(opciones.headers || {})
+    <style>
+        .catalogo {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
         }
+
+        .producto {
+            border: 1px solid #e0e5e3;
+            border-radius: 10px;
+            padding: 16px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .producto h3 {
+            margin: 10px 0 5px;
+            font-size: 16px;
+        }
+
+        .producto p {
+            margin: 5px 0;
+            color: #5b6663;
+            font-size: 13px;
+        }
+
+        .precio {
+            font-size: 20px;
+            font-weight: bold;
+            color: #246b63 !important;
+            margin: 8px 0 4px !important;
+        }
+
+        .stock {
+            font-size: 12px;
+        }
+
+        .producto button {
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .carrito-item {
+            border-bottom: 1px solid #e5e5e5;
+            padding: 10px 0;
+        }
+
+        .carrito-item p {
+            margin: 4px 0;
+            font-size: 12.5px;
+        }
+
+        .cantidad {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .cantidad button {
+            padding: 4px 9px;
+            font-size: 12px;
+        }
+
+        .total {
+            font-size: 21px;
+            font-weight: bold;
+            margin: 18px 0 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .vacio {
+            color: #66716e;
+            padding: 15px 0;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+            .catalogo {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div>
+        <h1>🐾 VetCare</h1>
+        <p id="subtituloTienda">Todo para consentir a tu mascota</p>
+    </div>
+
+    <div class="acciones">
+        <a href="dashboard.html" class="btn-header">← Volver al Panel</a>
+        <button onclick="irAlCarrito()">
+            🛒 Carrito (<span id="contador">0</span>)
+        </button>
+    </div>
+</header>
+
+<nav class="barra-navegacion">
+    <!-- Generado dinámicamente según el rol por roles.js -->
+</nav>
+
+<main>
+    <div class="principal">
+
+        <section class="panel">
+            <h2 id="tituloSeccion">Accesorios para tu mascota</h2>
+            <p id="descSeccion">Explora nuestros productos y elige tus favoritos.</p>
+
+            <label for="busqueda">Buscar producto:</label>
+            <input
+                id="busqueda"
+                type="search"
+                placeholder="Ej. pelota, collar, arnés, croquetas..."
+            >
+
+            <h3>Categorías</h3>
+            <div id="filtros" class="filtros">
+                <button class="activo" data-categoria="Todas">Todas</button>
+            </div>
+
+            <div id="catalogo" class="catalogo">
+                <p class="vacio">Cargando productos...</p>
+            </div>
+        </section>
+
+        <aside class="panel" id="carrito">
+            <h2 id="tituloCarrito">🛒 Mi carrito</h2>
+
+            <!-- Opción de caja para Recepcionista y Administrador -->
+            <div id="panelCajaRecepcion" style="display:none; background: #f0f5f3; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                <label for="dniComprador" style="font-size: 12px; margin-bottom: 4px;">DNI / Nombre del Cliente:</label>
+                <input type="text" id="dniComprador" placeholder="Ej. 72345678" style="margin-bottom: 8px; padding: 6px 10px; font-size: 12px;">
+                
+                <label for="tipoComprobante" style="font-size: 12px; margin-bottom: 4px;">Comprobante de Venta:</label>
+                <select id="tipoComprobante" style="margin-bottom: 0; padding: 6px 10px; font-size: 12px;">
+                    <option value="BOLETA">Boleta Electrónica</option>
+                    <option value="FACTURA">Factura</option>
+                    <option value="TICKET">Ticket de Caja</option>
+                </select>
+            </div>
+
+            <div id="listaCarrito">
+                <p class="vacio">Tu carrito está vacío.</p>
+            </div>
+
+            <div class="total">
+                <span>Total a pagar:</span>
+                <span>S/ <span id="total">0.00</span></span>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-cancelar" onclick="vaciarCarrito()" style="flex: 1;">
+                    Vaciar
+                </button>
+
+                <button id="btnAccionCompra" onclick="comprar()" style="flex: 2;">
+                    Continuar compra
+                </button>
+            </div>
+
+            <p id="mensaje" class="mensaje"></p>
+        </aside>
+
+    </div>
+</main>
+
+<footer>
+    <p>VetCare © 2026 · Cuidado y bienestar animal · Clínica Patitas Alegre</p>
+</footer>
+
+<script src="js/roles.js"></script>
+<script>
+    const API = "http://localhost:3000/api/productos";
+
+    const PRODUCTOS_INICIALES = [
+        { idProducto: 1, nombre: "Arnés Ergonómico Reflectivo", categoria: "Accesorios", precio: 45.00, stock: 12, descripcion: "Ajustable y acolchado para paseos seguros.", estado: "ACTIVO" },
+        { idProducto: 2, nombre: "Croquetas Premium Salmón 3kg", categoria: "Alimentos", precio: 78.50, stock: 20, descripcion: "Rico en Omega 3 y 6 para pelaje brillante.", estado: "ACTIVO" },
+        { idProducto: 3, nombre: "Pelota de Goma Resistente", categoria: "Juguetes", precio: 22.00, stock: 15, descripcion: "Goma no tóxica para ejercitar a tu mascota.", estado: "ACTIVO" },
+        { idProducto: 4, nombre: "Shampoo Avena Antipicazón", categoria: "Higiene", precio: 28.00, stock: 18, descripcion: "Fórmula suave sin sulfatos para piel sensible.", estado: "ACTIVO" },
+        { idProducto: 5, nombre: "Cama Suave Térmica Mediana", categoria: "Camas", precio: 85.00, stock: 8, descripcion: "Funda lavable con interior ultra suave.", estado: "ACTIVO" },
+        { idProducto: 6, nombre: "Collar Ajustable con Cascabel", categoria: "Collares", precio: 15.00, stock: 25, descripcion: "Diseño ergonómico para gatos y cachorros.", estado: "ACTIVO" }
+    ];
+
+    let productos = [];
+    let carrito = [];
+    let categoriaActual = "Todas";
+
+    document.addEventListener("DOMContentLoaded", () => {
+        inicializarRolesUI("accesorios");
+        adaptarSegunRol();
+        iniciarTienda();
     });
 
-    if (!respuesta.ok) {
-        const detalle = await respuesta.text();
-        throw new Error(
-            `Error HTTP ${respuesta.status}: ${
-                detalle || respuesta.statusText
-            }`
-        );
+    function adaptarSegunRol() {
+        const rol = obtenerRolActual();
+        const panelCaja = document.getElementById("panelCajaRecepcion");
+        const btnCompra = document.getElementById("btnAccionCompra");
+        const subtitulo = document.getElementById("subtituloTienda");
+        const tituloCarrito = document.getElementById("tituloCarrito");
+
+        if (rol === "RECEPCIONISTA" || rol === "ADMIN") {
+            subtitulo.textContent = "Caja y Emisión de Ventas de Mostrador (3000)";
+            panelCaja.style.display = "block";
+            btnCompra.textContent = "💳 Emitir Venta";
+            tituloCarrito.textContent = "🛒 Orden de Venta en Caja";
+        } else {
+            subtitulo.textContent = "Todo para consentir a tu mascota · Modo Tienda";
+            panelCaja.style.display = "none";
+            btnCompra.textContent = "Continuar compra";
+            tituloCarrito.textContent = "🛒 Mi carrito";
+        }
     }
 
-    if (respuesta.status === 204) {
-        return null;
-    }
+    async function iniciarTienda() {
+        try {
+            const [respuestaProductos, respuestaCategorias] =
+                await Promise.all([
+                    fetch(API),
+                    fetch(API + "/categorias")
+                ]);
 
-    return respuesta.json();
-}
-
-function actualizarConexion(online, texto) {
-    connection.classList.toggle("online", online);
-    connection.classList.toggle("offline", !online);
-    document.getElementById("connectionText").textContent = texto;
-}
-
-async function cargarEspecies() {
-    try {
-        especies = await solicitar(`${API_URL}/especies`);
-
-        selectEspecie.replaceChildren(
-            new Option("Seleccionar especie", "")
-        );
-
-        especies.forEach(especie => {
-            selectEspecie.add(
-                new Option(especie.nombre, especie.idEspecie)
-            );
-        });
-    } catch (error) {
-        selectEspecie.replaceChildren(
-            new Option("No se pudieron cargar las especies", "")
-        );
-        mostrarMensaje(
-            "No se pudieron cargar las especies. " + error.message,
-            "error"
-        );
-    }
-}
-
-async function cargarRazas(idEspecie) {
-    selectRaza.replaceChildren(
-        new Option("Sin especificar", "")
-    );
-    selectRaza.disabled = true;
-
-    if (!idEspecie) {
-        return;
-    }
-
-    try {
-        razas = await solicitar(
-            `${API_URL}/razas/especie/${encodeURIComponent(idEspecie)}`
-        );
-
-        razas.forEach(raza => {
-            selectRaza.add(
-                new Option(raza.nombre, raza.idRaza)
-            );
-        });
-
-        selectRaza.disabled = false;
-    } catch (error) {
-        mostrarMensaje(
-            "No se pudieron cargar las razas. " + error.message,
-            "error"
-        );
-    }
-}
-
-function obtenerNombreEspecie(id) {
-    const especie = especies.find(
-        item => Number(item.idEspecie) === Number(id)
-    );
-    return especie ? especie.nombre : `ID ${id ?? "—"}`;
-}
-
-function obtenerNombreRaza(id) {
-    if (id === null || id === undefined || id === "") {
-        return "Sin especificar";
-    }
-
-    const raza = razas.find(
-        item => Number(item.idRaza) === Number(id)
-    );
-
-    return raza ? raza.nombre : `ID ${id}`;
-}
-
-function crearCelda(texto, clase = "") {
-    const td = document.createElement("td");
-    td.textContent = texto;
-    if (clase) td.className = clase;
-    return td;
-}
-
-function crearCeldaMascota(mascota) {
-    const td = document.createElement("td");
-
-    const nombre = document.createElement("span");
-    nombre.className = "pet-name";
-    nombre.textContent = mascota.nombre || "Sin nombre";
-
-    const codigo = document.createElement("span");
-    codigo.className = "pet-code";
-    codigo.textContent = mascota.codigo || `ID ${mascota.idMascota}`;
-
-    td.append(nombre, codigo);
-    return td;
-}
-
-function crearCeldaEspecie(mascota) {
-    const td = document.createElement("td");
-
-    const especie = document.createElement("span");
-    especie.className = "species-name";
-    especie.textContent = obtenerNombreEspecie(mascota.idEspecie);
-
-    const raza = document.createElement("span");
-    raza.className = "breed-name";
-
-    // Las razas se cargan por especie; se utiliza la lista actual.
-    const razaEncontrada = razas.find(
-        item => Number(item.idRaza) === Number(mascota.idRaza)
-    );
-
-    raza.textContent = mascota.idRaza == null
-        ? "Sin especificar"
-        : razaEncontrada?.nombre || `Raza ID ${mascota.idRaza}`;
-
-    td.append(especie, raza);
-    return td;
-}
-
-function dibujarTabla() {
-    const busqueda = document.getElementById("buscar")
-        .value.trim().toLowerCase();
-
-    const filtro = document.getElementById("filtroEstado").value;
-
-    const filtradas = mascotas.filter(mascota => {
-        const texto = [
-            mascota.nombre,
-            mascota.codigo,
-            mascota.numeroChip,
-            mascota.idMascota
-        ].filter(valor => valor != null).join(" ").toLowerCase();
-
-        return texto.includes(busqueda)
-            && (!filtro || mascota.estado === filtro);
-    });
-
-    listaMascotas.replaceChildren();
-
-    if (filtradas.length === 0) {
-        const tr = document.createElement("tr");
-        const td = document.createElement("td");
-        td.colSpan = 5;
-        td.className = "empty-cell";
-        td.textContent = mascotas.length
-            ? "No hay resultados para esta búsqueda."
-            : "Todavía no hay mascotas registradas.";
-        tr.append(td);
-        listaMascotas.append(tr);
-    } else {
-        filtradas.forEach(mascota => {
-            const tr = document.createElement("tr");
-
-            tr.append(
-                crearCeldaMascota(mascota),
-                crearCeldaEspecie(mascota),
-                crearCelda(mascota.sexo || "—"),
-                crearCelda(
-                    mascota.pesoKg != null
-                        ? `${mascota.pesoKg} kg`
-                        : "—"
-                )
-            );
-
-            const tdEstado = document.createElement("td");
-            const badge = document.createElement("span");
-            badge.className = "status-badge";
-
-            if (mascota.estado === "INACTIVO") {
-                badge.classList.add("inactive");
-            } else if (mascota.estado === "FALLECIDO") {
-                badge.classList.add("deceased");
+            if (!respuestaProductos.ok || !respuestaCategorias.ok) {
+                throw new Error("Error al consultar la API");
             }
 
-            badge.textContent = mascota.estado || "ACTIVO";
-            tdEstado.append(badge);
-            tr.append(tdEstado);
+            productos = await respuestaProductos.json();
+            const categorias = await respuestaCategorias.json();
 
-            // Columna de acciones
-            const tdAcciones = document.createElement("td");
+            mostrarCategorias(categorias);
+            mostrarProductos();
+        } catch (error) {
+            productos = PRODUCTOS_INICIALES;
+            const categoriasDemo = [
+                { idCategoria: 1, nombre: "Alimentos" },
+                { idCategoria: 2, nombre: "Juguetes" },
+                { idCategoria: 3, nombre: "Accesorios" },
+                { idCategoria: 4, nombre: "Higiene" },
+                { idCategoria: 5, nombre: "Camas" },
+                { idCategoria: 6, nombre: "Collares" }
+            ];
+            mostrarCategorias(categoriasDemo);
+            mostrarProductos();
+        }
+    }
 
-            const btnEditar = document.createElement("button");
-            btnEditar.type = "button";
-            btnEditar.textContent = "Editar";
-            btnEditar.className = "btn-secondary";
-            btnEditar.addEventListener("click", () => {
-                cargarMascotaParaEditar(mascota);
+    function mostrarCategorias(categorias) {
+        const filtros = document.getElementById("filtros");
+        filtros.innerHTML = "";
+
+        const nombres = ["Todas", ...categorias.map(c => c.nombre)];
+
+        nombres.forEach(nombre => {
+            const boton = document.createElement("button");
+            boton.textContent = nombre;
+            boton.dataset.categoria = nombre;
+
+            if (nombre === categoriaActual) {
+                boton.classList.add("activo");
+            }
+
+            boton.addEventListener("click", () => {
+                categoriaActual = nombre;
+
+                document.querySelectorAll("#filtros button")
+                    .forEach(b => b.classList.remove("activo"));
+
+                boton.classList.add("activo");
+                mostrarProductos();
             });
 
-            const btnEliminar = document.createElement("button");
-            btnEliminar.type = "button";
-            btnEliminar.textContent = "Eliminar";
-            btnEliminar.className = "btn-danger";
-            btnEliminar.addEventListener("click", () => {
-                eliminarMascota(mascota);
-            });
-
-            tdAcciones.append(btnEditar, btnEliminar);
-            tr.appendChild(tdAcciones);
-
-            listaMascotas.append(tr);
+            filtros.appendChild(boton);
         });
     }
 
-    document.getElementById("totalMascotas").textContent =
-        mascotas.length;
+    function mostrarProductos() {
+        const catalogo = document.getElementById("catalogo");
+        const busqueda = document.getElementById("busqueda")
+            .value.trim().toLowerCase();
 
-    document.getElementById("totalActivas").textContent =
-        mascotas.filter(m => m.estado === "ACTIVO").length;
+        catalogo.innerHTML = "";
 
-    document.getElementById("totalOtras").textContent =
-        mascotas.filter(m => m.estado !== "ACTIVO").length;
+        const filtrados = productos.filter(p => {
+            const coincideCategoria =
+                categoriaActual === "Todas" ||
+                p.categoria === categoriaActual;
 
-    document.getElementById("estadoLista").textContent =
-        `Mostrando ${filtradas.length} de ${mascotas.length} mascotas`;
-}
+            const coincideBusqueda =
+                p.nombre.toLowerCase().includes(busqueda) ||
+                (p.descripcion || "").toLowerCase().includes(busqueda);
 
-async function cargarMascotas() {
-    const estadoLista = document.getElementById("estadoLista");
-    estadoLista.textContent = "Cargando mascotas...";
-
-    try {
-        mascotas = await solicitar(API_URL);
-        actualizarConexion(true, "Servicio conectado");
-        dibujarTabla();
-    } catch (error) {
-        mascotas = [];
-        dibujarTabla();
-        estadoLista.textContent = "No se pudieron cargar las mascotas.";
-        actualizarConexion(false, "Servicio no disponible");
-        mostrarMensaje(
-            "Error al consultar el microservicio: " + error.message,
-            "error"
-        );
-    }
-}
-
-function construirDatosFormulario() {
-    const idEspecie = Number(selectEspecie.value);
-    const valorRaza = selectRaza.value;
-
-    const pesoTexto = document.getElementById("pesoKg").value;
-    const fechaTexto = document.getElementById("fechaNacimiento").value;
-
-    return {
-        idPropietario: Number(
-            document.getElementById("idPropietario").value
-        ),
-        idEspecie,
-        idRaza: valorRaza ? Number(valorRaza) : null,
-        nombre: document.getElementById("nombre").value.trim(),
-        sexo: document.getElementById("sexo").value,
-        fechaNacimiento: fechaTexto || null,
-        pesoKg: pesoTexto ? Number(pesoTexto) : null,
-        color: document.getElementById("color").value.trim() || null,
-        numeroChip:
-            document.getElementById("numeroChip").value.trim() || null,
-        alergias:
-            document.getElementById("alergias").value.trim() || null,
-        observaciones:
-            document.getElementById("observaciones").value.trim() || null,
-        estado: document.getElementById("estado").value
-    };
-}
-
-form.addEventListener("submit", async event => {
-    event.preventDefault();
-    ocultarMensaje();
-
-    if (!form.reportValidity()) {
-        return;
-    }
-
-    const datos = construirDatosFormulario();
-
-    if (!Number.isInteger(datos.idPropietario)
-        || datos.idPropietario < 1) {
-        mostrarMensaje("Introduce un ID de propietario válido.", "error");
-        return;
-    }
-
-    if (!Number.isInteger(datos.idEspecie) || datos.idEspecie < 1) {
-        mostrarMensaje("Selecciona una especie válida.", "error");
-        return;
-    }
-
-    if (datos.idRaza !== null
-        && (!Number.isInteger(datos.idRaza) || datos.idRaza < 1)) {
-        mostrarMensaje("Selecciona una raza válida.", "error");
-        return;
-    }
-
-    if (datos.pesoKg !== null
-        && (!Number.isFinite(datos.pesoKg) || datos.pesoKg <= 0
-            || datos.pesoKg > 999.99)) {
-        mostrarMensaje("El peso debe estar entre 0.01 y 999.99 kg.", "error");
-        return;
-    }
-
-    btnGuardar.disabled = true;
-    btnGuardar.textContent = "Guardando...";
-
-    try {
-        const nuevaMascota = await solicitar(API_URL, {
-            method: "POST",
-            body: JSON.stringify(datos)
+            return p.estado === "ACTIVO" &&
+                Number(p.stock) > 0 &&
+                coincideCategoria &&
+                coincideBusqueda;
         });
 
-        mostrarMensaje(
-            `¡Mascota ${nuevaMascota.nombre} registrada correctamente!`,
-            "success"
-        );
-
-        form.reset();
-        await cargarRazas("");
-        await cargarMascotas();
-    } catch (error) {
-        mostrarMensaje(
-            "No se pudo registrar la mascota. " + error.message,
-            "error"
-        );
-    } finally {
-        btnGuardar.disabled = false;
-        btnGuardar.innerHTML = "<span>＋</span> Registrar mascota";
-    }
-});
-
-selectEspecie.addEventListener("change", () => {
-    cargarRazas(selectEspecie.value);
-});
-
-document.getElementById("buscar").addEventListener("input", dibujarTabla);
-document.getElementById("filtroEstado").addEventListener("change", dibujarTabla);
-
-document.getElementById("btnActualizar").addEventListener("click", async () => {
-    await cargarMascotas();
-});
-
-
-let mascotaEditandoId = null;
-
-async function cargarMascotaParaEditar(mascota) {
-    mascotaEditandoId = mascota.idMascota;
-
-    document.getElementById("nombre").value = mascota.nombre ?? "";
-    document.getElementById("idPropietario").value =
-        mascota.idPropietario ?? "";
-    document.getElementById("sexo").value = mascota.sexo ?? "";
-    document.getElementById("fechaNacimiento").value =
-        mascota.fechaNacimiento ?? "";
-    document.getElementById("pesoKg").value = mascota.pesoKg ?? "";
-    document.getElementById("color").value = mascota.color ?? "";
-    document.getElementById("numeroChip").value = mascota.numeroChip ?? "";
-    document.getElementById("alergias").value = mascota.alergias ?? "";
-    document.getElementById("observaciones").value =
-        mascota.observaciones ?? "";
-    document.getElementById("estado").value = mascota.estado ?? "ACTIVO";
-
-    selectEspecie.value = String(mascota.idEspecie ?? "");
-
-    await cargarRazas(mascota.idEspecie);
-
-    selectRaza.value = mascota.idRaza == null
-        ? ""
-        : String(mascota.idRaza);
-
-    btnGuardar.textContent = "Guardar cambios";
-
-    document.getElementById("nombre").focus();
-
-    mostrarMensaje(
-        `Editando la mascota ${mascota.nombre}. Modifica los datos y guarda los cambios.`,
-        "info"
-    );
-}
-
-async function eliminarMascota(mascota) {
-    const confirmar = confirm(
-        `¿Deseas eliminar a ${mascota.nombre}? Esta acción no se puede deshacer.`
-    );
-
-    if (!confirmar) return;
-
-    try {
-        await solicitar(`${API_URL}/${mascota.idMascota}`, {
-            method: "DELETE"
-        });
-
-        if (mascotaEditandoId === mascota.idMascota) {
-            mascotaEditandoId = null;
-            form.reset();
-            btnGuardar.textContent = "Registrar mascota";
+        if (filtrados.length === 0) {
+            catalogo.innerHTML =
+                '<p class="vacio">No hay productos para mostrar en esta categoría.</p>';
+            return;
         }
 
-        mostrarMensaje(
-            `La mascota ${mascota.nombre} fue eliminada correctamente.`,
-            "success"
-        );
+        filtrados.forEach(p => {
+            const tarjeta = document.createElement("article");
+            tarjeta.className = "producto";
 
-        await cargarMascotas();
-    } catch (error) {
-        mostrarMensaje(
-            "No se pudo eliminar la mascota. " + error.message,
-            "error"
-        );
+            const nombre = document.createElement("h3");
+            nombre.textContent = p.nombre;
+
+            const categoria = document.createElement("p");
+            categoria.textContent = p.categoria || "Accesorio";
+
+            const descripcion = document.createElement("p");
+            descripcion.textContent = p.descripcion || "Accesorio para mascotas";
+
+            const precio = document.createElement("p");
+            precio.className = "precio";
+            precio.textContent = "S/ " + Number(p.precio).toFixed(2);
+
+            const stock = document.createElement("p");
+            stock.className = "stock";
+            stock.textContent = "Disponibles: " + p.stock;
+
+            const boton = document.createElement("button");
+            boton.textContent = "Agregar al carrito";
+            boton.addEventListener("click", () => agregar(p.idProducto));
+
+            tarjeta.append(nombre, categoria, descripcion, precio, stock, boton);
+            catalogo.appendChild(tarjeta);
+        });
     }
-}
 
+    function agregar(id) {
+        const producto = productos.find(p => p.idProducto === id);
+        if (!producto) return;
 
-async function iniciarPagina() {
-    await cargarEspecies();
-    await cargarMascotas();
-}
+        const item = carrito.find(p => p.idProducto === id);
 
-iniciarPagina();
+        if (item) {
+            if (item.cantidad >= Number(producto.stock)) {
+                alert("No hay suficiente stock.");
+                return;
+            }
+            item.cantidad++;
+        } else {
+            carrito.push({ ...producto, cantidad: 1 });
+        }
+
+        document.getElementById("mensaje").textContent = "";
+        mostrarCarrito();
+    }
+
+    function cambiarCantidad(id, cambio) {
+        const item = carrito.find(p => p.idProducto === id);
+        const producto = productos.find(p => p.idProducto === id);
+
+        if (!item || !producto) return;
+
+        const nuevaCantidad = item.cantidad + cambio;
+
+        if (nuevaCantidad > Number(producto.stock)) {
+            alert("No hay suficiente stock.");
+            return;
+        }
+
+        if (nuevaCantidad <= 0) {
+            carrito = carrito.filter(p => p.idProducto !== id);
+        } else {
+            item.cantidad = nuevaCantidad;
+        }
+
+        mostrarCarrito();
+    }
+
+    function mostrarCarrito() {
+        const lista = document.getElementById("listaCarrito");
+        lista.innerHTML = "";
+
+        let total = 0;
+        let unidades = 0;
+
+        if (carrito.length === 0) {
+            lista.innerHTML = '<p class="vacio">Tu carrito está vacío.</p>';
+        }
+
+        carrito.forEach(item => {
+            const subtotal = Number(item.precio) * item.cantidad;
+            total += subtotal;
+            unidades += item.cantidad;
+
+            const div = document.createElement("div");
+            div.className = "carrito-item";
+
+            const nombre = document.createElement("strong");
+            nombre.textContent = item.nombre;
+
+            const detalle = document.createElement("p");
+            detalle.textContent =
+                `S/ ${Number(item.precio).toFixed(2)} por unidad`;
+
+            const subtotalTexto = document.createElement("p");
+            subtotalTexto.textContent = "Subtotal: S/ " + subtotal.toFixed(2);
+
+            const controles = document.createElement("div");
+            controles.className = "cantidad";
+
+            const menos = document.createElement("button");
+            menos.textContent = "−";
+            menos.onclick = () => cambiarCantidad(item.idProducto, -1);
+
+            const cantidad = document.createElement("span");
+            cantidad.textContent = item.cantidad;
+
+            const mas = document.createElement("button");
+            mas.textContent = "+";
+            mas.onclick = () => cambiarCantidad(item.idProducto, 1);
+
+            const eliminar = document.createElement("button");
+            eliminar.textContent = "Eliminar";
+            eliminar.className = "btn-eliminar";
+            eliminar.style.marginLeft = "auto";
+            eliminar.onclick = () => {
+                carrito = carrito.filter(p => p.idProducto !== item.idProducto);
+                mostrarCarrito();
+            };
+
+            controles.append(menos, cantidad, mas, eliminar);
+            div.append(nombre, detalle, subtotalTexto, controles);
+            lista.appendChild(div);
+        });
+
+        document.getElementById("total").textContent = total.toFixed(2);
+        document.getElementById("contador").textContent = unidades;
+    }
+
+    function vaciarCarrito() {
+        carrito = [];
+        mostrarCarrito();
+        document.getElementById("mensaje").textContent = "";
+    }
+
+    function irAlCarrito() {
+        document.getElementById("carrito").scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+
+    function comprar() {
+        const mensaje = document.getElementById("mensaje");
+
+        if (carrito.length === 0) {
+            mensaje.textContent = "Primero agrega productos al carrito.";
+            return;
+        }
+
+        const totalSoles = document.getElementById("total").textContent;
+        const rol = obtenerRolActual();
+
+        if (rol === "RECEPCIONISTA" || rol === "ADMIN") {
+            const cliente = document.getElementById("dniComprador").value.trim() || "Consumidor Final";
+            const tipoComp = document.getElementById("tipoComprobante").value;
+            const nroComp = `VTA-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            alert(`🎉 ¡Venta Emitida en Caja!\n\nComprobante: ${tipoComp} N° ${nroComp}\nCliente: ${cliente}\nTotal cobrado: S/ ${totalSoles}\n\nTransacción enviada al microservicio de Ventas (puerto 3000).`);
+        } else {
+            alert(`¡Pedido realizado con éxito!\nTotal a pagar: S/ ${totalSoles}\nGracias por tu compra en VetCare. Puedes recogerlo en clínica o recibirlo a domicilio.`);
+        }
+
+        vaciarCarrito();
+    }
+
+    document.getElementById("busqueda")
+        .addEventListener("input", mostrarProductos);
+</script>
+
+</body>
+</html>

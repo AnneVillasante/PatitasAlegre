@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Servicio de Notificaciones</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div>
+        <h1>🐾 VetCare</h1>
+        <p>Centro de mensajería y alertas por correo electrónico</p>
+    </div>
+    <div class="acciones">
+        <a href="dashboard.html" class="btn-header">← Volver al Panel</a>
+    </div>
+</header>
+
+<nav class="barra-navegacion">
+    <a href="dashboard.html">Inicio</a>
+    <a href="mascotas.html">Mis Mascotas</a>
+    <a href="citas.html">Mis Citas</a>
+    <a href="historial.html">Historial</a>
+    <a href="propietarios.html">Propietarios</a>
+    <a href="veterinarios.html">Veterinarios</a>
+    <a href="farmacia.html">Farmacia</a>
+    <a href="accesorios.html">Tienda</a>
+    <a href="notificaciones.html" class="activo">Notificaciones</a>
+</nav>
+
+<main>
+    <div class="principal">
+
+        <!-- LISTADO DE NOTIFICACIONES -->
+        <section class="panel">
+            <h2>Historial de envíos</h2>
+            <p>Monitorea los correos y avisos enviados a los propietarios.</p>
+
+            <label for="buscadorNotif">Buscar notificación:</label>
+            <input type="search" id="buscadorNotif" placeholder="Buscar por email, asunto o código..." oninput="filtrarNotificaciones()">
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Destinatario</th>
+                            <th>Tipo / Asunto</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaNotificaciones">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="contadorNotif" style="color: #66716e; font-size: 13px; margin-top: 15px;">Total: 0 notificaciones registradas</p>
+
+            <!-- CONSULTA POR CÓDIGO -->
+            <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #e0e5e3;">
+                <h3 style="font-size: 15px; margin-bottom: 8px;">Consultar envío por código</h3>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="codigoConsulta" placeholder="Ej. NOT-2026-0091" style="margin-bottom: 0;">
+                    <button type="button" class="btn-secundario" onclick="consultarPorCodigo()">Consultar</button>
+                </div>
+                <div id="resultadoConsulta" style="display:none; margin-top: 10px; padding: 10px; border-radius: 7px; font-size: 13px;"></div>
+            </div>
+        </section>
+
+        <!-- FORMULARIO DE ENVÍO -->
+        <aside class="panel">
+            <h2>Enviar notificación</h2>
+            <p>Redacta un aviso o utiliza una plantilla rápida.</p>
+
+            <form id="formNotif" onsubmit="enviarNotificacion(event)">
+                <label for="plantilla">Cargar plantilla predefinida</label>
+                <select id="plantilla" onchange="aplicarPlantilla(this.value)">
+                    <option value="">Selecciona una plantilla...</option>
+                    <option value="cita">Confirmación de Cita Médica</option>
+                    <option value="vacuna">Recordatorio de Vacuna</option>
+                    <option value="receta">Receta Médica en Farmacia</option>
+                    <option value="control">Seguimiento Post-Atención</option>
+                </select>
+
+                <label for="emailDestino">Correo del destinatario *</label>
+                <input type="email" id="emailDestino" placeholder="propietario@example.com" required>
+
+                <label for="tipoNotif">Tipo de mensaje *</label>
+                <select id="tipoNotif" required>
+                    <option value="Cita">Cita Médica</option>
+                    <option value="Vacunación">Vacunación</option>
+                    <option value="Farmacia">Farmacia / Medicamento</option>
+                    <option value="Aviso General">Aviso General</option>
+                </select>
+
+                <label for="asunto">Asunto *</label>
+                <input type="text" id="asunto" placeholder="Ej. Recordatorio de cita médica" required>
+
+                <label for="mensaje">Cuerpo del mensaje *</label>
+                <textarea id="mensaje" rows="4" placeholder="Escribe el mensaje aquí..." required></textarea>
+
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit" style="flex: 1;">Enviar correo</button>
+                    <button type="reset" class="btn-cancelar">Limpiar</button>
+                </div>
+            </form>
+
+            <div id="mensajeAlerta" style="display: none; margin-top: 15px;"></div>
+        </aside>
+
+    </div>
+</main>
+
+<footer>
+    <p>VetCare © 2026 · Cuidado y bienestar animal · Clínica Patitas Alegre</p>
+</footer>
+
+<script src="js/roles.js"></script>
+<script>
+const URL_SERVICIO = "http://localhost:8010/notificaciones";
+
+const PLANTILLAS = {
+    cita: {
+        tipo: "Cita",
+        asunto: "🐾 VetCare: Confirmación de Cita Médica",
+        mensaje: "Estimado/a propietario/a, le confirmamos que la cita médica de su mascota ha sido programada con éxito en la Clínica Patitas Alegre. Por favor acérquese 10 minutos antes de la hora acordada."
+    },
+    vacuna: {
+        tipo: "Vacunación",
+        asunto: "💉 VetCare: Recordatorio de Vacunación",
+        mensaje: "Le recordamos que su mascota tiene una dosis de vacuna programada para los próximos días. Mantener sus vacunas al día previene enfermedades. ¡Los esperamos!"
+    },
+    receta: {
+        tipo: "Farmacia",
+        asunto: "💊 VetCare: Medicamentos listos en Farmacia",
+        mensaje: "Su receta médica veterinaria ha sido validada y los fármacos se encuentran listos para entrega en el área de Farmacia de nuestra clínica."
+    },
+    control: {
+        tipo: "Aviso General",
+        asunto: "🩺 VetCare: Seguimiento médico de su mascota",
+        mensaje: "Esperamos que su mascota se encuentre recuperándose satisfactoriamente. Si presenta algún síntoma inusual, no dude en comunicarse inmediatamente con nosotros."
+    }
+};
+
+let notificaciones = JSON.parse(localStorage.getItem("vetcare_notificaciones")) || [
+    { id: 1, codigo: "NOT-2026-0091", destino: "ana.v@example.com", tipo: "Cita", asunto: "Confirmación de Cita Médica", fecha: "2026-10-15 14:10", estado: "Entregado" },
+    { id: 2, codigo: "NOT-2026-0089", destino: "carlos.r@example.com", tipo: "Vacunación", asunto: "Recordatorio de Vacuna Antirrábica", fecha: "2026-10-15 11:30", estado: "Entregado" },
+    { id: 3, codigo: "NOT-2026-0085", destino: "lucia.f@example.com", tipo: "Farmacia", asunto: "Receta Lista en Farmacia", fecha: "2026-10-14 16:45", estado: "Entregado" },
+    { id: 4, codigo: "NOT-2026-0082", destino: "dueño@gmail.com", tipo: "Aviso General", asunto: "Campaña de Desparasitación Gratuita", fecha: "2026-10-14 09:15", estado: "Entregado" }
+];
+
+function aplicarPlantilla(key) {
+    if (!key || !PLANTILLAS[key]) return;
+    const p = PLANTILLAS[key];
+    document.getElementById("tipoNotif").value = p.tipo;
+    document.getElementById("asunto").value = p.asunto;
+    document.getElementById("mensaje").value = p.mensaje;
+}
+
+function renderizarTabla(lista = notificaciones) {
+    const tbody = document.getElementById("tablaNotificaciones");
+    const contador = document.getElementById("contadorNotif");
+    contador.textContent = `Total: ${lista.length} notificaciones registradas`;
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 24px; color: #66716e;">No se encontraron notificaciones.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = lista.map(n => `
+        <tr>
+            <td><strong style="font-family: monospace; font-size: 12px;">${n.codigo}</strong></td>
+            <td><div>✉️ ${n.destino}</div></td>
+            <td>
+                <strong>${n.asunto}</strong>
+                <div style="font-size: 11.5px; color: #5b6663;">Tipo: ${n.tipo}</div>
+            </td>
+            <td><span style="font-size: 12px; color: #5b6663;">${n.fecha}</span></td>
+            <td><span class="badge-estado badge-activo">${n.estado}</span></td>
+        </tr>
+    `).join("");
+}
+
+function filtrarNotificaciones() {
+    const q = document.getElementById("buscadorNotif").value.toLowerCase().trim();
+    const filtrados = notificaciones.filter(n => 
+        n.destino.toLowerCase().includes(q) || 
+        n.asunto.toLowerCase().includes(q) || 
+        n.codigo.toLowerCase().includes(q)
+    );
+    renderizarTabla(filtrados);
+}
+
+async function enviarNotificacion(event) {
+    event.preventDefault();
+
+    const destino = document.getElementById("emailDestino").value.trim();
+    const tipo = document.getElementById("tipoNotif").value;
+    const asunto = document.getElementById("asunto").value.trim();
+    const mensaje = document.getElementById("mensaje").value.trim();
+
+    const nuevoCodigo = `NOT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const xmlPayload = `
+        <enviarNotificacionRequest>
+            <destinatario>${destino}</destinatario>
+            <asunto>${asunto}</asunto>
+            <tipo>${tipo}</tipo>
+            <mensaje>${mensaje}</mensaje>
+        </enviarNotificacionRequest>
+    `;
+
+    try {
+        await fetch(`${URL_SERVICIO}/enviar`, {
+            method: "POST",
+            headers: { "Content-Type": "application/xml" },
+            body: xmlPayload
+        });
+    } catch (e) {
+        console.warn("Backend 8010 no disponible o CORS, guardando localmente.");
+    }
+
+    const fechaHora = new Date().toLocaleString("es-PE", { dateStyle: "short", timeStyle: "short" });
+
+    notificaciones.unshift({
+        id: Date.now(),
+        codigo: nuevoCodigo,
+        destino,
+        tipo,
+        asunto,
+        fecha: fechaHora,
+        estado: "Entregado"
+    });
+
+    localStorage.setItem("vetcare_notificaciones", JSON.stringify(notificaciones));
+    document.getElementById("formNotif").reset();
+    renderizarTabla();
+    mostrarMensaje(`¡Correo enviado con éxito! Código: ${nuevoCodigo}`, "exito");
+}
+
+function consultarPorCodigo() {
+    const cod = document.getElementById("codigoConsulta").value.trim();
+    const resBox = document.getElementById("resultadoConsulta");
+
+    if (!cod) {
+        alert("Ingresa un código para consultar.");
+        return;
+    }
+
+    const local = notificaciones.find(n => n.codigo.toUpperCase() === cod.toUpperCase());
+
+    resBox.style.display = "block";
+    if (local) {
+        resBox.style.background = "#e1f5eb";
+        resBox.style.color = "#176b42";
+        resBox.innerHTML = `✅ Notificación encontrada: <strong>${local.codigo}</strong><br>Destino: ${local.destino}<br>Estado: <strong>${local.estado}</strong> (${local.fecha})`;
+    } else {
+        resBox.style.background = "#fbeae8";
+        resBox.style.color = "#b83c3c";
+        resBox.innerHTML = `❌ No se encontró ninguna notificación con el código <strong>${cod}</strong>.`;
+    }
+}
+
+function mostrarMensaje(texto, tipo) {
+    const box = document.getElementById("mensajeAlerta");
+    box.textContent = texto;
+    box.style.display = "block";
+    box.className = tipo === "exito" ? "mensaje mensaje-exito" : "mensaje mensaje-info";
+    setTimeout(() => { box.style.display = "none"; }, 3500);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarRolesUI("notificaciones");
+    renderizarTabla();
+});
+</script>
+
+</body>
+</html>

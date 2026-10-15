@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Farmacia y Medicamentos</title>
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <style>
+        .item-orden {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e5e3;
+        }
+
+        .item-orden .nombre {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .item-orden .precio-unitario {
+            font-size: 11.5px;
+            color: #5b6663;
+        }
+
+        .controles-orden {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .controles-orden button {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .resumen-total {
+            font-size: 20px;
+            font-weight: bold;
+            color: #246b63;
+            margin: 15px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div>
+        <h1>🐾 VetCare</h1>
+        <p id="subtituloFarmacia">Dispensación de fármacos y recetas veterinarias</p>
+    </div>
+    <div class="acciones">
+        <a href="dashboard.html" class="btn-header">← Volver al Panel</a>
+    </div>
+</header>
+
+<nav class="barra-navegacion">
+    <!-- Generado dinámicamente según el rol por roles.js -->
+</nav>
+
+<main>
+    <div class="principal">
+
+        <!-- CATÁLOGO DE MEDICAMENTOS -->
+        <section class="panel">
+            <h2 id="tituloCatalogo">Catálogo de medicamentos</h2>
+            <p id="descCatalogo">Explora los fármacos disponibles en almacén y añádelos a la receta médica.</p>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <input type="search" id="buscadorFarmacos" placeholder="Buscar medicamento o código..." style="flex: 1; min-width: 200px; margin-bottom: 0;" oninput="filtrarFarmacos()">
+
+                <select id="filtroCategoria" style="max-width: 200px; margin-bottom: 0;" onchange="filtrarFarmacos()">
+                    <option value="">Todas las categorías</option>
+                    <option value="Antibióticos">Antibióticos</option>
+                    <option value="Antiparasitarios">Antiparasitarios</option>
+                    <option value="Antiinflamatorios">Antiinflamatorios</option>
+                    <option value="Vacunas">Vacunas</option>
+                    <option value="Vitaminas">Vitaminas</option>
+                </select>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Medicamento</th>
+                            <th>Presentación</th>
+                            <th>Stock</th>
+                            <th>Precio</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaFarmacos">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="contadorFarmacos" style="color: #66716e; font-size: 13px; margin-top: 15px;">Total: 8 medicamentos en stock</p>
+        </section>
+
+        <!-- PANEL LATERAL: MODO TIENDA (CLIENTE) O DISPENSACIÓN (RECEPCIONISTA / ADMIN) -->
+        <aside class="panel">
+            <h2 id="tituloPanelDerecho">Dispensar receta médica</h2>
+            <p id="descPanelDerecho">Ingresa los datos del paciente y procesa la entrega de fármacos.</p>
+
+            <form id="formVenta" onsubmit="procesarVentaFarmacia(event)">
+                <!-- Campos exclusivos de Recepcionista y Administrador -->
+                <div id="camposRecepcion">
+                    <label for="idPropietario">DNI o ID del Propietario *</label>
+                    <input type="text" id="idPropietario" placeholder="Ej. 72345678">
+
+                    <label for="idMascota">Nombre o ID del Paciente *</label>
+                    <input type="text" id="idMascota" placeholder="Ej. Max">
+
+                    <label for="idReceta">N° de Receta Médica</label>
+                    <input type="number" id="idReceta" placeholder="Ej. 1042">
+                </div>
+
+                <!-- Campo de cliente si es necesario -->
+                <div id="camposCliente" style="display: none;">
+                    <label for="nombreClienteFarmacia">Nombre o Celular de contacto *</label>
+                    <input type="text" id="nombreClienteFarmacia" placeholder="Ej. Ana Villasante - 987112233">
+                </div>
+
+                <h3 id="subtituloItems" style="font-size: 15px; margin: 15px 0 8px;">Medicamentos a entregar</h3>
+                <div id="listaOrden">
+                    <p style="color: #66716e; font-size: 13px;">No has añadido ningún medicamento aún.</p>
+                </div>
+
+                <div class="resumen-total">
+                    <span>Total a pagar:</span>
+                    <span id="totalVenta">S/ 0.00</span>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" id="btnProcesarFarmacia" style="flex: 2;">Procesar orden</button>
+                    <button type="button" class="btn-cancelar" onclick="vaciarItems()" style="flex: 1;">Vaciar</button>
+                </div>
+            </form>
+
+            <div id="resultadoVenta" style="display: none; margin-top: 15px; padding: 12px; background: #e1f5eb; border: 1px solid #b7e8d0; border-radius: 7px;">
+                <strong id="tituloResultado" style="color: #176b42; font-size: 14px;">✅ ¡Orden Procesada!</strong>
+                <p id="detalleResultado" style="margin: 6px 0 0; font-size: 12.5px; color: #176b42;"></p>
+            </div>
+        </aside>
+
+    </div>
+</main>
+
+<footer>
+    <p>VetCare © 2026 · Cuidado y bienestar animal · Clínica Patitas Alegre</p>
+</footer>
+
+<script src="js/roles.js"></script>
+<script>
+const URL_SERVICIO = "http://localhost:8008/farmacia";
+
+const CATALOGO = [
+    { id: 1, codigo: "MED-001", nombre: "Amoxicilina + Ác. Clavulánico", categoria: "Antibióticos", presentacion: "Caja 20 comprimidos 250mg", stock: 45, precio: 38.50, ventaLibre: false },
+    { id: 2, codigo: "MED-002", nombre: "Meloxicam Gotas 0.5%", categoria: "Antiinflamatorios", presentacion: "Frasco gotero 10ml", stock: 22, precio: 29.00, ventaLibre: true },
+    { id: 3, codigo: "MED-003", nombre: "Bravecto Antiparasitario", categoria: "Antiparasitarios", presentacion: "Comprimido masticable (10-20kg)", stock: 15, precio: 110.00, ventaLibre: true },
+    { id: 4, codigo: "MED-004", nombre: "NexGard Spectra", categoria: "Antiparasitarios", presentacion: "Caja x 3 tabletas masticables", stock: 8, precio: 95.00, ventaLibre: true },
+    { id: 5, codigo: "MED-005", nombre: "Cefalexina Veterinaria 500mg", categoria: "Antibióticos", presentacion: "Blister x 10 pastillas", stock: 32, precio: 24.50, ventaLibre: false },
+    { id: 6, codigo: "MED-006", nombre: "Vacuna Óctuple Canina", categoria: "Vacunas", presentacion: "Dosis monodosis 1ml", stock: 18, precio: 45.00, ventaLibre: false },
+    { id: 7, codigo: "MED-007", nombre: "Prednisolona 5mg", categoria: "Antiinflamatorios", presentacion: "Caja x 30 comprimidos", stock: 4, precio: 18.00, ventaLibre: false },
+    { id: 8, codigo: "MED-008", nombre: "Complejo B + Hierro Inyectable", categoria: "Vitaminas", presentacion: "Frasco ampolla 50ml", stock: 12, precio: 32.00, ventaLibre: true }
+];
+
+let itemsOrden = [];
+
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarRolesUI("farmacia");
+    configurarModoSegunRol();
+    renderizarCatalogo();
+});
+
+function configurarModoSegunRol() {
+    const rol = obtenerRolActual();
+    const subtitulo = document.getElementById("subtituloFarmacia");
+    const titCat = document.getElementById("tituloCatalogo");
+    const descCat = document.getElementById("descCatalogo");
+    const titDer = document.getElementById("tituloPanelDerecho");
+    const descDer = document.getElementById("descPanelDerecho");
+    const camposRecep = document.getElementById("camposRecepcion");
+    const camposCli = document.getElementById("camposCliente");
+    const btnProcesar = document.getElementById("btnProcesarFarmacia");
+    const subItems = document.getElementById("subtituloItems");
+
+    if (rol === "CLIENTE") {
+        subtitulo.textContent = "Farmacia Veterinaria · Modo Tienda y Compra Libre";
+        titCat.textContent = "Medicamentos y productos de salud";
+        descCat.textContent = "Explora suplementos, antiparasitarios y tratamientos de venta libre para tu mascota.";
+        titDer.textContent = "🛒 Mi carrito de farmacia";
+        descDer.textContent = "Revisa los fármacos seleccionados y genera tu solicitud de compra.";
+        camposRecep.style.display = "none";
+        camposCli.style.display = "block";
+        subItems.textContent = "Productos en tu pedido:";
+        btnProcesar.textContent = "🛍️ Realizar Pedido de Farmacia";
+    } else if (rol === "MEDICO") {
+        subtitulo.textContent = "Vademécum Clínico y Consulta de Fármacos";
+        titCat.textContent = "Vademécum Farmacéutico";
+        descCat.textContent = "Consulta de principios activos, dosis y disponibilidad de fármacos para prescripción médica.";
+        titDer.textContent = "🩺 Prescripción para Consulta";
+        descDer.textContent = "Añade los medicamentos a sugerir en la receta de la historia clínica.";
+        camposRecep.style.display = "block";
+        camposCli.style.display = "none";
+        btnProcesar.textContent = "Generar Prescripción";
+    } else {
+        // RECEPCIONISTA / ADMIN
+        subtitulo.textContent = "Emisión de Ventas y Dispensación de Recetas (8008)";
+        titCat.textContent = "Catálogo de Medicamentos en Almacén";
+        descCat.textContent = "Fármacos disponibles para venta directa o despacho de receta médica.";
+        titDer.textContent = "📋 Dispensar Receta y Emitir Venta";
+        descDer.textContent = "Ingresa los datos del paciente y emite el despacho con el microservicio SOA.";
+        camposRecep.style.display = "block";
+        camposCli.style.display = "none";
+        btnProcesar.textContent = "💳 Procesar Venta (XML SOA)";
+    }
+}
+
+function renderizarCatalogo(lista = CATALOGO) {
+    const tbody = document.getElementById("tablaFarmacos");
+    const rol = obtenerRolActual();
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 24px; color: #66716e;">No se encontraron medicamentos.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = lista.map(p => {
+        const btnEtiqueta = (rol === "CLIENTE") ? "🛒 Añadir" : (rol === "MEDICO" ? "🩺 Recetar" : "➕ Despachar");
+
+        return `
+            <tr>
+                <td>
+                    <strong>${p.nombre}</strong>
+                    <div style="font-size: 11.5px; color: #5b6663;">${p.codigo} · ${p.categoria} ${p.ventaLibre ? '· <span style="color:#176b42; font-weight:bold;">Venta libre</span>' : ''}</div>
+                </td>
+                <td>${p.presentacion}</td>
+                <td>
+                    <span class="badge-estado ${p.stock <= 5 ? 'badge-inactivo' : 'badge-activo'}">
+                        ${p.stock} unid.
+                    </span>
+                </td>
+                <td><strong>S/ ${p.precio.toFixed(2)}</strong></td>
+                <td>
+                    <button type="button" style="padding: 6px 12px; font-size: 12px;" onclick="agregarItem(${p.id})">
+                        ${btnEtiqueta}
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function filtrarFarmacos() {
+    const q = document.getElementById("buscadorFarmacos").value.toLowerCase().trim();
+    const cat = document.getElementById("filtroCategoria").value;
+
+    const filtrados = CATALOGO.filter(p => {
+        const coincideTexto = p.nombre.toLowerCase().includes(q) || p.codigo.toLowerCase().includes(q);
+        const coincideCat = cat ? p.categoria === cat : true;
+        return coincideTexto && coincideCat;
+    });
+
+    renderizarCatalogo(filtrados);
+}
+
+function agregarItem(idProducto) {
+    const p = CATALOGO.find(item => item.id === idProducto);
+    if (!p) return;
+
+    const itemExistente = itemsOrden.find(item => item.idProducto === idProducto);
+    if (itemExistente) {
+        if (itemExistente.cantidad >= p.stock) {
+            alert("No hay suficiente stock disponible de este fármaco.");
+            return;
+        }
+        itemExistente.cantidad++;
+    } else {
+        itemsOrden.push({
+            idProducto: p.id,
+            nombre: p.nombre,
+            precio: p.precio,
+            cantidad: 1,
+            maxStock: p.stock
+        });
+    }
+
+    renderizarItemsOrden();
+}
+
+function cambiarCantidadItem(idProducto, cambio) {
+    const item = itemsOrden.find(i => i.idProducto === idProducto);
+    if (!item) return;
+
+    const nuevaCant = item.cantidad + cambio;
+    if (nuevaCant > item.maxStock) {
+        alert("Stock máximo alcanzado.");
+        return;
+    }
+
+    if (nuevaCant <= 0) {
+        itemsOrden = itemsOrden.filter(i => i.idProducto !== idProducto);
+    } else {
+        item.cantidad = nuevaCant;
+    }
+
+    renderizarItemsOrden();
+}
+
+function eliminarItem(idProducto) {
+    itemsOrden = itemsOrden.filter(i => i.idProducto !== idProducto);
+    renderizarItemsOrden();
+}
+
+function vaciarItems() {
+    itemsOrden = [];
+    renderizarItemsOrden();
+    document.getElementById("resultadoVenta").style.display = "none";
+}
+
+function renderizarItemsOrden() {
+    const contenedor = document.getElementById("listaOrden");
+    const totalEl = document.getElementById("totalVenta");
+
+    if (itemsOrden.length === 0) {
+        contenedor.innerHTML = `<p style="color: #66716e; font-size: 13px;">No has añadido ningún medicamento aún.</p>`;
+        totalEl.textContent = "S/ 0.00";
+        return;
+    }
+
+    let sumaTotal = 0;
+
+    contenedor.innerHTML = itemsOrden.map(item => {
+        const subtotal = item.precio * item.cantidad;
+        sumaTotal += subtotal;
+
+        return `
+            <div class="item-orden">
+                <div style="flex: 1;">
+                    <div class="nombre">${item.nombre}</div>
+                    <div class="precio-unitario">S/ ${item.precio.toFixed(2)} c/u · Sub: S/ ${subtotal.toFixed(2)}</div>
+                </div>
+                <div class="controles-orden">
+                    <button type="button" class="btn-secundario" onclick="cambiarCantidadItem(${item.idProducto}, -1)">−</button>
+                    <span style="font-weight: bold; min-width: 18px; text-align: center;">${item.cantidad}</span>
+                    <button type="button" class="btn-secundario" onclick="cambiarCantidadItem(${item.idProducto}, 1)">+</button>
+                    <button type="button" class="btn-eliminar" onclick="eliminarItem(${item.idProducto})">✕</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    totalEl.textContent = `S/ ${sumaTotal.toFixed(2)}`;
+}
+
+async function procesarVentaFarmacia(event) {
+    event.preventDefault();
+
+    if (itemsOrden.length === 0) {
+        alert("Agrega al menos un medicamento a la orden antes de procesar.");
+        return;
+    }
+
+    const rol = obtenerRolActual();
+    const totalCalculado = itemsOrden.reduce((acc, i) => acc + (i.precio * i.cantidad), 0);
+    const codigoGenerado = `DISP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    if (rol === "CLIENTE") {
+        const cliente = document.getElementById("nombreClienteFarmacia").value.trim() || "Cliente Registrado";
+        alert(`🎉 ¡Pedido de Farmacia Realizado!\n\nCódigo de Pedido: ${codigoGenerado}\nContacto: ${cliente}\nTotal: S/ ${totalCalculado.toFixed(2)}\n\nPuedes recoger tu pedido en la farmacia de la clínica o solicitar delivery.`);
+        vaciarItems();
+        return;
+    }
+
+    // Para RECEPCIONISTA / ADMIN / MEDICO:
+    const idPropietario = document.getElementById("idPropietario").value.trim() || 1;
+    const idMascota = document.getElementById("idMascota").value.trim() || 1;
+    const idReceta = document.getElementById("idReceta").value.trim() || 10;
+
+    const xmlItems = itemsOrden.map(i => `
+        <item>
+            <idProducto>${i.idProducto}</idProducto>
+            <cantidad>${i.cantidad}</cantidad>
+        </item>
+    `).join("");
+
+    const xmlPayload = `
+        <iniciarVentaRequest>
+            <idPropietario>${parseInt(idPropietario) || 1}</idPropietario>
+            <idMascota>${parseInt(idMascota) || 1}</idMascota>
+            <idReceta>${parseInt(idReceta) || 10}</idReceta>
+            ${xmlItems}
+        </iniciarVentaRequest>
+    `;
+
+    try {
+        await fetch(`${URL_SERVICIO}/ventas/iniciar`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/xml",
+                "Accept": "application/xml"
+            },
+            body: xmlPayload
+        });
+    } catch (e) {
+        console.warn("Backend 8008 no disponible o CORS, procesando localmente.");
+    }
+
+    const resBox = document.getElementById("resultadoVenta");
+    const det = document.getElementById("detalleResultado");
+    resBox.style.display = "block";
+    det.innerHTML = `Código: <strong>${codigoGenerado}</strong><br>Paciente: ${idMascota} · Receta N° ${idReceta}<br>Total Dispensado: <strong>S/ ${totalCalculado.toFixed(2)}</strong>`;
+
+    itemsOrden = [];
+    renderizarItemsOrden();
+    document.getElementById("formVenta").reset();
+}
+</script>
+
+</body>
+</html>

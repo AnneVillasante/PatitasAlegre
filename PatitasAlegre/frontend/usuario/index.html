@@ -1,124 +1,116 @@
-
-const container = document.getElementById('container');
-const registerBtn = document.getElementById('register');
-const loginBtn = document.getElementById('login');
-
-// Alternar entre inicio de sesión y registro
-registerBtn.addEventListener('click', () => {
-    container.classList.add('active');
-});
-
-loginBtn.addEventListener('click', () => {
-    container.classList.remove('active');
-});
-
-// =====================================
-// REGISTRO DE CLIENTES: JAVA SPRING BOOT
-// =====================================
-
-const formularioRegistro = document.getElementById('registerForm');
-
-formularioRegistro.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const username = document.getElementById('nombreRegistro').value.trim();
-    const email = document.getElementById('emailRegistro').value.trim();
-    const password = document.getElementById('passwordRegistro').value;
-
-    const boton = formularioRegistro.querySelector('button[type="submit"]');
-    boton.disabled = true;
-
-    try {
-        const respuesta = await fetch('http://localhost:8080/api/registro', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                username: username,
-                email: email,
-                password: password
-            })
-        });
-
-        const datos = await respuesta.json();
-
-        if (!respuesta.ok || !datos.ok) {
-            alert(datos.mensaje || 'No se pudo registrar la cuenta.');
-            return;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Inicio de Sesión y Registro</title>
+    <link rel="stylesheet" href="css/Pagina1 (1).css">
+    <style>
+        .demo-bar {
+            position: fixed;
+            bottom: 20px;
+            background: #ffffff;
+            padding: 10px 22px;
+            border-radius: 9999px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 2000;
         }
-
-        alert('¡Cuenta creada correctamente! Ya puedes iniciar sesión.');
-
-        formularioRegistro.reset();
-
-        // Cambiar al formulario de inicio de sesión
-        container.classList.remove('active');
-
-        // Preparar el login con el correo registrado
-        document.getElementById('emailLogin').value = email;
-        document.getElementById('rolLogin').value = 'CLIENTE';
-
-    } catch (error) {
-        console.error('Error al registrar:', error);
-
-        alert(
-            'No se pudo conectar con el servidor Java. ' +
-            'Comprueba que Spring Boot esté ejecutándose.'
-        );
-    } finally {
-        boton.disabled = false;
-    }
-});
-
-// =====================================
-// INICIO DE SESIÓN: PYTHON FLASK
-// =====================================
-
-const formularioLogin = document.getElementById('loginForm');
-
-formularioLogin.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById('emailLogin').value.trim();
-    const password = document.getElementById('passwordLogin').value;
-    const rol = document.getElementById('rolLogin').value;
-
-    const boton = formularioLogin.querySelector('button[type="submit"]');
-    boton.disabled = true;
-
-    try {
-        const respuesta = await fetch('http://127.0.0.1:5000/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password,
-                rol: rol
-            })
-        });
-
-        const datos = await respuesta.json();
-
-        if (respuesta.ok && datos.ok) {
-            alert(`¡Bienvenido a VetCare, ${datos.usuario.nombre}!`);
-            console.log('Usuario autenticado:', datos.usuario);
-
-            // Más adelante implementaremos sesiones y tokens.
-        } else {
-            alert(datos.mensaje || 'No se pudo iniciar sesión.');
+        .demo-bar a {
+            color: #176b55;
+            text-decoration: underline;
         }
+    </style>
+</head>
+<body>
 
-    } catch (error) {
-        console.error('Error al conectar con Flask:', error);
+<div class="container" id="container">
 
-        alert(
-            'No se pudo conectar con el servidor Python. ' +
-            'Comprueba que Flask esté ejecutándose.'
-        );
-    } finally {
-        boton.disabled = false;
-    }
+    <!-- FORMULARIO DE REGISTRO (01-REGISTRO / JAVA SPRING BOOT) -->
+    <div class="form-container sign-up">
+        <form id="registerForm">
+            <h1>Crear Cuenta</h1>
+            <p class="form-note">Registro de propietarios con el microservicio Java (8080)</p>
+            
+            <input type="text" id="nombreRegistro" placeholder="Nombre completo o usuario" required>
+            <input type="email" id="emailRegistro" placeholder="Correo electrónico" required>
+            <input type="password" id="passwordRegistro" placeholder="Contraseña segura" required>
+            
+            <button type="submit" style="margin-top: 10px;">Registrarme</button>
+        </form>
+    </div>
+
+    <!-- FORMULARIO DE INICIO DE SESIÓN (02-AUTH / PYTHON FLASK) -->
+    <div class="form-container sign-in">
+        <form id="loginForm">
+            <h1>Iniciar Sesión</h1>
+            <p class="form-note">Autenticación con el microservicio Python (5000)</p>
+            
+            <input type="email" id="emailLogin" placeholder="Correo electrónico" required>
+            <input type="password" id="passwordLogin" placeholder="Contraseña" required>
+            <select id="rolLogin" style="margin-bottom: 12px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 100%;">
+                <option value="ADMIN">👑 Administrador</option>
+                <option value="MEDICO">🩺 Personal Médico</option>
+                <option value="RECEPCIONISTA">📋 Recepcionista</option>
+                <option value="CLIENTE">🐾 Cliente / Propietario</option>
+            </select>
+            
+            <button type="submit" style="margin-top: 10px;">Ingresar a VetCare</button>
+        </form>
+    </div>
+
+    <!-- PANEL LATERAL DESLIZANTE -->
+    <div class="toggle-container">
+        <div class="toggle">
+            <div class="toggle-panel toggle-left">
+                <h1>¿Ya tienes cuenta?</h1>
+                <p>Inicia sesión con tus credenciales para acceder a tus citas, mascotas y recetas.</p>
+                <button class="hidden" id="login">Iniciar Sesión</button>
+            </div>
+            <div class="toggle-panel toggle-right">
+                <h1>¡Hola, Amigo!</h1>
+                <p>Regístrate en VetCare para cuidar la salud y bienestar de tus queridas mascotas.</p>
+                <button class="hidden" id="register">Crear Cuenta</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ACCESO RÁPIDO PARA EXPLORACIÓN DE LA PLATAFORMA -->
+<div class="demo-bar">
+    <span>🐾 Acceso rápido con rol:</span>
+    <select id="rolDemo" style="padding: 4px 8px; border-radius: 6px; border: 1px solid #ccc; font-size: 12.5px;">
+        <option value="ADMIN">👑 Administrador</option>
+        <option value="MEDICO">🩺 Personal Médico</option>
+        <option value="RECEPCIONISTA">📋 Recepcionista</option>
+        <option value="CLIENTE">🐾 Cliente / Propietario</option>
+    </select>
+    <button onclick="entrarDemo()" style="background: #176b55; color: #fff; padding: 6px 14px; border-radius: 20px; border: 0; cursor: pointer; font-weight: bold;">
+        Entrar al Dashboard →
+    </button>
+</div>
+
+<script src="js/script1.js"></script>
+<script>
+function entrarDemo() {
+    const rol = document.getElementById("rolDemo").value;
+    localStorage.setItem("vetcare_rol", rol);
+    window.location.href = "dashboard.html";
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const rol = document.getElementById("rolLogin").value;
+    localStorage.setItem("vetcare_rol", rol);
+    setTimeout(() => {
+        window.location.href = "dashboard.html";
+    }, 1000);
 });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetCare | Personal Médico Veterinario</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+<header class="encabezado">
+    <div>
+        <h1>🐾 VetCare</h1>
+        <p>Personal médico veterinario y especialistas de la clínica</p>
+    </div>
+    <div class="acciones">
+        <a href="dashboard.html" class="btn-header">← Volver al Panel</a>
+    </div>
+</header>
+
+<nav class="barra-navegacion">
+    <a href="dashboard.html">Inicio</a>
+    <a href="mascotas.html">Mis Mascotas</a>
+    <a href="citas.html">Mis Citas</a>
+    <a href="historial.html">Historial</a>
+    <a href="propietarios.html">Propietarios</a>
+    <a href="veterinarios.html" class="activo">Veterinarios</a>
+    <a href="farmacia.html">Farmacia</a>
+    <a href="accesorios.html">Tienda</a>
+    <a href="notificaciones.html">Notificaciones</a>
+</nav>
+
+<main>
+    <div class="principal">
+
+        <!-- LISTADO DE VETERINARIOS -->
+        <section class="panel">
+            <h2>Personal médico en servicio</h2>
+            <p>Consulta los médicos especialistas registrados y sus turnos de atención.</p>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                <input type="search" id="buscadorVets" placeholder="Buscar por nombre o CMVP..." style="flex: 1; min-width: 200px; margin-bottom: 0;" oninput="filtrarVeterinarios()">
+                
+                <select id="filtroEspecialidad" style="max-width: 200px; margin-bottom: 0;" onchange="filtrarVeterinarios()">
+                    <option value="">Todas las especialidades</option>
+                    <option value="Medicina General">Medicina General</option>
+                    <option value="Cirugía y Traumatología">Cirugía y Traumatología</option>
+                    <option value="Dermatología Veterinaria">Dermatología</option>
+                    <option value="Odontología">Odontología</option>
+                </select>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Médico Veterinario</th>
+                            <th>CMVP</th>
+                            <th>Especialidad</th>
+                            <th>Estado</th>
+                            <th>Turno</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaVeterinarios">
+                        <!-- Filas dinámicas -->
+                    </tbody>
+                </table>
+            </div>
+
+            <p id="contadorVets" style="color: #66716e; font-size: 13px; margin-top: 15px;">Total: 0 médicos registrados</p>
+        </section>
+
+        <!-- FORMULARIO DE REGISTRO DE VETERINARIO -->
+        <aside class="panel">
+            <h2 id="formTitle">Registrar especialista</h2>
+            <p>Ingresa los datos del médico veterinario para incorporarlo al equipo.</p>
+
+            <form id="formVeterinario" onsubmit="guardarVeterinario(event)">
+                <label for="dni">DNI *</label>
+                <input type="text" id="dni" placeholder="8 dígitos" maxlength="8" pattern="[0-9]{8}" required>
+
+                <label for="colegiatura">N° Colegiatura (CMVP) *</label>
+                <input type="text" id="colegiatura" placeholder="Ej. CMVP-10452" required>
+
+                <label for="nombres">Nombres *</label>
+                <input type="text" id="nombres" placeholder="Ej. Martín" required>
+
+                <label for="apellidos">Apellidos *</label>
+                <input type="text" id="apellidos" placeholder="Ej. Sotomayor" required>
+
+                <label for="especialidad">Especialidad médica *</label>
+                <select id="especialidad" required>
+                    <option value="Medicina General">Medicina General</option>
+                    <option value="Cirugía y Traumatología">Cirugía y Traumatología</option>
+                    <option value="Dermatología Veterinaria">Dermatología Veterinaria</option>
+                    <option value="Odontología">Odontología</option>
+                    <option value="Cardiología">Cardiología</option>
+                    <option value="Oftalmología">Oftalmología</option>
+                </select>
+
+                <label for="telefono">Teléfono *</label>
+                <input type="tel" id="telefono" placeholder="Ej. 987445566" required>
+
+                <label for="email">Correo electrónico *</label>
+                <input type="email" id="email" placeholder="Ej. doctor@vetcare.pe" required>
+
+                <label for="horario">Horario habitual</label>
+                <input type="text" id="horario" placeholder="Ej. Lun - Vie: 09:00 - 17:00">
+
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit" id="btnGuardar" style="flex: 1;">Registrar médico</button>
+                    <button type="reset" class="btn-cancelar">Limpiar</button>
+                </div>
+            </form>
+
+            <div id="mensajeAlerta" style="display: none; margin-top: 15px;"></div>
+        </aside>
+
+    </div>
+</main>
+
+<footer>
+    <p>VetCare © 2026 · Cuidado y bienestar animal · Clínica Patitas Alegre</p>
+</footer>
+
+<script src="js/roles.js"></script>
+<script>
+const URL_SERVICIO = "http://localhost:8005/veterinarios";
+
+let veterinarios = JSON.parse(localStorage.getItem("vetcare_veterinarios")) || [
+    { id: 1, nombres: "Martín", apellidos: "Sotomayor", dni: "44123456", colegiatura: "CMVP-08912", especialidad: "Cirugía y Traumatología", estado: "Disponible", telefono: "987445566", email: "martin.s@vetcare.pe" },
+    { id: 2, nombres: "Valeria", apellidos: "Chávez", dni: "47895623", colegiatura: "CMVP-10452", especialidad: "Dermatología Veterinaria", estado: "Disponible", telefono: "988776655", email: "valeria.c@vetcare.pe" },
+    { id: 3, nombres: "Rodrigo", apellidos: "Pacheco", dni: "41258963", colegiatura: "CMVP-07621", especialidad: "Medicina General", estado: "En Consulta", telefono: "976112244", email: "rodrigo.p@vetcare.pe" },
+    { id: 4, nombres: "Camila", apellidos: "Reyes", dni: "46321458", colegiatura: "CMVP-11203", especialidad: "Odontología", estado: "Disponible", telefono: "995884411", email: "camila.r@vetcare.pe" },
+    { id: 5, nombres: "Jorge", apellidos: "Gutiérrez", dni: "42159874", colegiatura: "CMVP-09341", especialidad: "Medicina General", estado: "Disponible", telefono: "991223366", email: "jorge.g@vetcare.pe" }
+];
+
+function renderizarTabla(lista = veterinarios) {
+    const tbody = document.getElementById("tablaVeterinarios");
+    const contador = document.getElementById("contadorVets");
+    contador.textContent = `Total: ${lista.length} médicos registrados`;
+
+    if (lista.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 24px; color: #66716e;">No se encontraron especialistas.</td></tr>`;
+        return;
+    }
+
+    tbody.innerHTML = lista.map(v => {
+        let badgeClass = "badge-activo";
+        if (v.estado === "En Consulta") badgeClass = "badge-pendiente";
+        if (v.estado === "Fuera de Turno") badgeClass = "badge-inactivo";
+
+        return `
+            <tr>
+                <td>
+                    <strong>Dr(a). ${v.nombres} ${v.apellidos}</strong>
+                    <div style="font-size: 12px; color: #5b6663;">📞 ${v.telefono} · ✉️ ${v.email}</div>
+                </td>
+                <td><span style="font-family: monospace; font-size: 12px;">${v.colegiatura}</span></td>
+                <td>${v.especialidad}</td>
+                <td><span class="badge-estado ${badgeClass}">${v.estado}</span></td>
+                <td>
+                    <select style="width: auto; padding: 4px 8px; font-size: 12px; margin-bottom: 0;" onchange="cambiarEstado(${v.id}, this.value)">
+                        <option value="Disponible" ${v.estado === 'Disponible' ? 'selected' : ''}>Disponible</option>
+                        <option value="En Consulta" ${v.estado === 'En Consulta' ? 'selected' : ''}>En Consulta</option>
+                        <option value="Fuera de Turno" ${v.estado === 'Fuera de Turno' ? 'selected' : ''}>Fuera de Turno</option>
+                    </select>
+                </td>
+            </tr>
+        `;
+    }).join("");
+}
+
+function filtrarVeterinarios() {
+    const q = document.getElementById("buscadorVets").value.toLowerCase().trim();
+    const esp = document.getElementById("filtroEspecialidad").value;
+
+    const filtrados = veterinarios.filter(v => {
+        const coincideTexto = v.nombres.toLowerCase().includes(q) || 
+                              v.apellidos.toLowerCase().includes(q) || 
+                              v.colegiatura.toLowerCase().includes(q);
+        const coincideEsp = esp ? v.especialidad === esp : true;
+        return coincideTexto && coincideEsp;
+    });
+
+    renderizarTabla(filtrados);
+}
+
+function cambiarEstado(id, nuevoEstado) {
+    const v = veterinarios.find(item => item.id === id);
+    if (!v) return;
+
+    v.estado = nuevoEstado;
+    localStorage.setItem("vetcare_veterinarios", JSON.stringify(veterinarios));
+    renderizarTabla();
+}
+
+async function guardarVeterinario(event) {
+    event.preventDefault();
+
+    const dni = document.getElementById("dni").value.trim();
+    const colegiatura = document.getElementById("colegiatura").value.trim();
+    const nombres = document.getElementById("nombres").value.trim();
+    const apellidos = document.getElementById("apellidos").value.trim();
+    const especialidad = document.getElementById("especialidad").value;
+    const telefono = document.getElementById("telefono").value.trim();
+    const email = document.getElementById("email").value.trim();
+
+    const nuevoVet = {
+        id: Date.now(),
+        dni,
+        colegiatura,
+        nombres,
+        apellidos,
+        especialidad,
+        telefono,
+        email,
+        estado: "Disponible"
+    };
+
+    veterinarios.unshift(nuevoVet);
+    localStorage.setItem("vetcare_veterinarios", JSON.stringify(veterinarios));
+    document.getElementById("formVeterinario").reset();
+    renderizarTabla();
+    mostrarMensaje(`Dr(a). ${nombres} ${apellidos} registrado satisfactoriamente.`, "exito");
+}
+
+function mostrarMensaje(texto, tipo) {
+    const box = document.getElementById("mensajeAlerta");
+    box.textContent = texto;
+    box.style.display = "block";
+    box.className = tipo === "exito" ? "mensaje mensaje-exito" : "mensaje mensaje-info";
+    setTimeout(() => { box.style.display = "none"; }, 3500);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    inicializarRolesUI("veterinarios");
+    renderizarTabla();
+});
+</script>
+
+</body>
+</html>
