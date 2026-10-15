@@ -1,0 +1,504 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+/* ========================================
+   1. PALETA DE COLORES VETCARE
+======================================== */
+
+:root {
+    --vet-primary: #193155;
+    --vet-green: #76B637;
+    --vet-green-hover: #5D9229;
+    --vet-green-dark: #28523C;
+    --vet-background: #F1F6EF;
+    --vet-input: #EDF4E8;
+    --vet-text: #263238;
+    --vet-muted: #59665A;
+    --vet-white: #FFFFFF;
+    --vet-border: #D5DFD0;
+}
+
+/* ========================================
+   2. CONFIGURACIÓN GENERAL
+======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    background: linear-gradient(to right, #F1F6EF, #D9E9D7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    color: var(--vet-text);
+}
+
+/* ========================================
+   3. CONTENEDOR PRINCIPAL
+======================================== */
+
+.container {
+    background-color: var(--vet-white);
+    border-radius: 30px;
+    box-shadow: 0 8px 25px rgba(25, 49, 85, 0.18);
+    position: relative;
+    overflow: hidden;
+    width: 768px;
+    max-width: 100%;
+    min-height: 520px;
+}
+
+/* ========================================
+   4. TEXTOS
+======================================== */
+
+.container h1 {
+    color: var(--vet-primary);
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.container p {
+    font-size: 14px;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    margin: 16px 0;
+    color: var(--vet-muted);
+}
+
+.container span {
+    font-size: 12px;
+    color: var(--vet-muted);
+    text-align: center;
+}
+
+.container a {
+    color: var(--vet-primary);
+    font-size: 12px;
+    text-decoration: none;
+    margin: 10px 0;
+    transition: color 0.3s ease;
+}
+
+.container a:hover {
+    color: var(--vet-green-hover);
+}
+
+/* ========================================
+   5. BOTONES
+======================================== */
+
+.container button {
+    background-color: var(--vet-green);
+    color: var(--vet-white);
+    font-size: 12px;
+    padding: 12px 30px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease,
+        box-shadow 0.3s ease;
+}
+
+.container button:hover {
+    background-color: var(--vet-green-hover);
+    box-shadow: 0 4px 10px rgba(93, 146, 41, 0.20);
+}
+
+.container button:active {
+    transform: scale(0.97);
+}
+
+.container button:focus-visible,
+.container a:focus-visible,
+.container select:focus-visible,
+.container input:focus-visible {
+    outline: 2px solid var(--vet-green-hover);
+    outline-offset: 3px;
+}
+
+.container button.hidden {
+    background-color: transparent;
+    border-color: var(--vet-white);
+    color: var(--vet-white);
+}
+
+.container button.hidden:hover {
+    background-color: var(--vet-white);
+    color: var(--vet-primary);
+}
+
+/* ========================================
+   6. FORMULARIOS
+======================================== */
+
+.container form {
+    background-color: var(--vet-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 24px 40px;
+    height: 100%;
+    width: 100%;
+}
+
+.container input,
+.container select {
+    background-color: var(--vet-input);
+    color: var(--vet-text);
+    border: 1px solid transparent;
+    margin: 6px 0;
+    padding: 12px 15px;
+    font-size: 12px;
+    border-radius: 8px;
+    width: 100%;
+    min-height: 42px;
+    outline: none;
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+.container input::placeholder {
+    color: var(--vet-muted);
+    opacity: 1;
+}
+
+.container input:focus,
+.container select:focus {
+    background-color: var(--vet-white);
+    border-color: var(--vet-green);
+    box-shadow: 0 0 0 3px rgba(118, 182, 55, 0.16);
+}
+
+.container select {
+    cursor: pointer;
+}
+
+.container select option {
+    background-color: var(--vet-white);
+    color: var(--vet-text);
+}
+
+/* Oculta las etiquetas visualmente, pero mantiene accesibilidad */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.form-note {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+    text-align: center;
+    margin: 4px 0 !important;
+}
+
+.form-message {
+    font-size: 11px !important;
+    text-align: center;
+    margin: 8px 0 0 !important;
+}
+
+/* ========================================
+   7. CONTENEDORES DE FORMULARIO
+======================================== */
+
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+.sign-in {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    pointer-events: auto;
+    animation: move 0.6s;
+}
+
+/* ========================================
+   8. ANIMACIÓN LOGIN / REGISTRO
+======================================== */
+
+@keyframes move {
+    0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+/* ========================================
+   9. ICONOS SOCIALES
+======================================== */
+
+.social-icons {
+    margin: 12px 0;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.social-icons a {
+    border: 1px solid var(--vet-border);
+    border-radius: 8px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    color: var(--vet-primary);
+    background-color: var(--vet-white);
+    transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    background-color: var(--vet-input);
+    border-color: var(--vet-green);
+    transform: translateY(-2px);
+}
+
+/* ========================================
+   10. PANEL LATERAL
+======================================== */
+
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 150px 0 0 100px;
+    z-index: 1000;
+}
+
+.container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 150px 100px 0;
+}
+
+/* ========================================
+   11. FONDO VERDE Y AZUL MARINO
+======================================== */
+
+.toggle {
+    background: linear-gradient(
+        135deg,
+        var(--vet-primary) 0%,
+        var(--vet-green-dark) 100%
+    );
+    color: var(--vet-white);
+    position: relative;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+/* ========================================
+   12. PANELES DE BIENVENIDA
+======================================== */
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 30px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-panel h1 {
+    color: var(--vet-white);
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1.4;
+    width: 100%;
+    max-width: 290px;
+}
+
+.toggle-panel p {
+    color: var(--vet-white);
+    font-size: 13px;
+    line-height: 1.7;
+    width: 100%;
+    max-width: 280px;
+    margin: 18px 0 24px;
+}
+
+/* ========================================
+   13. PANEL IZQUIERDO
+======================================== */
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+
+/* ========================================
+   14. PANEL DERECHO
+======================================== */
+
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.active .toggle-right {
+    transform: translateX(200%);
+}
+
+/* ========================================
+   15. RESPONSIVE
+======================================== */
+
+@media screen and (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    .container {
+        width: 100%;
+        min-height: 570px;
+        border-radius: 22px;
+    }
+
+    .container form {
+        padding: 24px 22px;
+    }
+
+    .container h1 {
+        font-size: 23px;
+        text-align: center;
+    }
+
+    .container button {
+        padding: 12px 22px;
+    }
+
+    .toggle-container {
+        display: none;
+    }
+
+    .form-container {
+        width: 100%;
+    }
+
+    .container.active .sign-in {
+        transform: translateX(100%);
+    }
+
+    .container.active .sign-up {
+        transform: translateX(0);
+    }
+
+    .sign-up {
+        left: 0;
+    }
+}
+
+/* ========================================
+   16. PANTALLAS PEQUEÑAS
+======================================== */
+
+@media screen and (max-width: 380px) {
+    .container {
+        min-height: 600px;
+    }
+
+    .container form {
+        padding: 18px 16px;
+    }
+
+    .social-icons a {
+        width: 34px;
+        height: 34px;
+    }
+
+    .container input,
+    .container select {
+        padding: 10px 12px;
+    }
+}
+
+/* ========================================
+   17. ACCESIBILIDAD
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
