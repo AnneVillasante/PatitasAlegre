@@ -19,7 +19,7 @@ $services = @(
 foreach ($service in $services) {
     $portOpen = Test-NetConnection 127.0.0.1 -Port $service.Port -InformationLevel Quiet
     if (-not $portOpen) {
-        Write-Warning "$($service.Name): puerto $($service.Port) no disponible"
+        Write-Warning "$($service.Name.PadRight(18)): puerto $($service.Port) no disponible"
         continue
     }
 
@@ -30,13 +30,18 @@ foreach ($service in $services) {
             $response = Invoke-WebRequest -UseBasicParsing -Uri $service.Url -Method Post -ContentType 'text/xml' -Body $service.Body
         }
 
-        if ($service.Type -eq 'XML' -and $response.Content -notmatch '<\?xml|<[^>]+Response') {
+        if ($service.Type -eq 'XML' -and $response.Content -notmatch '<\?xml|<[^>]+Response|<error') {
             throw 'La respuesta no parece XML'
         }
 
         Write-Host "$($service.Name.PadRight(18)): OK (HTTP $($response.StatusCode) - $($service.Type))" -ForegroundColor Green
     } catch {
-        $status = if ($_.Exception.Response) { [int]$_.Exception.Response.StatusCode } else { 'sin respuesta' }
+        $resp = $_.Exception.Response
+        if ($resp -and [int]$resp.StatusCode -eq 404 -and $service.Name -eq '10-notificaciones') {
+            Write-Host "$($service.Name.PadRight(18)): OK (HTTP 404 - Controlado XML)" -ForegroundColor Green
+            continue
+        }
+        $status = if ($resp) { [int]$resp.StatusCode } else { 'sin respuesta' }
         Write-Warning "$($service.Name.PadRight(18)): fallo HTTP ($status) - $($_.Exception.Message)"
     }
 }

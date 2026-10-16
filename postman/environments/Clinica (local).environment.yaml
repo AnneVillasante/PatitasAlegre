@@ -1,0 +1,20 @@
+name: Clinica (local)
+values:
+  - key: base_registro
+    value: ''
+  - key: base_auth
+    value: ''
+  - key: base_propietarios
+    value: ''
+  - key: base_mascotas
+    value: ''
+  - key: base_personal
+    value: ''
+  - key: base_venta
+    value: ''
+  - key: base_citas
+    value: ''
+  - key: base_farmacia
+    value: ''
+  - key: base_notificaciones
+    value: ''

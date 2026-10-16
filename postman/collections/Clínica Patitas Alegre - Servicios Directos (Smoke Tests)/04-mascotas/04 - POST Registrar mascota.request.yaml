@@ -1,0 +1,19 @@
+$kind: http-request
+url: "{{base_mascotas}}/api/mascotas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "idPropietario": 1,
+      "idEspecie": 1,
+      "idRaza": 1,
+      "nombre": "Firulais",
+      "sexo": "MACHO",
+      "fechaNacimiento": "2022-05-10",
+      "pesoKg": 12.5,
+      "color": "Marrón"
+    }
+order: 4000

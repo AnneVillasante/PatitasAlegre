@@ -1,0 +1,30 @@
+# Use this workspace to collaborate
+workspace:
+  id: 0654e94c-91df-4207-80f6-5d1984102af0
+
+localResources:
+  collections:
+    - ../PatitasAlegre/postman/clinica-soa.postman_collection.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/01-registro.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/02-auth.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/03-propietarios.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/04-mascotas.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/05-personal.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/06-venta-node.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/07-citas.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/08-farmacia.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/10-notificaciones.json
+    - ../PatitasAlegre/postman/colecciones-por-servicio/servicios-directos.postman_collection.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/01-registro-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/02-auth-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/03-propietarios-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/04-mascotas-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/05-personal-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/06-venta-node-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/07-citas-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/08-farmacia-esb.json
+    - ../PatitasAlegre/postman/colecciones-via-esb/10-notificaciones-esb.json
+
+cloudResources:
+  collections:
+    ../postman/collections/Clínica Patitas Alegre - Servicios Directos (Smoke Tests): bfa57e89-9c70-4f40-9f6f-0b19e2fdedd5

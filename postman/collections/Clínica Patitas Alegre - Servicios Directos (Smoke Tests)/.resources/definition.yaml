@@ -1,0 +1,12 @@
+$kind: collection
+description: Pruebas directas microservicio a microservicio sin pasar por WSO2 ESB
+variables:
+  base_registro: http://localhost:8080
+  base_auth: http://localhost:5000
+  base_propietarios: http://localhost:8003
+  base_mascotas: http://localhost:8081
+  base_personal: http://localhost:8005
+  base_venta: http://localhost:3000
+  base_citas: http://localhost:8007
+  base_farmacia: http://localhost:8008
+  base_notificaciones: http://localhost:8010
