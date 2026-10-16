@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{base_personal}}/veterinarios/consultar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: xml
+  content: |-
+    <consultarVeterinarioRequest>
+      <idVeterinario>1</idVeterinario>
+    </consultarVeterinarioRequest>
+order: 4000

@@ -7,12 +7,12 @@ body:
   type: xml
   content: |-
     <crearCitaRequest>
-      <dniPropietario>12345678</dniPropietario>
+      <idPropietario>1</idPropietario>
       <idMascota>1</idMascota>
       <idVeterinario>1</idVeterinario>
       <idTipo>1</idTipo>
       <fecha>2026-11-15</fecha>
       <hora>10:00</hora>
-      <motivo>Consulta de rutina</motivo>
+      <motivo>Consulta general</motivo>
     </crearCitaRequest>
 order: 1000

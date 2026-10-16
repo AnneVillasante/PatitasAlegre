@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{base_personal}}/veterinarios/disponibles"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: xml
+  content: <listarDisponiblesRequest/>
+order: 3000

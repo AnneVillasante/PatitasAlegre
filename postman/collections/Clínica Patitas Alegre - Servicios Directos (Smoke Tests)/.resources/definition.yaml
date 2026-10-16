@@ -1,5 +1,5 @@
 $kind: collection
-description: Pruebas directas microservicio a microservicio sin pasar por WSO2 ESB
+description: Pruebas directas microservicio a microservicio corregidas para ejecución individual
 variables:
   base_registro: http://localhost:8080
   base_auth: http://localhost:5000
