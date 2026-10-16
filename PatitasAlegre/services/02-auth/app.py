@@ -1,8 +1,11 @@
-
 import os
+import sys
 import webbrowser
 from threading import Timer
 from datetime import datetime, timedelta, timezone
+
+# Garantizar resolución de módulos locales (db.py) sin importar la ruta de ejecución
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import bcrypt
 import jwt
