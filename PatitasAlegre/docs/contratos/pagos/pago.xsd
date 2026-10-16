@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://clinica.com/pagos" xmlns:tns="http://clinica.com/pagos" elementFormDefault="qualified">
+  <xs:element name="procesarPagoRequest"><xs:complexType><xs:sequence><xs:element name="idPropietario" type="xs:int"/><xs:element name="tipoVenta" type="xs:string"/><xs:element name="idReferencia" type="xs:int"/><xs:element name="monto" type="xs:decimal"/><xs:element name="metodoPago" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="procesarPagoResponse"><xs:complexType><xs:sequence><xs:element name="codigoPago" type="xs:string"/><xs:element name="estado" type="xs:string"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="confirmarPagoRequest"><xs:complexType><xs:sequence><xs:element name="codigoPago" type="xs:string"/><xs:element name="referenciaExterna" type="xs:string" minOccurs="0"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="confirmarPagoResponse"><xs:complexType><xs:sequence><xs:element name="estado" type="xs:string"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="consultarPagoRequest"><xs:complexType><xs:sequence><xs:element name="codigoPago" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="consultarPagoResponse"><xs:complexType><xs:sequence><xs:element name="codigoPago" type="xs:string"/><xs:element name="monto" type="xs:decimal"/><xs:element name="estado" type="xs:string"/><xs:element name="fecha" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+</xs:schema>

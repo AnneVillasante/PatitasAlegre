@@ -16,16 +16,16 @@ class VentaValidatorTest {
     @Test
     void rechazaVentaSinItems() {
         VentaDTO venta = new VentaDTO();
-        venta.setIdPropietario(1L);
+        venta.setIdPropietario(1);
         assertThrows(IllegalArgumentException.class, () -> validator.validarInicioVenta(venta));
     }
 
     @Test
     void aceptaVentaConItemsValidos() {
         VentaDTO venta = new VentaDTO();
-        venta.setIdPropietario(1L);
+        venta.setIdPropietario(1);
         VentaDTO.ItemDTO item = new VentaDTO.ItemDTO();
-        item.setIdProducto(1L);
+        item.setIdProducto(1);
         item.setCantidad(2);
         venta.setItems(List.of(item));
         assertDoesNotThrow(() -> validator.validarInicioVenta(venta));

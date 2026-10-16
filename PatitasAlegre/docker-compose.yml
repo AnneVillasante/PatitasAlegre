@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+	mysql:
+		image: mysql:8.0
+		container_name: clinica-mysql
+		restart: unless-stopped
+		ports:
+			- "3306:3306"
+		environment:
+			MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+			MYSQL_ALLOW_EMPTY_PASSWORD: "no"
+			TZ: America/Lima
+		volumes:
+			- mysql-data:/var/lib/mysql
+			- ./database:/docker-entrypoint-initdb.d:ro
+		command:
+			- --character-set-server=utf8mb4
+			- --collation-server=utf8mb4_unicode_ci
+			- --default-authentication-plugin=mysql_native_password
+		networks:
+			- clinica-net
+		healthcheck:
+			test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p$${MYSQL_ROOT_PASSWORD}"]
+			interval: 10s
+			timeout: 5s
+			retries: 10
+
+	activemq:
+		image: apache/activemq:latest
+		container_name: clinica-activemq
+		restart: unless-stopped
+		ports:
+			- "61616:61616"
+			- "8161:8161"
+			- "61613:61613"
+		environment:
+			ACTIVEMQ_ADMIN_LOGIN: admin
+			ACTIVEMQ_ADMIN_PASSWORD: admin
+		volumes:
+			- activemq-data:/opt/activemq/data
+		networks:
+			- clinica-net
+
+	wso2ei:
+		image: wso2/wso2ei-business-process:6.6.0
+		container_name: clinica-wso2ei
+		restart: unless-stopped
+		ports:
+			- "8280:8280"
+			- "8243:8243"
+			- "9443:9443"
+		environment:
+			JAVA_OPTS: "-Xms512m -Xmx1024m"
+		volumes:
+			- ./esb/proxy-services:/home/wso2carbon/wso2ei-6.6.0/repository/deployment/server/synapse-configs/default/proxy-services:ro
+			- ./esb/xsd:/home/wso2carbon/wso2ei-6.6.0/repository/deployment/server/synapse-configs/default/registry/entries/xsd:ro
+		depends_on:
+			mysql:
+				condition: service_healthy
+			activemq:
+				condition: service_started
+		networks:
+			- clinica-net
+
+	wso2bps:
+		image: wso2/wso2bps:3.2.0
+		container_name: clinica-wso2bps
+		restart: unless-stopped
+		ports:
+			- "9764:9763"
+			- "9446:9443"
+		environment:
+			JAVA_OPTS: "-Xms256m -Xmx512m"
+		volumes:
+			- ./bpm-engine/procesos:/home/wso2carbon/wso2bps-3.2.0/repository/deployment/server/bpel:ro
+		depends_on:
+			- mysql
+		networks:
+			- clinica-net
+
+volumes:
+	mysql-data:
+	activemq-data:
+
+networks:
+	clinica-net:
+		driver: bridge

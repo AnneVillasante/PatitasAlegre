@@ -1,0 +1,46 @@
+{
+	"01-registro": {
+		"tecnologia": "Java / Spring Boot",
+		"baseUrl": "http://localhost:8080"
+	},
+	"02-auth": {
+		"tecnologia": "Python / Flask",
+		"baseUrl": "http://localhost:5000"
+	},
+	"03-propietarios": {
+		"tecnologia": "PHP / PDO",
+		"baseUrl": "http://localhost:8003"
+	},
+	"04-mascotas": {
+		"tecnologia": "Java / Spring Boot",
+		"baseUrl": "http://localhost:8081"
+	},
+	"05-personal": {
+		"tecnologia": "Python / Flask",
+		"baseUrl": "http://localhost:8005"
+	},
+	"06-venta-node": {
+		"tecnologia": "Node.js / Express",
+		"baseUrl": "http://localhost:3000"
+	},
+	"07-citas": {
+		"tecnologia": "PHP / PDO",
+		"baseUrl": "http://localhost:8007"
+	},
+	"08-farmacia": {
+		"tecnologia": "Java / Spring Boot",
+		"baseUrl": "http://localhost:8008"
+	},
+	"10-notificaciones": {
+		"tecnologia": "PHP / PDO",
+		"baseUrl": "http://localhost:8010"
+	},
+	"esb": {
+		"tecnologia": "WSO2 EI / Synapse",
+		"baseUrl": "http://localhost:8280/services"
+	},
+	"bpm-engine": {
+		"tecnologia": "Apache ODE / BPEL",
+		"baseUrl": "http://localhost:8080/ode"
+	}
+}

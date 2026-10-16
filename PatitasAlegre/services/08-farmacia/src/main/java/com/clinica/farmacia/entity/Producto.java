@@ -56,6 +56,10 @@ public class Producto {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public String getCodigo() {
         return codigo;
     }
@@ -70,6 +74,10 @@ public class Producto {
 
     public Integer getIdCategoria() {
         return idCategoria;
+    }
+
+    public void setIdCategoria(Integer idCategoria) {
+        this.idCategoria = idCategoria;
     }
 
     public String getPresentacion() {

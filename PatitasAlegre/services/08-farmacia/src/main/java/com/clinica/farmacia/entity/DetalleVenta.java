@@ -38,6 +38,18 @@ public class DetalleVenta {
     @Column(precision = 10, scale = 2)
     private BigDecimal subtotal;
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Venta getVenta() {
+        return venta;
+    }
+
     public void setVenta(Venta venta) {
         this.venta = venta;
     }
@@ -58,8 +70,16 @@ public class DetalleVenta {
         this.cantidad = cantidad;
     }
 
+    public BigDecimal getPrecioUnitario() {
+        return precioUnitario;
+    }
+
     public void setPrecioUnitario(BigDecimal precioUnitario) {
         this.precioUnitario = precioUnitario;
+    }
+
+    public BigDecimal getSubtotal() {
+        return subtotal;
     }
 
     public void setSubtotal(BigDecimal subtotal) {

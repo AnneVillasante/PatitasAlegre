@@ -1,0 +1,13 @@
+{
+	"01-registro": 8080,
+	"02-auth": 5000,
+	"03-propietarios": 8003,
+	"04-mascotas": 8081,
+	"05-personal": 8005,
+	"06-venta-node": 3000,
+	"07-citas": 8007,
+	"08-farmacia": 8008,
+	"10-notificaciones": 8010,
+	"esb": 8280,
+	"bpm-engine": 8080
+}

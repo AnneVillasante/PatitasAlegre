@@ -1,0 +1,6 @@
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=tu_password
+DB_NAME=patitas_alegre
+JWT_SECRET=tu_clave_secreta_jwt_2026

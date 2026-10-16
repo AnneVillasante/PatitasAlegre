@@ -103,10 +103,9 @@ formularioLogin.addEventListener('submit', async (event) => {
         const datos = await respuesta.json();
 
         if (respuesta.ok && datos.ok) {
+            localStorage.setItem('patitasAlegreToken', datos.token);
             alert(`¡Bienvenido a VetCare, ${datos.usuario.nombre}!`);
             console.log('Usuario autenticado:', datos.usuario);
-
-            // Más adelante implementaremos sesiones y tokens.
         } else {
             alert(datos.mensaje || 'No se pudo iniciar sesión.');
         }

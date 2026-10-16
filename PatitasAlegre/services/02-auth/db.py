@@ -9,8 +9,8 @@ def obtener_conexion():
         conexion = mysql.connector.connect(
             host=os.getenv("DB_HOST", "localhost"),
             port=int(os.getenv("DB_PORT", "3306")),
-            user=os.getenv("DB_USER", "root"),
-            password=os.getenv("DB_PASSWORD", "admin1234"),
+            user=os.getenv("DB_USER", "svc_auth"),
+            password=os.getenv("DB_PASSWORD", "Auth2026!"),
             database="clinica_auth"
         )
 

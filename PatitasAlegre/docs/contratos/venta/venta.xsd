@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://clinica.com/venta" xmlns:tns="http://clinica.com/venta" elementFormDefault="qualified">
+  <xs:element name="listarProductosRequest"><xs:complexType/></xs:element>
+  <xs:element name="listarProductosResponse"><xs:complexType><xs:sequence><xs:element name="producto" type="tns:ProductoType" minOccurs="0" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:complexType name="ProductoType"><xs:sequence><xs:element name="idProducto" type="xs:int"/><xs:element name="codigo" type="xs:string"/><xs:element name="nombre" type="xs:string"/><xs:element name="precio" type="xs:decimal"/><xs:element name="stock" type="xs:int"/></xs:sequence></xs:complexType>
+  <xs:element name="iniciarVentaRequest"><xs:complexType><xs:sequence><xs:element name="idPropietario" type="xs:int"/><xs:element name="item" type="tns:ItemType" minOccurs="1" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:complexType name="ItemType"><xs:sequence><xs:element name="idProducto" type="xs:int"/><xs:element name="cantidad" type="xs:int"/></xs:sequence></xs:complexType>
+  <xs:element name="iniciarVentaResponse"><xs:complexType><xs:sequence><xs:element name="codigoVenta" type="xs:string"/><xs:element name="estado" type="xs:string"/><xs:element name="total" type="xs:decimal"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="confirmarVentaRequest"><xs:complexType><xs:sequence><xs:element name="codigoVenta" type="xs:string"/><xs:element name="metodoPago" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="confirmarVentaResponse"><xs:complexType><xs:sequence><xs:element name="estado" type="xs:string"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="cancelarVentaRequest"><xs:complexType><xs:sequence><xs:element name="codigoVenta" type="xs:string"/><xs:element name="motivo" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="cancelarVentaResponse"><xs:complexType><xs:sequence><xs:element name="estado" type="xs:string"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+</xs:schema>

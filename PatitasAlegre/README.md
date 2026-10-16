@@ -1,50 +1,60 @@
-# 🐾 Clínica Veterinaria Patitas Alegre (VetCare)
-## Arquitectura SOA & Microservicios
+# Clinica Veterinaria Patitas Alegre
 
-Este repositorio contiene la plataforma integral de gestión veterinaria **Patitas Alegre / VetCare**, compuesta por microservicios heterogéneos (Java Spring Boot, Python Flask, PHP, Node.js), base de datos MySQL segmentada y una interfaz web moderna.
+Plataforma SOA de gestion veterinaria compuesta por servicios Java, Python,
+PHP y Node.js, schemas MySQL independientes, contratos XML y proxies WSO2.
 
----
+## Arquitectura
 
-## 📑 Manual de Inicio Rápido
+El frontend consume los servicios mediante el ESB cuando este esta disponible.
+Cada servicio mantiene su propio schema MySQL y usuario de base de datos.
+Los contratos WSDL/XSD se encuentran en [docs/contratos](docs/contratos).
 
-Consulta el manual completo y detallado en:
-👉 [**MANUAL_INICIO.md**](MANUAL_INICIO.md)
+## Servicios locales
 
----
+| Servicio | Tecnologia | Puerto | Base de datos |
+|---|---|---:|---|
+| Registro | Spring Boot | 8080 | `clinica_auth` |
+| Auth | Flask | 5000 | `clinica_auth` |
+| Propietarios | PHP | 8003 | `clinica_propietarios` |
+| Mascotas | Spring Boot | 8081 | `clinica_mascotas` |
+| Personal | Flask | 8005 | `clinica_veterinarios` |
+| Venta | Node.js | 3000 | `clinica_accesorios` |
+| Citas | PHP | 8007 | `clinica_citas` |
+| Farmacia | Spring Boot | 8008 | `clinica_farmacia` |
+| Notificaciones | PHP | 8010 | `clinica_notificaciones` |
 
-## 🗺️ Mapa de Puertos y Servicios
+El ESB usa `http://localhost:8280/services`. El motor BPM/BPEL se publica en
+WSO2 BPS mediante el mapeo `9764:9763` de Docker.
 
-| N° | Microservicio | Directorio | Tecnología | Puerto | Endpoint de Prueba |
-| :---: | :--- | :--- | :--- | :---: | :--- |
-| **01** | Registro de Usuarios | `services/01-registro` | Spring Boot (Java 17) | `8080` | `POST /api/registro` |
-| **02** | Autenticación & JWT | `services/02-auth` | Flask (Python 3) | `5000` | `GET /` |
-| **03** | Propietarios | `services/03-propietarios` | PHP 8 (PDO XML) | `8003` | `POST /propietarios/listar` |
-| **04** | Mascotas & Pacientes | `services/04-mascotas` | Spring Boot (Java 17) | `8081` | `GET /api/mascotas/especies` |
-| **05** | Personal Médico | `services/05-personal` | Flask (Python 3) | `8005` | `POST /veterinarios/especialidades` |
-| **06** | Ventas & Accesorios | `services/06-venta-node` | Node.js (Express) | `3000` | `GET /api/salud` |
-| **07** | Citas Médicas | `services/07-citas` | PHP 8 (PDO XML) | `8007` | `POST /citas/listar` |
-| **08** | Farmacia Veterinaria | `services/08-farmacia` | Spring Boot (Java 17) | `8008` | `GET /farmacia/productos` |
-| **10** | Notificaciones & SMTP | `services/10-notificaciones` | PHP 8 (PHPMailer) | `8010` | `GET /notificaciones/consultar/...` |
-| **DB** | Base de Datos | `database/` | MySQL 8.0 | `3306` | Multi-Schema |
+## Inicio rapido
 
----
+1. Copia `config/.env example` a `.env` y reemplaza los valores de secreto.
+2. Con MySQL local, ejecuta en orden:
 
-## ⚡ Comandos Rápidos de Inicialización
-
-### 1. Base de Datos (ejecutar en MySQL):
-```bash
+```powershell
 mysql -u root -p < database/database.sql
 mysql -u root -p < database/DB_users.sql
 mysql -u root -p < database/seed-data.sql
 ```
 
-### 2. Smoke Testing (Verificación de puertos y XML):
+3. Para infraestructura Docker:
+
 ```powershell
+docker compose up -d
+docker compose ps
+```
+
+4. Levanta los microservicios siguiendo [MANUAL_INICIO.md](MANUAL_INICIO.md).
+5. Ejecuta la verificacion:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\check-status.ps1
 powershell -ExecutionPolicy Bypass -File .\scripts\phase1-smoke.ps1
 ```
 
-### 3. Frontend:
-Abre el panel principal en el navegador:
-```powershell
-Start-Process "frontend\usuario\dashboard.html"
-```
+## Contratos
+
+Cada carpeta de [docs/contratos](docs/contratos) contiene un XSD y un WSDL:
+registro, auth, propietarios, mascotas, personal, venta, citas, farmacia,
+pagos y notificaciones. Los WSDL apuntan a los proxies del ESB en
+`localhost:8280/services`.

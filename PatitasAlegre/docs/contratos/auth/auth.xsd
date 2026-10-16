@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://clinica.com/auth" xmlns:tns="http://clinica.com/auth" elementFormDefault="qualified">
+  <xs:element name="loginRequest"><xs:complexType><xs:sequence><xs:element name="username" type="xs:string"/><xs:element name="password" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="loginResponse"><xs:complexType><xs:sequence><xs:element name="token" type="xs:string"/><xs:element name="estado" type="xs:string"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="validarTokenRequest"><xs:complexType><xs:sequence><xs:element name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="validarTokenResponse"><xs:complexType><xs:sequence><xs:element name="valido" type="xs:boolean"/><xs:element name="username" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="logoutRequest"><xs:complexType><xs:sequence><xs:element name="token" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="logoutResponse"><xs:complexType><xs:sequence><xs:element name="estado" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+</xs:schema>

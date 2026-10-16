@@ -24,10 +24,12 @@ function ocultarMensaje() {
 }
 
 async function solicitar(url, opciones = {}) {
+    const token = localStorage.getItem("patitasAlegreToken");
     const respuesta = await fetch(url, {
         ...opciones,
         headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...(opciones.headers || {})
         }
     });

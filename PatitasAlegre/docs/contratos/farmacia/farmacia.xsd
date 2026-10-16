@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://clinica.com/farmacia" xmlns:tns="http://clinica.com/farmacia" elementFormDefault="qualified">
+  <xs:element name="iniciarVentaFarmaciaRequest"><xs:complexType><xs:sequence><xs:element name="idPropietario" type="xs:int"/><xs:element name="item" type="tns:ItemFarmaciaType" minOccurs="1" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:complexType name="ItemFarmaciaType"><xs:sequence><xs:element name="idProducto" type="xs:int"/><xs:element name="cantidad" type="xs:int"/></xs:sequence></xs:complexType>
+  <xs:element name="iniciarVentaFarmaciaResponse"><xs:complexType><xs:sequence><xs:element name="codigoVenta" type="xs:string"/><xs:element name="estado" type="xs:string"/><xs:element name="total" type="xs:decimal"/><xs:element name="mensaje" type="xs:string"/></xs:sequence></xs:complexType></xs:element>
+  <xs:element name="listarProductosFarmaciaRequest"><xs:complexType/></xs:element>
+  <xs:element name="listarProductosFarmaciaResponse"><xs:complexType><xs:sequence><xs:element name="producto" type="tns:ProductoFarmaciaType" minOccurs="0" maxOccurs="unbounded"/></xs:sequence></xs:complexType></xs:element>
+  <xs:complexType name="ProductoFarmaciaType"><xs:sequence><xs:element name="idProducto" type="xs:int"/><xs:element name="codigo" type="xs:string"/><xs:element name="nombre" type="xs:string"/><xs:element name="precio" type="xs:decimal"/><xs:element name="stock" type="xs:int"/></xs:sequence></xs:complexType>
+</xs:schema>

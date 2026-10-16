@@ -50,6 +50,3 @@ FLUSH PRIVILEGES;
 
 -- Verificación
 SELECT user, host FROM mysql.user WHERE user LIKE 'svc_%';
--- Cambiar contraseña de un usuario
-ALTER USER 'svc_propietarios'@'localhost' IDENTIFIED BY 'NuevaPassword2026!';
-FLUSH PRIVILEGES;
