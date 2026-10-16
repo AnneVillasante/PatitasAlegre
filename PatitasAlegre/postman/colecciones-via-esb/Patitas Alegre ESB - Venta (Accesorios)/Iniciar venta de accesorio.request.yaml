@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{esbUrl}}/VentaProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:iniciarVenta
+body:
+  type: text
+  content: |-
+    <iniciarVentaRequest xmlns="http://clinica.com/venta">
+      <idPropietario>1</idPropietario>
+      <item>
+        <idProducto>1</idProducto>
+        <cantidad>2</cantidad>
+      </item>
+    </iniciarVentaRequest>
+order: 2000

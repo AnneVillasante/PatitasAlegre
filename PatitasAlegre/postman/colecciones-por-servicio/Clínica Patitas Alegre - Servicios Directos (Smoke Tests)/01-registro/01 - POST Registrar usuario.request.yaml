@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_registro}}/api/registro"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "username": "test_user",
+      "email": "test_user@clinica.com",
+      "password": "Secret2026!",
+      "idRol": 4
+    }
+order: 2000

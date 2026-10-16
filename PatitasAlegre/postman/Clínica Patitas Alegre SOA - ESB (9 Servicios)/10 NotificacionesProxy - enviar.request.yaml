@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{esbUrl}}/NotificacionesProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:enviarNotificacion
+body:
+  type: text
+  content: <enviarNotificacionRequest><idPropietario>105</idPropietario><destinatario>esb@clinica.test</destinatario><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><mensaje>Prueba ESB</mensaje></enviarNotificacionRequest>
+order: 9000

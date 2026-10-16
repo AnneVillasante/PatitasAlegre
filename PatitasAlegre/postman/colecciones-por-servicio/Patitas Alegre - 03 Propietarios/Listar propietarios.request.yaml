@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/propietarios/listar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <listarPropietariosRequest/>
+order: 4000

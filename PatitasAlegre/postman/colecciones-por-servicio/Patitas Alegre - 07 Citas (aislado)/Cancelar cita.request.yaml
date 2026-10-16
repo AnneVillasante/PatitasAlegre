@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/citas/cancelar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <cancelarCitaRequest><codigo_cita>{{codigoCita}}</codigo_cita><motivo>Prueba de cancelación</motivo></cancelarCitaRequest>
+order: 4000

@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{esbUrl}}/MascotasProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:registrarMascota
+body:
+  type: text
+  content: |-
+    <registrarMascotaRequest xmlns="http://clinica.com/mascotas">
+      <idPropietario>1</idPropietario>
+      <idEspecie>1</idEspecie>
+      <idRaza>1</idRaza>
+      <nombre>Pelusa ESB</nombre>
+      <sexo>HEMBRA</sexo>
+      <pesoKg>6.2</pesoKg>
+    </registrarMascotaRequest>
+order: 3000

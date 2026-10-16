@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{esbUrl}}/CitasProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:crearCita
+body:
+  type: text
+  content: <crearCitaRequest><dniPropietario>12345678</dniPropietario><idVeterinario>1</idVeterinario><idMascota>1</idMascota><fecha>2026-11-15</fecha><hora>10:00</hora></crearCitaRequest>
+order: 7000

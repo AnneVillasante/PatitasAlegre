@@ -1,0 +1,4 @@
+$kind: collection
+description: ""
+variables:
+  esbUrl: http://localhost:8280/services

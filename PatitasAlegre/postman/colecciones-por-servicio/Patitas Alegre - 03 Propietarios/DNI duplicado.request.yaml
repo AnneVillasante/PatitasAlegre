@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/propietarios/registrar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <registrarPropietarioRequest><dni>{{dniPrueba}}</dni><nombres>Duplicado</nombres><apellidos>Prueba</apellidos></registrarPropietarioRequest>
+scripts:
+  - type: afterResponse
+    code: pm.test('Devuelve error de negocio', function () { pm.expect(pm.response.text()).to.include('ERROR-NEGOCIO'); });
+order: 2000

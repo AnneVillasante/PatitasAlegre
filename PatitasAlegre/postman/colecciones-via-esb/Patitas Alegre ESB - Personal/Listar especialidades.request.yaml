@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{esbUrl}}/VeterinariosProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:listarEspecialidades
+body:
+  type: text
+  content: <listarEspecialidadesRequest/>
+order: 1000

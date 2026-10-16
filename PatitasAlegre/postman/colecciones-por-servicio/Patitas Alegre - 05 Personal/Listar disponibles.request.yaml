@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/veterinarios/disponibles"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <listarDisponiblesRequest><especialidad>Cirugía</especialidad></listarDisponiblesRequest>
+order: 3000

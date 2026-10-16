@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/farmacia/ventas/iniciar"
+method: POST
+headers:
+  Content-Type: application/xml
+body:
+  type: text
+  content: <iniciarVentaRequest><idPropietario>1</idPropietario></iniciarVentaRequest>
+scripts:
+  - type: afterResponse
+    code: pm.test('Error de negocio', function () { pm.expect(pm.response.text()).to.include('ERROR-NEGOCIO'); });
+order: 2000

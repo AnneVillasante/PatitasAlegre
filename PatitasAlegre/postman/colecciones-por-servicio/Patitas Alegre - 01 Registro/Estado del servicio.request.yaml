@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/api/registro/estado"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Servicio funcionando', function () {
+          pm.expect(pm.response.code).to.eql(200);
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.estado).to.eql('funcionando');
+      });
+order: 1000

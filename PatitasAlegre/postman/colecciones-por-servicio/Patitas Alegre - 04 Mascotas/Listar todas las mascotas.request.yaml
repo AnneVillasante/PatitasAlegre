@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/api/mascotas"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Respuesta 200 y array de mascotas', function () {
+          pm.expect(pm.response.code).to.eql(200);
+          var data = pm.response.json();
+          pm.expect(Array.isArray(data)).to.be.true;
+      });
+order: 2000

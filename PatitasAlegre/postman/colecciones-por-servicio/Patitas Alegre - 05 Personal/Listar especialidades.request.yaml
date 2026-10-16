@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/veterinarios/especialidades"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <listarEspecialidadesRequest/>
+order: 1000

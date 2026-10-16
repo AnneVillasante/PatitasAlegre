@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{esbUrl}}/RegistroProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:consultarUsuario
+body:
+  type: text
+  content: |-
+    <consultarUsuarioRequest xmlns="http://clinica.com/registro">
+      <username>admin</username>
+    </consultarUsuarioRequest>
+order: 2000

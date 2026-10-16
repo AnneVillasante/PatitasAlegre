@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/notificaciones/enviar"
+method: POST
+headers:
+  Content-Type: application/xml
+body:
+  type: text
+  content: <enviarNotificacionRequest><idPropietario>105</idPropietario><destinatario>paciente@clinica.test</destinatario><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><asunto>Prueba</asunto><mensaje>Notificación de prueba</mensaje></enviarNotificacionRequest>
+scripts:
+  - type: afterResponse
+    code: |-
+      const match = pm.response.text().match(/<codigo>([^<]+)<\/codigo>/);
+      if (match) pm.collectionVariables.set('codigo', match[1]);
+      pm.test('Notificación enviada', function () { pm.expect(pm.response.text()).to.include('<estado>ENVIADO</estado>'); });
+order: 1000

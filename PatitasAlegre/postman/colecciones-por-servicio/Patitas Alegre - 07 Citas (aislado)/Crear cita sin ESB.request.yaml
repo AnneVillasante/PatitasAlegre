@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/citas/crear"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <crearCitaRequest><idPropietario>1</idPropietario><idVeterinario>1</idVeterinario><idMascota>1</idMascota><id_tipo>1</id_tipo><fecha>2026-11-15</fecha><hora>10:00</hora><motivo>Consulta aislada</motivo></crearCitaRequest>
+scripts:
+  - type: afterResponse
+    code: |-
+      const match = pm.response.text().match(/<codigo_cita>([^<]+)<\/codigo_cita>/);
+      if (match) pm.collectionVariables.set('codigoCita', match[1]);
+      pm.test('Cita confirmada', function () { pm.expect(pm.response.text()).to.include('<estado>CONFIRMADA</estado>'); });
+order: 1000

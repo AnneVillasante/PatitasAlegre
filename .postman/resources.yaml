@@ -4,26 +4,40 @@ workspace:
 
 localResources:
   collections:
-    - ../PatitasAlegre/postman/clinica-soa.postman_collection.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/01-registro.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/02-auth.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/03-propietarios.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/04-mascotas.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/05-personal.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/06-venta-node.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/07-citas.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/08-farmacia.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/10-notificaciones.json
-    - ../PatitasAlegre/postman/colecciones-por-servicio/servicios-directos.postman_collection.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/01-registro-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/02-auth-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/03-propietarios-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/04-mascotas-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/05-personal-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/06-venta-node-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/07-citas-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/08-farmacia-esb.json
-    - ../PatitasAlegre/postman/colecciones-via-esb/10-notificaciones-esb.json
+    - ../PatitasAlegre/postman/Clínica Patitas Alegre SOA - ESB (9 Servicios)
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 01
+      Registro
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 02 Auth
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 03
+      Propietarios
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 04
+      Mascotas
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 05
+      Personal
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 06
+      Venta (Node.js)
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 07
+      Citas (aislado)
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 08
+      Farmacia
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Patitas Alegre - 10
+      Notificaciones
+    - ../PatitasAlegre/postman/colecciones-por-servicio/Clínica Patitas Alegre -
+      Servicios Directos (Smoke Tests)
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Registro
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Auth
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB -
+      Propietarios
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Mascotas
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Personal
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Venta
+      (Accesorios)
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Citas
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB - Farmacia
+    - ../PatitasAlegre/postman/colecciones-via-esb/Patitas Alegre ESB -
+      Notificaciones
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
 
 cloudResources:
   collections:

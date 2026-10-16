@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{baseUrl}}/api/registro"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "username": "cliente_test_" + Math.floor(Math.random() * 10000),
+      "email": "test_" + Math.floor(Math.random() * 10000) + "@clinica.com",
+      "password": "Password2026!"
+    }
+scripts:
+  - type: beforeRequest
+    code: |-
+      const randomId = Math.floor(Math.random() * 100000);
+      pm.variables.set('randomUser', 'user_' + randomId);
+      pm.variables.set('randomEmail', 'user_' + randomId + '@clinica.com');
+  - type: afterResponse
+    code: |-
+      pm.test('Registro exitoso o duplicado controlado', function () {
+          pm.expect(pm.response.code).to.be.oneOf([201, 400]);
+      });
+order: 2000

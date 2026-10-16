@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/api/productos"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "nombre": "Accesorio Incompleto"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Error de validación 400 por campos faltantes', function () {
+          pm.expect(pm.response.code).to.eql(400);
+      });
+order: 5000

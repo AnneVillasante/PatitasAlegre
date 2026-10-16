@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/propietarios/consultar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <consultarPropietarioRequest><dni>{{dniPrueba}}</dni></consultarPropietarioRequest>
+order: 3000

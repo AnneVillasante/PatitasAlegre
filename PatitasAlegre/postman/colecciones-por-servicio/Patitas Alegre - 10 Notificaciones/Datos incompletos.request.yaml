@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/notificaciones/enviar"
+method: POST
+headers:
+  Content-Type: application/xml
+body:
+  type: text
+  content: <enviarNotificacionRequest><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><mensaje>Falta destinatario</mensaje></enviarNotificacionRequest>
+scripts:
+  - type: afterResponse
+    code: pm.test('Error de validación', function () { pm.expect(pm.response.status).to.eql('Bad Request'); });
+order: 3000

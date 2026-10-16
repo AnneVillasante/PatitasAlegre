@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/citas/listar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <listarCitasRequest><id_propietario>1</id_propietario></listarCitasRequest>
+order: 3000

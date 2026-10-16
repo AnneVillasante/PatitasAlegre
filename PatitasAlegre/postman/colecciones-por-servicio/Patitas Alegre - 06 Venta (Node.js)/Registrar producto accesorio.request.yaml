@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/api/productos"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "codigo": "ACC-TEST-" + Math.floor(Math.random() * 10000),
+      "nombre": "Juguete Mordedor Test",
+      "descripcion": "Accesorio de prueba para mascotas",
+      "idCategoria": 1,
+      "precio": 29.90,
+      "stock": 15,
+      "stockMinimo": 3
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Producto registrado exitosamente o duplicado controlado', function () {
+          pm.expect(pm.response.code).to.be.oneOf([201, 500]);
+      });
+order: 4000

@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/veterinarios/listar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <listarVeterinariosRequest/>
+order: 2000

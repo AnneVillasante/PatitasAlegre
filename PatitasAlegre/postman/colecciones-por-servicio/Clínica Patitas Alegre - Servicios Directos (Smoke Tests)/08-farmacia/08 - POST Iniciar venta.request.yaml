@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{base_farmacia}}/farmacia/ventas/iniciar"
+method: POST
+headers:
+  Content-Type: application/xml
+body:
+  type: xml
+  content: |-
+    <iniciarVentaRequest>
+      <idPropietario>1</idPropietario>
+      <item>
+        <idProducto>1</idProducto>
+        <cantidad>1</cantidad>
+      </item>
+    </iniciarVentaRequest>
+order: 2000

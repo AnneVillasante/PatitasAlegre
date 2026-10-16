@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{esbUrl}}/AuthProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:login
+body:
+  type: text
+  content: |-
+    <loginRequest xmlns="http://clinica.com/auth">
+      <username>admin</username>
+      <password>admin123</password>
+    </loginRequest>
+order: 1000

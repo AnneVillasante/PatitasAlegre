@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{esbUrl}}/RegistroProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:registrarUsuario
+body:
+  type: text
+  content: |-
+    <registrarUsuarioRequest xmlns="http://clinica.com/registro">
+      <username>cliente_esb</username>
+      <email>cliente_esb@clinica.com</email>
+      <password>Password2026!</password>
+      <idRol>4</idRol>
+    </registrarUsuarioRequest>
+order: 1000

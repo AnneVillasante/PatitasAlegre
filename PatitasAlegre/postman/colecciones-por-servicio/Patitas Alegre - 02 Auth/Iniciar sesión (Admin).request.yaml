@@ -1,0 +1,24 @@
+$kind: http-request
+url: "{{baseUrl}}/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "admin@clinica.com",
+      "password": "admin123",
+      "rol": "ADMIN"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Login exitoso con token JWT', function () {
+          pm.expect(pm.response.code).to.eql(200);
+          var data = pm.response.json();
+          pm.expect(data.ok).to.be.true;
+          pm.expect(data.token).to.not.be.empty;
+          pm.collectionVariables.set('token', data.token);
+      });
+order: 2000

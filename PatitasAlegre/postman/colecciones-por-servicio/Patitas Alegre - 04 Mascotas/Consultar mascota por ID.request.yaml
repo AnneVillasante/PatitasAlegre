@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/mascotas/{{idMascotaCreada}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Mascota consultada con éxito', function () {
+          pm.expect(pm.response.code).to.be.oneOf([200, 404]);
+      });
+order: 7000

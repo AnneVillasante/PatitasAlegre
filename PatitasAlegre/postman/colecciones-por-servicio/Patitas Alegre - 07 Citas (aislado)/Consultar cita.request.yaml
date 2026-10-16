@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/citas/consultar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <consultarCitaRequest><codigo_cita>{{codigoCita}}</codigo_cita></consultarCitaRequest>
+order: 2000

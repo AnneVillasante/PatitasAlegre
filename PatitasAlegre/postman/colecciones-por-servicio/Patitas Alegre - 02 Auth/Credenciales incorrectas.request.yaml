@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "admin@clinica.com",
+      "password": "clave_incorrecta",
+      "rol": "ADMIN"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Rechazo 401 por credenciales incorrectas', function () {
+          pm.expect(pm.response.code).to.eql(401);
+          var data = pm.response.json();
+          pm.expect(data.ok).to.be.false;
+      });
+order: 3000

@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_auth}}/test-db"
+method: GET
+order: 1000

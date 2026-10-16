@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{esbUrl}}/PropietariosProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:consultarPropietario
+body:
+  type: text
+  content: <consultarPropietarioRequest><dni>12345678</dni></consultarPropietarioRequest>
+order: 3000

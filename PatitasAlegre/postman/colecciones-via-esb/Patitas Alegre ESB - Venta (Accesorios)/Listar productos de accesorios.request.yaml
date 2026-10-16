@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{esbUrl}}/VentaProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:listarProductos
+body:
+  type: text
+  content: <listarProductosRequest xmlns="http://clinica.com/venta"/>
+order: 1000

@@ -1,0 +1,9 @@
+$kind: http-request
+url: "{{baseUrl}}/citas/crear"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <crearCitaRequest><idPropietario>1</idPropietario><idVeterinario>1</idVeterinario><idMascota>1</idMascota><fecha>2020-01-01</fecha><hora>10:00</hora></crearCitaRequest>
+order: 5000

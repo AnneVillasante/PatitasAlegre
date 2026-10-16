@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/propietarios/registrar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <registrarPropietarioRequest><dni>{{dniPrueba}}</dni><nombres>Prueba</nombres><apellidos>Propietario</apellidos><telefono>999999999</telefono><email>prueba@clinica.test</email></registrarPropietarioRequest>
+scripts:
+  - type: afterResponse
+    code: pm.test('XML y registro exitoso', function () { pm.expect(pm.response.text()).to.include('<estado>REGISTRADO</estado>'); });
+order: 1000

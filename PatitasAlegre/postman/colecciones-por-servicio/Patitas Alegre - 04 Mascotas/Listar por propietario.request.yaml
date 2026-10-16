@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/mascotas/propietario/1"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Mascotas del propietario', function () {
+          pm.expect(pm.response.code).to.eql(200);
+          pm.expect(Array.isArray(pm.response.json())).to.be.true;
+      });
+order: 5000

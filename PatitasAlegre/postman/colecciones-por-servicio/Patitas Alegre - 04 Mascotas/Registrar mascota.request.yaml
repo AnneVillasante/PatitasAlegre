@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{baseUrl}}/api/mascotas"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "nombre": "Pelusa Postman",
+      "idPropietario": 1,
+      "idEspecie": 1,
+      "idRaza": 1,
+      "sexo": "HEMBRA",
+      "pesoKg": 5.5,
+      "color": "Blanco",
+      "estado": "ACTIVO"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Mascota creada correctamente (201)', function () {
+          pm.expect(pm.response.code).to.eql(201);
+          var data = pm.response.json();
+          pm.expect(data.idMascota).to.not.be.null;
+          pm.collectionVariables.set('idMascotaCreada', String(data.idMascota));
+      });
+order: 6000

@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{esbUrl}}/MascotasProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:consultarMascota
+body:
+  type: text
+  content: |-
+    <consultarMascotaRequest xmlns="http://clinica.com/mascotas">
+      <idMascota>1</idMascota>
+    </consultarMascotaRequest>
+order: 2000
