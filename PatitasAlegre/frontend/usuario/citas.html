@@ -150,7 +150,36 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("fecha").value = hoy;
 
     renderizarTabla();
+    cargarCitasDesdeBackend();
 });
+
+async function cargarCitasDesdeBackend() {
+    try {
+        const res = await fetch("http://localhost:8007/citas", {
+            headers: { "Accept": "application/json" }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.citas && data.citas.length > 0) {
+                citas = data.citas.map((c, i) => ({
+                    id: c.id_cita || (i + 1),
+                    codigo: c.codigo_cita,
+                    dni: c.dni_propietario,
+                    mascota: c.mascota,
+                    tipo: c.tipo_atencion,
+                    veterinario: c.veterinario,
+                    fecha: c.fecha,
+                    hora: c.hora,
+                    motivo: c.motivo,
+                    estado: c.estado
+                }));
+                renderizarTabla();
+            }
+        }
+    } catch (e) {
+        console.warn("Backend 8007 no disponible, usando caché local.", e);
+    }
+}
 
 function configurarModoCitasSegunRol() {
     const rol = obtenerRolActual();

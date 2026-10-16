@@ -1,5 +1,6 @@
 package com.clinica.farmacia.eventos;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,16 @@ public class EventoPublisher {
     private final JmsTemplate jmsTemplate;
     private final XmlMapper xmlMapper = new XmlMapper();
 
-    public EventoPublisher(JmsTemplate jmsTemplate) {
+    public EventoPublisher(@Autowired(required = false) JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
+    }
+
+    public void publicarEvento(String destino, Object evento) {
+        if (jmsTemplate != null) {
+            jmsTemplate.convertAndSend(destino, evento);
+        } else {
+            System.out.println("[WARN] JmsTemplate no configurado. Evento simulado para: " + destino);
+        }
     }
 
     public void publicarVentaIniciada(Venta venta) {
@@ -21,11 +30,13 @@ public class EventoPublisher {
     }
 
     public void publicarVentaCompletada(Venta venta) {
-        publicar("topic.VentaCompletada", new Evento("VentaCompletada", venta.getCodigoVenta(), venta.getIdPropietario()));
+        publicar("topic.VentaCompletada",
+                new Evento("VentaCompletada", venta.getCodigoVenta(), venta.getIdPropietario()));
     }
 
     public void publicarVentaCancelada(Venta venta, String motivo) {
-        publicar("topic.VentaCancelada", new Evento("VentaCancelada", venta.getCodigoVenta(), venta.getIdPropietario()));
+        publicar("topic.VentaCancelada",
+                new Evento("VentaCancelada", venta.getCodigoVenta(), venta.getIdPropietario()));
     }
 
     private void publicar(String destino, Evento evento) {

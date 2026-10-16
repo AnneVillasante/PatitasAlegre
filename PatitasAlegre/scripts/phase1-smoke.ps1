@@ -4,7 +4,7 @@ $services = @(
     @{ Name = '03-propietarios'; Port = 8003; Url = 'http://127.0.0.1:8003/propietarios/listar'; Body = '<listarPropietariosRequest/>' },
     @{ Name = '05-personal'; Port = 8005; Url = 'http://127.0.0.1:8005/veterinarios/especialidades'; Body = '<listarEspecialidadesRequest/>' },
     @{ Name = '07-citas'; Port = 8007; Url = 'http://127.0.0.1:8007/citas/listar'; Body = '<listarCitasRequest><id_propietario>1</id_propietario></listarCitasRequest>' },
-    @{ Name = '08-farmacia'; Port = 8008; Url = 'http://127.0.0.1:8008/farmacia/productos'; Body = $null },
+    # @{ Name = '08-farmacia (Excluido)'; Port = 8008; Url = 'http://127.0.0.1:8008/farmacia/productos'; Body = $null },
     @{ Name = '10-notificaciones'; Port = 8010; Url = 'http://127.0.0.1:8010/notificaciones/consultar/NOT-NO-EXISTE'; Body = $null }
 )
 
