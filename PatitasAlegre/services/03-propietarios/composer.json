@@ -1,9 +1,10 @@
 {
     "name": "clinica/propietarios",
+    "version": "1.0.0",
     "description": "Servicio de gestión de propietarios - Clínica Veterinaria Patitas Alegres",
     "type": "project",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.5",
         "ext-pdo": "*",
         "ext-simplexml": "*",
         "vlucas/phpdotenv": "^5.5"

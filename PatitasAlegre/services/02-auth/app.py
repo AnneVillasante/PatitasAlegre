@@ -27,6 +27,8 @@ if not JWT_SECRET:
 
 
 app = Flask(__name__)
+app.config['VERSION'] = '1.0.0'
+__version__ = '1.0.0'
 CORS(app)
 
 # Carpeta principal: Proyecto-Veterinaria

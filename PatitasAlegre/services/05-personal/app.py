@@ -8,6 +8,8 @@ from controllers.veterinario_controller import VeterinarioController
 load_dotenv()
 
 app = Flask(__name__)
+app.config['VERSION'] = '1.0.0'
+__version__ = '1.0.0'
 controller = VeterinarioController()
 
 app.add_url_rule(

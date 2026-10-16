@@ -9,15 +9,15 @@ Este documento detalla el procedimiento paso a paso para configurar la base de d
 
 Asegúrate de contar con las siguientes herramientas instaladas en tu sistema:
 
-| Herramienta | Versión Recomendada | Verificación en Terminal |
+| Herramienta | Versión Actual del Entorno | Verificación en Terminal |
 | :--- | :--- | :--- |
 | **MySQL Server** | 8.0 o superior | `mysql --version` |
-| **Java JDK** | 17 o 21 | `java -version` |
+| **Java JDK** | 25 (LTS) | `java -version` |
 | **Maven** | 3.8+ (o usar `./mvnw`) | `mvn -version` |
-| **Python** | 3.10 o superior | `python --version` |
-| **PHP** | 8.1 o superior | `php -v` |
+| **Python** | 3.14 | `python --version` |
+| **PHP** | 8.5 | `php -v` |
 | **Composer** | 2.x | `composer -V` |
-| **Node.js & npm** | Node 18+ / npm 9+ | `node -v` y `npm -v` |
+| **Node.js & npm** | Node 24.11 / npm 11+ | `node -v` y `npm -v` |
 
 ---
 

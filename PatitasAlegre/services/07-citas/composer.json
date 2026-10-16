@@ -1,9 +1,10 @@
 {
     "name": "clinica/citas",
+    "version": "1.0.0",
     "description": "Servicio de registro de citas - Clínica Veterinaria Patitas Alegres",
     "type": "project",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.5",
         "ext-pdo": "*",
         "ext-simplexml": "*",
         "ext-curl": "*",

@@ -1,9 +1,10 @@
 {
     "name": "clinica/notificaciones",
+    "version": "1.0.0",
     "description": "Servicio de Notificaciones Email/SMS - Arquitectura SOA",
     "type": "project",
     "require": {
-        "php": ">=8.2",
+        "php": ">=8.5",
         "vlucas/phpdotenv": "^5.6",
         "phpmailer/phpmailer": "^6.9",
         "stomp-php/stomp-php": "^5.1",
