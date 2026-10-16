@@ -1,0 +1,29 @@
+<proxy name="MascotasProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Mascotas"/></log>
+            <validate source="//*[local-name()='registrarMascotaRequest' or local-name()='consultarMascotaRequest' or local-name()='listarMascotasRequest']">
+                <schema key="conf:/xsd/mascotas.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de mascotas inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='registrarMascotaRequest'])">
+                <then>
+                    <send><endpoint><address uri="http://localhost:8081/api/mascotas"/></endpoint></send>
+                </then>
+                <else>
+                    <filter xpath="boolean(//*[local-name()='consultarMascotaRequest'])">
+                        <then>
+                            <send><endpoint><address uri="http://localhost:8081/api/mascotas"/></endpoint></send>
+                        </then>
+                        <else>
+                            <send><endpoint><address uri="http://localhost:8081/api/mascotas"/></endpoint></send>
+                        </else>
+                    </filter>
+                </else>
+            </filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Mascotas response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

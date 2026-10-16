@@ -1,0 +1,22 @@
+<proxy name="RegistroProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Registro"/></log>
+            <validate source="//*[local-name()='registrarUsuarioRequest' or local-name()='consultarUsuarioRequest']">
+                <schema key="conf:/xsd/registro.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de registro inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='registrarUsuarioRequest'])">
+                <then>
+                    <send><endpoint><address uri="http://localhost:8080/api/registro"/></endpoint></send>
+                </then>
+                <else>
+                    <send><endpoint><address uri="http://localhost:8080/api/registro"/></endpoint></send>
+                </else>
+            </filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Registro response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

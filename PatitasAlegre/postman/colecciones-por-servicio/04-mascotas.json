@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "Patitas Alegre - 04 Mascotas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8081"
+    },
+    {
+      "key": "idMascotaCreada",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Estado del servicio",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/mascotas/estado"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Servicio activo', function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "    pm.expect(pm.response.text()).to.include('correctamente');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar todas las mascotas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/mascotas"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Respuesta 200 y array de mascotas', function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "    var data = pm.response.json();",
+              "    pm.expect(Array.isArray(data)).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar especies",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/mascotas/especies"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Lista de especies', function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "    pm.expect(pm.response.json().length).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar razas",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/mascotas/razas"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Lista de razas', function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "    pm.expect(pm.response.json().length).to.be.above(0);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Listar por propietario",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/mascotas/propietario/1"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Mascotas del propietario', function () {",
+              "    pm.expect(pm.response.code).to.eql(200);",
+              "    pm.expect(Array.isArray(pm.response.json())).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Registrar mascota",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Pelusa Postman\",\n  \"idPropietario\": 1,\n  \"idEspecie\": 1,\n  \"idRaza\": 1,\n  \"sexo\": \"HEMBRA\",\n  \"pesoKg\": 5.5,\n  \"color\": \"Blanco\",\n  \"estado\": \"ACTIVO\"\n}"
+        },
+        "url": "{{baseUrl}}/api/mascotas"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Mascota creada correctamente (201)', function () {",
+              "    pm.expect(pm.response.code).to.eql(201);",
+              "    var data = pm.response.json();",
+              "    pm.expect(data.idMascota).to.not.be.null;",
+              "    pm.collectionVariables.set('idMascotaCreada', String(data.idMascota));",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consultar mascota por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/mascotas/{{idMascotaCreada}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Mascota consultada con éxito', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,1 +1,204 @@
-{"info":{"name":"Clínica Patitas Alegre SOA - ESB","description":"Colección maestra de smoke tests vía WSO2 EI. Importar las colecciones específicas para ejecutar los escenarios completos.","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},"variable":[{"key":"esbUrl","value":"http://localhost:8280/services"}],"item":[{"name":"PropietariosProxy - consultar","request":{"method":"POST","header":[{"key":"Content-Type","value":"text/xml; charset=utf-8"}],"body":{"mode":"raw","raw":"<consultarPropietarioRequest><dni>12345678</dni></consultarPropietarioRequest>"},"url":"{{esbUrl}}/PropietariosProxy"}},{"name":"VeterinariosProxy - especialidades","request":{"method":"POST","header":[{"key":"Content-Type","value":"text/xml; charset=utf-8"}],"body":{"mode":"raw","raw":"<listarEspecialidadesRequest/>"},"url":"{{esbUrl}}/VeterinariosProxy"}},{"name":"CitasProxy - crear","request":{"method":"POST","header":[{"key":"Content-Type","value":"text/xml; charset=utf-8"}],"body":{"mode":"raw","raw":"<crearCitaRequest><dniPropietario>12345678</dniPropietario><idVeterinario>1</idVeterinario><idMascota>1</idMascota><fecha>2026-11-15</fecha><hora>10:00</hora></crearCitaRequest>"},"url":"{{esbUrl}}/CitasProxy"}},{"name":"FarmaciaProxy - iniciar venta","request":{"method":"POST","header":[{"key":"Content-Type","value":"text/xml; charset=utf-8"}],"body":{"mode":"raw","raw":"<iniciarVentaRequest><idPropietario>1</idPropietario><item><idProducto>1</idProducto><cantidad>1</cantidad></item></iniciarVentaRequest>"},"url":"{{esbUrl}}/FarmaciaProxy"}},{"name":"NotificacionesProxy - enviar","request":{"method":"POST","header":[{"key":"Content-Type","value":"text/xml; charset=utf-8"}],"body":{"mode":"raw","raw":"<enviarNotificacionRequest><idPropietario>105</idPropietario><destinatario>esb@clinica.test</destinatario><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><mensaje>Prueba ESB</mensaje></enviarNotificacionRequest>"},"url":"{{esbUrl}}/NotificacionesProxy"}}]}
+{
+  "info": {
+    "name": "Clínica Patitas Alegre SOA - ESB (9 Servicios)",
+    "description": "Colección maestra de smoke tests vía WSO2 EI para los 9 microservicios del sistema. Importar las colecciones específicas de colecciones-via-esb o colecciones-por-servicio para escenarios completos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "esbUrl",
+      "value": "http://localhost:8280/services"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 RegistroProxy - registrar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:registrarUsuario"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<registrarUsuarioRequest xmlns=\"http://clinica.com/registro\"><username>cliente_esb</username><email>cliente_esb@clinica.com</email><password>Password2026!</password><idRol>4</idRol></registrarUsuarioRequest>"
+        },
+        "url": "{{esbUrl}}/RegistroProxy"
+      }
+    },
+    {
+      "name": "02 AuthProxy - login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:login"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<loginRequest xmlns=\"http://clinica.com/auth\"><username>admin</username><password>admin123</password></loginRequest>"
+        },
+        "url": "{{esbUrl}}/AuthProxy"
+      }
+    },
+    {
+      "name": "03 PropietariosProxy - consultar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:consultarPropietario"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<consultarPropietarioRequest><dni>12345678</dni></consultarPropietarioRequest>"
+        },
+        "url": "{{esbUrl}}/PropietariosProxy"
+      }
+    },
+    {
+      "name": "04 MascotasProxy - listar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:listarMascotas"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<listarMascotasRequest xmlns=\"http://clinica.com/mascotas\"><idPropietario>1</idPropietario></listarMascotasRequest>"
+        },
+        "url": "{{esbUrl}}/MascotasProxy"
+      }
+    },
+    {
+      "name": "05 VeterinariosProxy - especialidades",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:listarEspecialidades"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<listarEspecialidadesRequest/>"
+        },
+        "url": "{{esbUrl}}/VeterinariosProxy"
+      }
+    },
+    {
+      "name": "06 VentaProxy - listar productos",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:listarProductos"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<listarProductosRequest xmlns=\"http://clinica.com/venta\"/>"
+        },
+        "url": "{{esbUrl}}/VentaProxy"
+      }
+    },
+    {
+      "name": "07 CitasProxy - crear",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:crearCita"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<crearCitaRequest><dniPropietario>12345678</dniPropietario><idVeterinario>1</idVeterinario><idMascota>1</idMascota><fecha>2026-11-15</fecha><hora>10:00</hora></crearCitaRequest>"
+        },
+        "url": "{{esbUrl}}/CitasProxy"
+      }
+    },
+    {
+      "name": "08 FarmaciaProxy - iniciar venta",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:iniciarVenta"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<iniciarVentaRequest><idPropietario>1</idPropietario><item><idProducto>1</idProducto><cantidad>1</cantidad></item></iniciarVentaRequest>"
+        },
+        "url": "{{esbUrl}}/FarmaciaProxy"
+      }
+    },
+    {
+      "name": "10 NotificacionesProxy - enviar",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:enviarNotificacion"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<enviarNotificacionRequest><idPropietario>105</idPropietario><destinatario>esb@clinica.test</destinatario><canal>EMAIL</canal><tipo>COMPROBANTE_VENTA</tipo><mensaje>Prueba ESB</mensaje></enviarNotificacionRequest>"
+        },
+        "url": "{{esbUrl}}/NotificacionesProxy"
+      }
+    }
+  ]
+}

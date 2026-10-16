@@ -1,0 +1,22 @@
+<proxy name="VentaProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Venta"/></log>
+            <validate source="//*[local-name()='listarProductosRequest' or local-name()='iniciarVentaRequest' or local-name()='confirmarVentaRequest' or local-name()='cancelarVentaRequest']">
+                <schema key="conf:/xsd/venta.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de venta inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='listarProductosRequest'])">
+                <then>
+                    <send><endpoint><address uri="http://localhost:3000/api/productos"/></endpoint></send>
+                </then>
+                <else>
+                    <send><endpoint><address uri="http://localhost:3000/api/productos"/></endpoint></send>
+                </else>
+            </filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Venta response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

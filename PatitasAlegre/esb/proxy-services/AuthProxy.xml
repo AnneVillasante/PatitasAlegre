@@ -1,0 +1,22 @@
+<proxy name="AuthProxy" startOnLoad="true" transports="http https" xmlns="http://ws.apache.org/ns/synapse">
+    <target>
+        <inSequence>
+            <property name="ESB_ORIGIN" value="WSO2" scope="transport"/>
+            <log level="custom"><property name="VETRO_SERVICE" value="Auth"/></log>
+            <validate source="//*[local-name()='loginRequest' or local-name()='validarTokenRequest' or local-name()='logoutRequest']">
+                <schema key="conf:/xsd/auth.xsd"/>
+                <on-fail><makefault response="true"><code value="tns:VALIDATION_ERROR"/><reason value="XML de autenticación inválido"/></makefault><respond/></on-fail>
+            </validate>
+            <filter xpath="boolean(//*[local-name()='loginRequest'])">
+                <then>
+                    <send><endpoint><address uri="http://localhost:5000/login"/></endpoint></send>
+                </then>
+                <else>
+                    <send><endpoint><address uri="http://localhost:5000/login"/></endpoint></send>
+                </else>
+            </filter>
+        </inSequence>
+        <outSequence><log level="custom"><property name="VETRO_OPERATE" value="Auth response"/></log><send/></outSequence>
+        <faultSequence><log level="full"/><drop/></faultSequence>
+    </target>
+</proxy>

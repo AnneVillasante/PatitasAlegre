@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Patitas Alegre ESB - Registro",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "esbUrl",
+      "value": "http://localhost:8280/services"
+    }
+  ],
+  "item": [
+    {
+      "name": "Registrar usuario",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:registrarUsuario"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<registrarUsuarioRequest xmlns=\"http://clinica.com/registro\">\n  <username>cliente_esb</username>\n  <email>cliente_esb@clinica.com</email>\n  <password>Password2026!</password>\n  <idRol>4</idRol>\n</registrarUsuarioRequest>"
+        },
+        "url": "{{esbUrl}}/RegistroProxy"
+      }
+    },
+    {
+      "name": "Consultar usuario",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:consultarUsuario"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<consultarUsuarioRequest xmlns=\"http://clinica.com/registro\">\n  <username>admin</username>\n</consultarUsuarioRequest>"
+        },
+        "url": "{{esbUrl}}/RegistroProxy"
+      }
+    }
+  ]
+}

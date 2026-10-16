@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Patitas Alegre ESB - Venta (Accesorios)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "esbUrl",
+      "value": "http://localhost:8280/services"
+    }
+  ],
+  "item": [
+    {
+      "name": "Listar productos de accesorios",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:listarProductos"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<listarProductosRequest xmlns=\"http://clinica.com/venta\"/>"
+        },
+        "url": "{{esbUrl}}/VentaProxy"
+      }
+    },
+    {
+      "name": "Iniciar venta de accesorio",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "text/xml; charset=utf-8"
+          },
+          {
+            "key": "SOAPAction",
+            "value": "urn:iniciarVenta"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "<iniciarVentaRequest xmlns=\"http://clinica.com/venta\">\n  <idPropietario>1</idPropietario>\n  <item>\n    <idProducto>1</idProducto>\n    <cantidad>2</cantidad>\n  </item>\n</iniciarVentaRequest>"
+        },
+        "url": "{{esbUrl}}/VentaProxy"
+      }
+    }
+  ]
+}
