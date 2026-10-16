@@ -31,15 +31,14 @@ public class VentaController {
     private final XmlBuilder xmlBuilder;
 
     public VentaController(VentaService ventaService, ProductoRepository productoRepository,
-                           XmlParser xmlParser, XmlBuilder xmlBuilder) {
+            XmlParser xmlParser, XmlBuilder xmlBuilder) {
         this.ventaService = ventaService;
         this.productoRepository = productoRepository;
         this.xmlParser = xmlParser;
         this.xmlBuilder = xmlBuilder;
     }
 
-    @PostMapping(value = "/ventas/iniciar", consumes = MediaType.APPLICATION_XML_VALUE,
-            produces = MediaType.APPLICATION_XML_VALUE)
+    @PostMapping(value = "/ventas/iniciar", consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE)
     public ResponseEntity<String> iniciarVenta(@RequestBody String xmlPayload) {
         try {
             Venta venta = ventaService.iniciarVenta(xmlParser.parsearVentaRequest(xmlPayload));
@@ -47,8 +46,7 @@ public class VentaController {
                     "codigoVenta", venta.getCodigoVenta(),
                     "estado", venta.getEstado(),
                     "total", venta.getTotal(),
-                    "mensaje", "Venta iniciada, esperando confirmación de pago"
-            )));
+                    "mensaje", "Venta iniciada, esperando confirmación de pago")));
         } catch (IllegalArgumentException e) {
             return error(HttpStatus.CONFLICT, "iniciarVentaResponse", e.getMessage());
         } catch (Exception e) {
@@ -66,7 +64,7 @@ public class VentaController {
     }
 
     @GetMapping(value = "/ventas/propietario/{idPropietario}", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<String> listarVentas(@PathVariable Long idPropietario) {
+    public ResponseEntity<String> listarVentas(@PathVariable Integer idPropietario) {
         List<Map<String, Object>> ventas = ventaService.listarPorPropietario(idPropietario).stream()
                 .map(venta -> Map.<String, Object>of(
                         "codigoVenta", venta.getCodigoVenta(),
@@ -87,8 +85,7 @@ public class VentaController {
                     "idPropietario", venta.getIdPropietario(),
                     "estado", venta.getEstado(),
                     "total", venta.getTotal(),
-                    "fechaVenta", venta.getFechaVenta()
-            )));
+                    "fechaVenta", venta.getFechaVenta())));
         } catch (IllegalArgumentException e) {
             return error(HttpStatus.NOT_FOUND, "consultarVentaResponse", e.getMessage());
         }

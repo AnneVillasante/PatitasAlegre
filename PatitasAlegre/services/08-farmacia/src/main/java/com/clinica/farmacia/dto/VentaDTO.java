@@ -9,30 +9,64 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 @JacksonXmlRootElement(localName = "iniciarVentaRequest")
 public class VentaDTO {
 
-    private Long idPropietario;
-    private Long idMascota;
-    private Long idReceta;
+    private Integer idPropietario;
+    private Integer idMascota;
+    private Integer idReceta;
 
     @JacksonXmlElementWrapper(useWrapping = false)
     @JacksonXmlProperty(localName = "item")
     private List<ItemDTO> items;
 
-    public Long getIdPropietario() { return idPropietario; }
-    public void setIdPropietario(Long idPropietario) { this.idPropietario = idPropietario; }
-    public Long getIdMascota() { return idMascota; }
-    public void setIdMascota(Long idMascota) { this.idMascota = idMascota; }
-    public Long getIdReceta() { return idReceta; }
-    public void setIdReceta(Long idReceta) { this.idReceta = idReceta; }
-    public List<ItemDTO> getItems() { return items; }
-    public void setItems(List<ItemDTO> items) { this.items = items; }
+    public Integer getIdPropietario() {
+        return idPropietario;
+    }
+
+    public void setIdPropietario(Integer idPropietario) {
+        this.idPropietario = idPropietario;
+    }
+
+    public Integer getIdMascota() {
+        return idMascota;
+    }
+
+    public void setIdMascota(Integer idMascota) {
+        this.idMascota = idMascota;
+    }
+
+    public Integer getIdReceta() {
+        return idReceta;
+    }
+
+    public void setIdReceta(Integer idReceta) {
+        this.idReceta = idReceta;
+    }
+
+    public List<ItemDTO> getItems() {
+        return items;
+    }
+
+    public void setItems(List<ItemDTO> items) {
+        this.items = items;
+    }
 
     public static class ItemDTO {
-        private Long idProducto;
+        private Integer idProducto;
         private Integer cantidad;
 
-        public Long getIdProducto() { return idProducto; }
-        public void setIdProducto(Long idProducto) { this.idProducto = idProducto; }
-        public Integer getCantidad() { return cantidad; }
-        public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+        public Integer getIdProducto() {
+            return idProducto;
+        }
+
+        public void setIdProducto(Integer idProducto) {
+            this.idProducto = idProducto;
+        }
+
+        public Integer getCantidad() {
+            return cantidad;
+        }
+
+        public void setCantidad(Integer cantidad) {
+            this.cantidad = cantidad;
+        }
     }
 }

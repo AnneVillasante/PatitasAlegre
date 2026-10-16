@@ -7,8 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.clinica.farmacia.entity.Venta;
 
-public interface VentaRepository extends JpaRepository<Venta, Long> {
+public interface VentaRepository extends JpaRepository<Venta, Integer> {
     Optional<Venta> findByCodigoVenta(String codigoVenta);
-    List<Venta> findByIdPropietarioOrderByFechaVentaDesc(Long idPropietario);
+
+    List<Venta> findByIdPropietarioOrderByFechaVentaDesc(Integer idPropietario);
+
     List<Venta> findByEstado(String estado);
 }

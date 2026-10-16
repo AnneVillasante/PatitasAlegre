@@ -17,7 +17,7 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
-    private Long id;
+    private Integer id;
 
     @Column(length = 20, unique = true)
     private String codigo;
@@ -52,17 +52,55 @@ public class Producto {
     @Column(length = 10)
     private String estado = "ACTIVO";
 
-    public Long getId() { return id; }
-    public String getCodigo() { return codigo; }
-    public String getNombre() { return nombre; }
-    public String getDescripcion() { return descripcion; }
-    public Integer getIdCategoria() { return idCategoria; }
-    public String getPresentacion() { return presentacion; }
-    public BigDecimal getPrecio() { return precio; }
-    public Integer getStock() { return stock; }
-    public Integer getStockMinimo() { return stockMinimo; }
-    public Boolean getRequiereReceta() { return requiereReceta; }
-    public LocalDate getFechaVencimiento() { return fechaVencimiento; }
-    public String getEstado() { return estado; }
-    public void setStock(Integer stock) { this.stock = stock; }
+    public Integer getId() {
+        return id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public Integer getIdCategoria() {
+        return idCategoria;
+    }
+
+    public String getPresentacion() {
+        return presentacion;
+    }
+
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public Integer getStockMinimo() {
+        return stockMinimo;
+    }
+
+    public Boolean getRequiereReceta() {
+        return requiereReceta;
+    }
+
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
 }

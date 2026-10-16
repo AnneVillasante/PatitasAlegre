@@ -10,21 +10,38 @@ public class Evento implements Serializable {
 
     private String tipo;
     private String codigoVenta;
-    private Long idPropietario;
+    private Integer idPropietario;
 
     public Evento() {
     }
 
-    public Evento(String tipo, String codigoVenta, Long idPropietario) {
+    public Evento(String tipo, String codigoVenta, Integer idPropietario) {
         this.tipo = tipo;
         this.codigoVenta = codigoVenta;
         this.idPropietario = idPropietario;
     }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
-    public String getCodigoVenta() { return codigoVenta; }
-    public void setCodigoVenta(String codigoVenta) { this.codigoVenta = codigoVenta; }
-    public Long getIdPropietario() { return idPropietario; }
-    public void setIdPropietario(Long idPropietario) { this.idPropietario = idPropietario; }
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public String getCodigoVenta() {
+        return codigoVenta;
+    }
+
+    public void setCodigoVenta(String codigoVenta) {
+        this.codigoVenta = codigoVenta;
+    }
+
+    public Integer getIdPropietario() {
+        return idPropietario;
+    }
+
+    public void setIdPropietario(Integer idPropietario) {
+        this.idPropietario = idPropietario;
+    }
 }

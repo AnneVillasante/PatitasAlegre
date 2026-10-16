@@ -26,7 +26,7 @@ public class VentaService {
     private final EventoPublisher eventoPublisher;
 
     public VentaService(VentaRepository ventaRepository, ProductoRepository productoRepository,
-                        VentaValidator validator, EventoPublisher eventoPublisher) {
+            VentaValidator validator, EventoPublisher eventoPublisher) {
         this.ventaRepository = ventaRepository;
         this.productoRepository = productoRepository;
         this.validator = validator;
@@ -90,7 +90,7 @@ public class VentaService {
                 .orElseThrow(() -> new IllegalArgumentException("Venta no encontrada: " + codigoVenta));
     }
 
-    public List<Venta> listarPorPropietario(Long idPropietario) {
+    public List<Venta> listarPorPropietario(Integer idPropietario) {
         return ventaRepository.findByIdPropietarioOrderByFechaVentaDesc(idPropietario);
     }
 

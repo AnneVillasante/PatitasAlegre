@@ -23,19 +23,19 @@ public class Venta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_venta")
-    private Long id;
+    private Integer id;
 
     @Column(name = "codigo_venta", unique = true, length = 20)
     private String codigoVenta;
 
     @Column(name = "id_propietario", nullable = false)
-    private Long idPropietario;
+    private Integer idPropietario;
 
     @Column(name = "id_mascota")
-    private Long idMascota;
+    private Integer idMascota;
 
     @Column(name = "id_receta")
-    private Long idReceta;
+    private Integer idReceta;
 
     @Column(precision = 10, scale = 2)
     private BigDecimal total;
@@ -54,20 +54,67 @@ public class Venta {
         fechaVenta = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-    public String getCodigoVenta() { return codigoVenta; }
-    public void setCodigoVenta(String codigoVenta) { this.codigoVenta = codigoVenta; }
-    public Long getIdPropietario() { return idPropietario; }
-    public void setIdPropietario(Long idPropietario) { this.idPropietario = idPropietario; }
-    public Long getIdMascota() { return idMascota; }
-    public void setIdMascota(Long idMascota) { this.idMascota = idMascota; }
-    public Long getIdReceta() { return idReceta; }
-    public void setIdReceta(Long idReceta) { this.idReceta = idReceta; }
-    public BigDecimal getTotal() { return total; }
-    public void setTotal(BigDecimal total) { this.total = total; }
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
-    public LocalDateTime getFechaVenta() { return fechaVenta; }
-    public List<DetalleVenta> getDetalles() { return detalles; }
-    public void setDetalles(List<DetalleVenta> detalles) { this.detalles = detalles; }
+    public Integer getId() {
+        return id;
+    }
+
+    public String getCodigoVenta() {
+        return codigoVenta;
+    }
+
+    public void setCodigoVenta(String codigoVenta) {
+        this.codigoVenta = codigoVenta;
+    }
+
+    public Integer getIdPropietario() {
+        return idPropietario;
+    }
+
+    public void setIdPropietario(Integer idPropietario) {
+        this.idPropietario = idPropietario;
+    }
+
+    public Integer getIdMascota() {
+        return idMascota;
+    }
+
+    public void setIdMascota(Integer idMascota) {
+        this.idMascota = idMascota;
+    }
+
+    public Integer getIdReceta() {
+        return idReceta;
+    }
+
+    public void setIdReceta(Integer idReceta) {
+        this.idReceta = idReceta;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public LocalDateTime getFechaVenta() {
+        return fechaVenta;
+    }
+
+    public List<DetalleVenta> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleVenta> detalles) {
+        this.detalles = detalles;
+    }
 }
