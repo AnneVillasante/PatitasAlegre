@@ -36,7 +36,7 @@ CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=False)
 
 # Carpeta de interfaz web (frontend/usuario)
 BASE_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..", "frontend", "usuario")
+    os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "usuario")
 )
 
 # Puerto del backend de inicio de sesion

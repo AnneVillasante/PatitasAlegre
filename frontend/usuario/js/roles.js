@@ -109,13 +109,14 @@ function configurarSelectorRol(rolActual, configRol) {
         selectorContainer.style.display = "inline-flex";
         selectorContainer.style.alignItems = "center";
         selectorContainer.style.gap = "6px";
-        selectorContainer.style.background = "rgba(255, 255, 255, 0.15)";
-        selectorContainer.style.padding = "4px 10px";
-        selectorContainer.style.borderRadius = "7px";
+        selectorContainer.style.background = "rgba(255, 255, 255, 0.16)";
+        selectorContainer.style.padding = "5px 12px";
+        selectorContainer.style.borderRadius = "8px";
+        selectorContainer.style.border = "1px solid rgba(255, 255, 255, 0.25)";
 
         selectorContainer.innerHTML = `
-            <span style="font-size: 13px; color: #e5eeec; font-weight: bold;">Rol:</span>
-            <select id="selectorRolGlobal" style="padding: 4px 8px; font-size: 12.5px; border-radius: 5px; border: 0; background: white; color: #246b63; font-weight: bold; cursor: pointer; margin-bottom: 0;">
+            <span style="font-size: 12px; color: #ffffff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Rol:</span>
+            <select id="selectorRolGlobal" style="padding: 5px 10px; font-size: 12.5px; border-radius: 6px; border: 0; background: #ffffff; color: #193155; font-weight: 700; cursor: pointer; margin-bottom: 0;">
                 <option value="ADMIN" ${rolActual === "ADMIN" ? "selected" : ""}>👑 Administrador</option>
                 <option value="MEDICO" ${rolActual === "MEDICO" ? "selected" : ""}>🩺 Personal Médico</option>
                 <option value="RECEPCIONISTA" ${rolActual === "RECEPCIONISTA" ? "selected" : ""}>📋 Recepcionista</option>

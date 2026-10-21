@@ -159,7 +159,7 @@ function renderizarTabla(lista = registros) {
         <tr>
             <td><span style="font-family: monospace; font-size: 12px;">${r.fecha}</span></td>
             <td><strong>${r.mascota}</strong></td>
-            <td><strong style="color: #246b63;">${r.diagnostico}</strong></td>
+            <td><strong style="color: var(--vet-primary);">${r.diagnostico}</strong></td>
             <td>${r.tratamiento}</td>
             <td><span class="badge-estado badge-activo">${r.vacunas || 'Ninguna'}</span></td>
             <td style="font-size: 12px; color: #5b6663;">${r.observaciones || '-'}</td>

@@ -3,50 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetCare | Panel de Control</title>
+    <title>VetCare | Panel de Control & Base de Datos</title>
     <link rel="stylesheet" href="css/estilos.css">
 
     <style>
+        /* ============================================================
+           ESTILOS ESPECÍFICOS DEL DASHBOARD & GESTOR DE BD
+           ============================================================ */
+        .pestanas-dashboard {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+            border-bottom: 2px solid var(--vet-border);
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: var(--vet-muted);
+            border: 0;
+            border-bottom: 3px solid transparent;
+            border-radius: 6px 6px 0 0;
+            padding: 12px 22px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: none;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: var(--vet-primary);
+            background: rgba(118, 182, 55, 0.08);
+            transform: none;
+            box-shadow: none;
+        }
+
+        .tab-btn.activo {
+            color: var(--vet-primary);
+            border-bottom-color: var(--vet-green);
+            background: var(--vet-white);
+            box-shadow: 0 -2px 10px rgba(25, 49, 85, 0.05);
+        }
+
+        /* GRID DE SERVICIOS / MÓDULOS */
         .grid-servicios {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 22px;
             margin-top: 20px;
         }
 
         .tarjeta-servicio {
-            background: white;
-            border: 1px solid #e0e5e3;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            background: var(--vet-white);
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius);
+            padding: 24px;
+            box-shadow: var(--vet-shadow-sm);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
 
         .tarjeta-servicio:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+            transform: translateY(-3px);
+            box-shadow: var(--vet-shadow);
         }
 
         .tarjeta-servicio .icono {
-            font-size: 30px;
-            margin-bottom: 10px;
+            font-size: 34px;
+            margin-bottom: 12px;
         }
 
         .tarjeta-servicio h3 {
             margin: 0 0 8px;
             font-size: 18px;
-            color: #263238;
+            color: var(--vet-primary);
+            font-weight: 700;
         }
 
         .tarjeta-servicio p {
-            margin: 0 0 16px;
+            margin: 0 0 18px;
             font-size: 13.5px;
-            color: #5b6663;
+            color: var(--vet-muted);
             flex-grow: 1;
+            line-height: 1.6;
         }
 
         .tarjeta-servicio .btn-vetcare {
@@ -54,96 +99,459 @@
             width: 100%;
         }
 
+        /* RESUMEN RÁPIDO KPIS */
         .resumen-rapido {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
             margin-top: 20px;
         }
 
         .stat-card {
-            background: #fafcfb;
-            border: 1px solid #e0e5e3;
-            border-radius: 10px;
-            padding: 14px 18px;
+            background: var(--vet-input);
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius-sm);
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            background: var(--vet-white);
+            border-color: var(--vet-green);
         }
 
         .stat-card span {
             font-size: 12.5px;
-            color: #5b6663;
+            color: var(--vet-muted);
+            font-weight: 600;
         }
 
         .stat-card strong {
             display: block;
-            font-size: 24px;
-            color: #246b63;
-            margin-top: 3px;
+            font-size: 26px;
+            color: var(--vet-primary);
+            font-weight: 800;
+        }
+
+        /* LAYOUT GESTOR BD */
+        .db-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .sidebar-db {
+            background: var(--vet-white);
+            border: 1px solid var(--vet-border);
+            border-radius: var(--vet-radius);
+            padding: 18px;
+            box-shadow: var(--vet-shadow-sm);
+            max-height: calc(100vh - 180px);
+            overflow-y: auto;
+            position: sticky;
+            top: 20px;
+        }
+
+        .schema-group {
+            margin-bottom: 18px;
+        }
+
+        .schema-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 800;
+            color: var(--vet-primary);
+            padding: 6px 10px;
+            background: #edf4e8;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .table-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--vet-text);
+            cursor: pointer;
+            margin-bottom: 3px;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+        }
+
+        .table-item:hover {
+            background: #f1f6ef;
+            color: var(--vet-primary);
+        }
+
+        .table-item.activo {
+            background: #e8f3e5;
+            color: var(--vet-primary-dark);
+            font-weight: 700;
+            border-left-color: var(--vet-green);
+        }
+
+        .badge-tabla-crud {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .badge-tabla-log {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #eceff1;
+            color: #546e7a;
+            font-weight: 700;
+        }
+
+        .alerta-log {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-left: 4px solid #ffb300;
+            border-radius: 8px;
+            padding: 14px 18px;
+            margin-bottom: 18px;
+            font-size: 13.5px;
+            color: #795548;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .alerta-log strong {
+            color: #5d4037;
+        }
+
+        .barra-acciones-tabla {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .controles-paginacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px solid var(--vet-border);
+            font-size: 13px;
+            color: var(--vet-muted);
+        }
+
+        .controles-paginacion .botones-pag {
+            display: flex;
+            gap: 8px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .form-full {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 990px) {
+            .db-layout {
+                grid-template-columns: 1fr;
+            }
+            .sidebar-db {
+                position: static;
+                max-height: 340px;
+            }
         }
     </style>
 </head>
 
 <body>
 
+<!-- ENCABEZADO -->
 <header class="encabezado">
     <div>
         <h1>🐾 VetCare</h1>
         <p>Sistema Integral de Gestión Veterinaria · Clínica Patitas Alegre</p>
     </div>
     <div class="acciones">
-        <a href="index.html" class="btn-header" style="background:#e5eeec; color:#246b63;">Cerrar sesión</a>
+        <a href="index.html" class="btn-header" style="background: rgba(255,255,255,0.18);">Cerrar sesión</a>
     </div>
 </header>
 
+<!-- BARRA DE NAVEGACIÓN SECUNDARIA (DINÁMICA POR ROL) -->
 <nav class="barra-navegacion">
     <!-- Generado dinámicamente según el rol por roles.js -->
 </nav>
 
 <main>
-    <div class="panel" style="margin-bottom: 25px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
-            <div>
-                <h2 id="tituloBienvenida">¡Bienvenido a VetCare!</h2>
-                <p id="descripcionRol" style="margin-bottom: 0;">Selecciona un módulo disponible para tu perfil de usuario.</p>
-            </div>
-            <div id="badgePerfilActivo" style="padding: 6px 14px; border-radius: 20px; background: #e1f5eb; color: #176b42; font-weight: bold; font-size: 13.5px;">
-                Perfil Activo
-            </div>
-        </div>
-
-        <div class="resumen-rapido" id="contenedorEstadisticas">
-            <div class="stat-card" id="statMascotasBox">
-                <span>🐶 Pacientes Registrados</span>
-                <strong id="dashTotalMascotas">4</strong>
-            </div>
-            <div class="stat-card" id="statCitasBox">
-                <span>📅 Citas Programadas</span>
-                <strong id="dashTotalCitas">4</strong>
-            </div>
-            <div class="stat-card" id="statPropietariosBox">
-                <span>👤 Propietarios Activos</span>
-                <strong id="dashTotalPropietarios">4</strong>
-            </div>
-            <div class="stat-card" id="statVetsBox">
-                <span>🩺 Médicos Veterinarios</span>
-                <strong id="dashTotalVets">5</strong>
-            </div>
-        </div>
+    <!-- SELECTOR DE PESTAÑAS (VISTA GENERAL vs GESTOR DE BASE DE DATOS) -->
+    <div class="pestanas-dashboard">
+        <button class="tab-btn activo" id="tabModulosBtn" onclick="cambiarPestana('modulos')">
+            <span>📊</span> Panel Principal & Módulos
+        </button>
+        <button class="tab-btn" id="tabDbBtn" onclick="cambiarPestana('db')">
+            <span>🗄️</span> Gestor de Base de Datos (32 Tablas SQL)
+        </button>
     </div>
 
-    <section>
-        <h2 id="tituloModulos">Módulos habilitados para tu rol</h2>
-        <div class="grid-servicios" id="gridModulos">
-            <!-- Módulos inyectados dinámicamente según el rol -->
+    <!-- ============================================================
+         PESTAÑA 1: PANEL PRINCIPAL & MÓDULOS CLÍNICOS
+         ============================================================ -->
+    <section id="vistaModulos">
+        <div class="panel">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px;">
+                <div>
+                    <h2 id="tituloBienvenida">¡Bienvenido a VetCare!</h2>
+                    <p id="descripcionRol" style="margin-bottom: 0;">Selecciona un módulo disponible para tu perfil de usuario.</p>
+                </div>
+                <div id="badgePerfilActivo" class="badge badge-activo" style="padding: 8px 18px; font-size: 13px;">
+                    👑 Administrador
+                </div>
+            </div>
+
+            <div class="resumen-rapido" id="contenedorEstadisticas">
+                <div class="stat-card" id="statMascotasBox">
+                    <span>🐶 Pacientes Registrados</span>
+                    <strong id="dashTotalMascotas">4</strong>
+                </div>
+                <div class="stat-card" id="statCitasBox">
+                    <span>📅 Citas Programadas</span>
+                    <strong id="dashTotalCitas">4</strong>
+                </div>
+                <div class="stat-card" id="statPropietariosBox">
+                    <span>👤 Propietarios Activos</span>
+                    <strong id="dashTotalPropietarios">4</strong>
+                </div>
+                <div class="stat-card" id="statVetsBox">
+                    <span>🩺 Médicos Veterinarios</span>
+                    <strong id="dashTotalVets">3</strong>
+                </div>
+            </div>
+        </div>
+
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                <h2 id="tituloModulos" style="color: var(--vet-primary); margin: 0;">Módulos habilitados para tu rol</h2>
+                <button class="btn-secundario btn-sm" onclick="cambiarPestana('db')">
+                    Ir al Gestor Universal de Tablas →
+                </button>
+            </div>
+            <div class="grid-servicios" id="gridModulos">
+                <!-- Módulos inyectados dinámicamente según el rol -->
+            </div>
+        </section>
+    </section>
+
+    <!-- ============================================================
+         PESTAÑA 2: GESTOR UNIVERSAL DE BASE DE DATOS (CRUD & LOGS)
+         ============================================================ -->
+    <section id="vistaDatabase" style="display: none;">
+        <div class="db-layout">
+
+            <!-- SIDEBAR DE ESQUEMAS Y TABLAS -->
+            <aside class="sidebar-db">
+                <div style="margin-bottom: 14px;">
+                    <label for="buscarTablaInput" style="font-size: 12px; margin-bottom: 4px;">Filtrar tablas:</label>
+                    <input type="search" id="buscarTablaInput" placeholder="Ej. mascotas, citas, logs..." style="margin-bottom: 8px; padding: 7px 10px;" oninput="filtrarListaTablas()">
+                </div>
+
+                <div id="arbolTablasContainer">
+                    <!-- Árbol dinámico de esquemas y 32 tablas -->
+                </div>
+            </aside>
+
+            <!-- ÁREA PRINCIPAL DE GESTIÓN DE TABLA SELECCIONADA -->
+            <div class="panel" style="margin-bottom: 0;">
+                
+                <!-- ENCABEZADO DE TABLA SELECCIONADA -->
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; margin-bottom: 18px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                            <h2 id="dbTablaTitulo" style="margin-bottom: 0;">Mascotas</h2>
+                            <span id="dbTablaBadgeTipo" class="badge-tabla-crud">CRUD COMPLETO</span>
+                            <span id="dbTablaSchemaTag" style="font-size: 12px; color: var(--vet-muted); font-family: monospace;">clinica_mascotas.mascotas</span>
+                        </div>
+                        <p id="dbTablaDescripcion" style="margin-top: 6px; margin-bottom: 0;">Catálogo principal de pacientes caninos, felinos y especies registradas.</p>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button id="btnNuevoRegistro" class="btn-vetcare" onclick="abrirModalCrear()">
+                            <span>➕</span> Nuevo Registro
+                        </button>
+                        <button class="btn-secundario btn-sm" onclick="exportarTablaJSON()" title="Descargar como JSON">
+                            📥 JSON
+                        </button>
+                        <button class="btn-secundario btn-sm" onclick="exportarTablaCSV()" title="Descargar como CSV">
+                            📊 CSV
+                        </button>
+                        <button class="btn-secundario btn-sm" onclick="restablecerTablaActual()" title="Restaurar datos semilla">
+                            🔄 Reiniciar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ALERTA SI LA TABLA ES UN LOG (SOLO LECTURA) -->
+                <div id="alertaLogSoloLectura" class="alerta-log" style="display: none;">
+                    <div style="font-size: 24px; line-height: 1;">🔒</div>
+                    <div>
+                        <strong>Tabla de Auditoría e Historial del Sistema (Solo Lectura)</strong>
+                        <p style="margin: 4px 0 0; font-size: 13px; color: #5d4037;">
+                            Esta tabla almacena eventos inmutables de auditoría generados por el sistema (seguridad, reprogramaciones, pasarela de pago o log de notificaciones). 
+                            Por cumplimiento normativo y trazabilidad, <strong>las operaciones de creación, edición y borrado están deshabilitadas</strong>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- BARRA DE BÚSQUEDA Y FILTRADO DENTRO DE LA TABLA -->
+                <div class="barra-acciones-tabla">
+                    <div style="display: flex; align-items: center; gap: 10px; flex: 1; max-width: 450px;">
+                        <input type="search" id="busquedaRegistrosInput" placeholder="Buscar en todos los campos..." style="margin-bottom: 0;" oninput="filtrarRegistrosTabla()">
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="conteoRegistros" style="font-size: 12.5px; color: var(--vet-muted); font-weight: 600;">Mostrando 0 registros</span>
+                    </div>
+                </div>
+
+                <!-- TABLA RESPONSIVA DE REGISTROS -->
+                <div class="table-responsive">
+                    <table id="tablaRegistrosDatos">
+                        <thead id="tablaRegistrosHead">
+                            <!-- Columnas dinámicas -->
+                        </thead>
+                        <tbody id="tablaRegistrosBody">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- CONTROLES DE PAGINACIÓN -->
+                <div class="controles-paginacion">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span>Filas por página:</span>
+                        <select id="selectRegistrosPorPagina" style="width: auto; margin-bottom: 0; padding: 4px 8px; font-size: 12.5px;" onchange="cambiarRegistrosPorPagina(this.value)">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                        </select>
+                    </div>
+                    <span id="infoPaginacion">Página 1 de 1</span>
+                    <div class="botones-pag">
+                        <button id="btnPaginaAnt" class="btn-secundario btn-sm" onclick="cambiarPagina(-1)">← Anterior</button>
+                        <button id="btnPaginaSig" class="btn-secundario btn-sm" onclick="cambiarPagina(1)">Siguiente →</button>
+                    </div>
+                </div>
+
+            </div>
+
         </div>
     </section>
 </main>
 
+<!-- ============================================================
+     MODALES NATIVOS (<dialog class="vet-dialog">)
+     ============================================================ -->
+
+<!-- 1. MODAL DE CREACIÓN / EDICIÓN (CRUD) -->
+<dialog id="modalFormularioCrud" class="vet-dialog">
+    <div class="dialog-header">
+        <h3 id="modalFormularioTitulo">Nuevo Registro</h3>
+        <button class="dialog-close" onclick="cerrarModalCrud()" aria-label="Cerrar">✕</button>
+    </div>
+    <form id="formularioCrud" onsubmit="guardarRegistroCrud(event)">
+        <div class="dialog-body">
+            <div id="camposFormularioContainer" class="form-grid">
+                <!-- Campos dinámicos generados según la tabla -->
+            </div>
+            <div id="mensajeErrorFormulario" class="mensaje mensaje-error" style="display: none; margin-top: 15px;"></div>
+        </div>
+        <div class="dialog-footer">
+            <button type="button" class="btn-cancelar" onclick="cerrarModalCrud()">Cancelar</button>
+            <button type="submit" class="btn-vetcare" id="btnGuardarCrud">Guardar Registro</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- 2. MODAL DE VISUALIZACIÓN DE DETALLE (INSPECCIÓN COMPLETA) -->
+<dialog id="modalDetalleRegistro" class="vet-dialog">
+    <div class="dialog-header">
+        <h3 id="modalDetalleTitulo">Inspección de Registro</h3>
+        <button class="dialog-close" onclick="cerrarModalDetalle()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="dialog-body">
+        <div id="detalleCamposContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 20px;">
+            <!-- Pares clave/valor -->
+        </div>
+        <h4 style="font-size: 13px; color: var(--vet-primary); margin-bottom: 8px;">Objeto JSON en Bruto:</h4>
+        <pre id="detalleJsonRaw" style="background: #193155; color: #a9d28a; padding: 14px; border-radius: 8px; font-size: 12px; overflow-x: auto; font-family: monospace;"></pre>
+    </div>
+    <div class="dialog-footer">
+        <button type="button" class="btn-vetcare" onclick="cerrarModalDetalle()">Cerrar</button>
+    </div>
+</dialog>
+
+<!-- 3. MODAL DE CONFIRMACIÓN DE ELIMINACIÓN -->
+<dialog id="modalConfirmarEliminacion" class="vet-dialog" style="max-width: 460px;">
+    <div class="dialog-header" style="background: linear-gradient(135deg, var(--vet-danger) 0%, #7f0000 100%);">
+        <h3>Confirmar Eliminación</h3>
+        <button class="dialog-close" onclick="cerrarModalEliminar()" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="dialog-body" style="text-align: center; padding: 25px 20px;">
+        <div style="font-size: 45px; margin-bottom: 12px;">⚠️</div>
+        <h4 style="color: var(--vet-danger); margin-bottom: 8px;">¿Eliminar este registro permanentemente?</h4>
+        <p id="textoConfirmarEliminacion" style="color: var(--vet-muted); font-size: 13.5px; margin-bottom: 0;">
+            Esta acción eliminará el registro seleccionado de la base de datos local.
+        </p>
+    </div>
+    <div class="dialog-footer" style="justify-content: center;">
+        <button type="button" class="btn-cancelar" onclick="cerrarModalEliminar()">Cancelar</button>
+        <button type="button" class="btn-eliminar" id="btnConfirmarEliminarAccion">Sí, Eliminar</button>
+    </div>
+</dialog>
+
+<!-- FOOTER -->
 <footer>
     <p>VetCare © 2026 · Cuidado y bienestar animal · Clínica Patitas Alegre</p>
 </footer>
 
+<!-- SCRIPTS DEL SISTEMA -->
 <script src="js/roles.js"></script>
+<script src="js/database-manager.js"></script>
+
 <script>
+    // ============================================================
+    // ESTADO LOCAL DEL DASHBOARD Y GESTOR DE BD
+    // ============================================================
+    let tablaActivaNombre = "mascotas";
+    let registrosActuales = [];
+    let registrosFiltrados = [];
+    let paginaActual = 1;
+    let registrosPorPagina = 10;
+    let registroEnEdicionId = null;
+    let registroAEliminarId = null;
+
     const DEFINICION_MODULOS = {
         mascotas: {
             icono: "🐶",
@@ -221,13 +629,41 @@
     document.addEventListener("DOMContentLoaded", () => {
         inicializarRolesUI("dashboard");
         renderizarDashboardPorRol();
+        inicializarGestorBD();
+
+        // Si la URL tiene #db, abrir automáticamente la pestaña de base de datos
+        if (window.location.hash === "#db") {
+            cambiarPestana("db");
+        }
     });
 
+    // Cambiar entre Pestaña 1 (Módulos) y Pestaña 2 (BD)
+    function cambiarPestana(pestana) {
+        const vistaModulos = document.getElementById("vistaModulos");
+        const vistaDb = document.getElementById("vistaDatabase");
+        const btnModulos = document.getElementById("tabModulosBtn");
+        const btnDb = document.getElementById("tabDbBtn");
+
+        if (pestana === "db") {
+            vistaModulos.style.display = "none";
+            vistaDb.style.display = "block";
+            btnModulos.classList.remove("activo");
+            btnDb.classList.add("activo");
+            window.location.hash = "db";
+        } else {
+            vistaModulos.style.display = "block";
+            vistaDb.style.display = "none";
+            btnModulos.classList.add("activo");
+            btnDb.classList.remove("activo");
+            window.location.hash = "";
+        }
+    }
+
+    // Renderizar tarjetas del Panel según el rol activo
     function renderizarDashboardPorRol() {
         const rol = obtenerRolActual();
         const config = ROLES_CONFIG[rol] || ROLES_CONFIG.ADMIN;
 
-        // 1. Mensajes de encabezado
         const tituloEl = document.getElementById("tituloBienvenida");
         const descEl = document.getElementById("descripcionRol");
         const badgeEl = document.getElementById("badgePerfilActivo");
@@ -236,7 +672,7 @@
 
         if (rol === "ADMIN") {
             tituloEl.textContent = "👑 Panel de Administración Total";
-            descEl.textContent = "Tienes acceso completo para supervisar y operar todos los microservicios clínicos y comerciales.";
+            descEl.textContent = "Tienes acceso completo para supervisar y operar todos los microservicios clínicos, comerciales y la base de datos.";
         } else if (rol === "MEDICO") {
             tituloEl.textContent = "🩺 Panel de Atención Médica Veterinaria";
             descEl.textContent = "Acceso a expedientes clínicos, historias médicas, pacientes y vademécum farmacéutico.";
@@ -252,7 +688,6 @@
             document.getElementById("statVetsBox").style.display = "none";
         }
 
-        // 2. Renderizar tarjetas de módulos permitidos
         const grid = document.getElementById("gridModulos");
         grid.innerHTML = "";
 
@@ -279,18 +714,516 @@
             grid.appendChild(card);
         });
 
-        // 3. Cargar datos estadísticos si existen en localStorage
-        const mascotas = JSON.parse(localStorage.getItem("vetcare_mascotas"));
-        if (mascotas && mascotas.length) document.getElementById("dashTotalMascotas").textContent = mascotas.length;
+        // Contar datos reales de VetcareDB
+        const mascotas = VetcareDB.getTableData("mascotas");
+        if (mascotas) document.getElementById("dashTotalMascotas").textContent = mascotas.length;
 
-        const citas = JSON.parse(localStorage.getItem("vetcare_citas"));
-        if (citas && citas.length) document.getElementById("dashTotalCitas").textContent = citas.length;
+        const citas = VetcareDB.getTableData("citas");
+        if (citas) document.getElementById("dashTotalCitas").textContent = citas.length;
 
-        const propietarios = JSON.parse(localStorage.getItem("vetcare_propietarios"));
-        if (propietarios && propietarios.length) document.getElementById("dashTotalPropietarios").textContent = propietarios.length;
+        const propietarios = VetcareDB.getTableData("propietarios");
+        if (propietarios) document.getElementById("dashTotalPropietarios").textContent = propietarios.length;
 
-        const vets = JSON.parse(localStorage.getItem("vetcare_veterinarios"));
-        if (vets && vets.length) document.getElementById("dashTotalVets").textContent = vets.length;
+        const vets = VetcareDB.getTableData("veterinarios");
+        if (vets) document.getElementById("dashTotalVets").textContent = vets.length;
+    }
+
+    // ============================================================
+    // MOTOR DE INTERFAZ DEL GESTOR DE BASE DE DATOS
+    // ============================================================
+    function inicializarGestorBD() {
+        renderizarArbolTablas();
+        seleccionarTabla("mascotas");
+    }
+
+    // Renderizar lista de esquemas y tablas en la barra lateral
+    function renderizarArbolTablas(filtro = "") {
+        const container = document.getElementById("arbolTablasContainer");
+        container.innerHTML = "";
+
+        const filtroMin = filtro.toLowerCase().trim();
+
+        DB_CATALOG.schemas.forEach(schema => {
+            const tablas = VetcareDB.getTablesBySchema(schema.id);
+            const tablasFiltradas = tablas.filter(t => 
+                !filtroMin || 
+                t.name.toLowerCase().includes(filtroMin) || 
+                t.label.toLowerCase().includes(filtroMin) ||
+                schema.nombre.toLowerCase().includes(filtroMin)
+            );
+
+            if (tablasFiltradas.length === 0) return;
+
+            const group = document.createElement("div");
+            group.className = "schema-group";
+
+            const title = document.createElement("div");
+            title.className = "schema-title";
+            title.innerHTML = `<span>${schema.nombre}</span> <span style="opacity: 0.7;">(${tablasFiltradas.length})</span>`;
+            group.appendChild(title);
+
+            tablasFiltradas.forEach(tabla => {
+                const item = document.createElement("div");
+                item.className = `table-item ${tabla.name === tablaActivaNombre ? "activo" : ""}`;
+                item.id = `item-tabla-${tabla.name}`;
+                item.onclick = () => seleccionarTabla(tabla.name);
+
+                const badge = tabla.isLog 
+                    ? `<span class="badge-tabla-log" title="Solo lectura">LOG</span>`
+                    : `<span class="badge-tabla-crud" title="CRUD disponible">CRUD</span>`;
+
+                item.innerHTML = `
+                    <span style="display: flex; align-items: center; gap: 6px;">
+                        <span>${tabla.isLog ? "🔒" : "📄"}</span>
+                        <span>${tabla.name}</span>
+                    </span>
+                    ${badge}
+                `;
+                group.appendChild(item);
+            });
+
+            container.appendChild(group);
+        });
+    }
+
+    function filtrarListaTablas() {
+        const val = document.getElementById("buscarTablaInput").value;
+        renderizarArbolTablas(val);
+    }
+
+    // Seleccionar una tabla y cargar sus datos
+    function seleccionarTabla(nombreTabla) {
+        tablaActivaNombre = nombreTabla;
+        const config = VetcareDB.getTableConfig(nombreTabla);
+        if (!config) return;
+
+        // Actualizar clase activa en el sidebar
+        document.querySelectorAll(".table-item").forEach(el => el.classList.remove("activo"));
+        const itemActivo = document.getElementById(`item-tabla-${nombreTabla}`);
+        if (itemActivo) itemActivo.classList.add("activo");
+
+        // Actualizar encabezados
+        document.getElementById("dbTablaTitulo").textContent = config.label;
+        document.getElementById("dbTablaSchemaTag").textContent = `${config.schema}.${config.name}`;
+        
+        const badgeTipo = document.getElementById("dbTablaBadgeTipo");
+        const btnNuevo = document.getElementById("btnNuevoRegistro");
+        const alertaLog = document.getElementById("alertaLogSoloLectura");
+
+        if (config.isLog) {
+            badgeTipo.className = "badge-tabla-log";
+            badgeTipo.textContent = "🔒 SOLO LECTURA (LOG / AUDITORÍA)";
+            btnNuevo.style.display = "none";
+            alertaLog.style.display = "flex";
+        } else {
+            badgeTipo.className = "badge-tabla-crud";
+            badgeTipo.textContent = "✨ TABLA OPERATIVA (CRUD COMPLETO)";
+            btnNuevo.style.display = "inline-flex";
+            alertaLog.style.display = "none";
+        }
+
+        // Cargar registros
+        registrosActuales = VetcareDB.getTableData(nombreTabla);
+        registrosFiltrados = [...registrosActuales];
+        paginaActual = 1;
+        document.getElementById("busquedaRegistrosInput").value = "";
+
+        renderizarCabecerasTabla(config);
+        renderizarCuerpoTabla();
+    }
+
+    // Renderizar cabeceras <thead>
+    function renderizarCabecerasTabla(config) {
+        const thead = document.getElementById("tablaRegistrosHead");
+        thead.innerHTML = "";
+
+        const tr = document.createElement("tr");
+
+        // Columnas de datos
+        config.fields.forEach(f => {
+            const th = document.createElement("th");
+            th.textContent = f.label;
+            tr.appendChild(th);
+        });
+
+        // Columna de Acciones
+        const thAcciones = document.createElement("th");
+        thAcciones.style.textAlign = "center";
+        thAcciones.style.width = "140px";
+        thAcciones.textContent = "Acciones";
+        tr.appendChild(thAcciones);
+
+        thead.appendChild(tr);
+    }
+
+    // Renderizar filas <tbody> con paginación
+    function renderizarCuerpoTabla() {
+        const tbody = document.getElementById("tablaRegistrosBody");
+        tbody.innerHTML = "";
+
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (!config) return;
+
+        const total = registrosFiltrados.length;
+        const totalPaginas = Math.ceil(total / registrosPorPagina) || 1;
+
+        if (paginaActual > totalPaginas) paginaActual = totalPaginas;
+        if (paginaActual < 1) paginaActual = 1;
+
+        const inicio = (paginaActual - 1) * registrosPorPagina;
+        const fin = inicio + registrosPorPagina;
+        const paginaRegistros = registrosFiltrados.slice(inicio, fin);
+
+        document.getElementById("conteoRegistros").textContent = `Mostrando ${paginaRegistros.length} de ${total} registros`;
+        document.getElementById("infoPaginacion").textContent = `Página ${paginaActual} de ${totalPaginas}`;
+        document.getElementById("btnPaginaAnt").disabled = (paginaActual <= 1);
+        document.getElementById("btnPaginaSig").disabled = (paginaActual >= totalPaginas);
+
+        if (paginaRegistros.length === 0) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan="${config.fields.length + 1}" style="text-align: center; padding: 30px; color: var(--vet-muted);">
+                No se encontraron registros en esta tabla.
+            </td>`;
+            tbody.appendChild(tr);
+            return;
+        }
+
+        paginaRegistros.forEach(item => {
+            const tr = document.createElement("tr");
+
+            // Celdas de datos
+            config.fields.forEach(f => {
+                const td = document.createElement("td");
+                let val = item[f.name];
+
+                if (val === null || val === undefined) {
+                    td.innerHTML = `<span style="color: #a0afa7; font-style: italic;">null</span>`;
+                } else if (f.name === "estado") {
+                    let badgeClass = "badge-info";
+                    if (val === "ACTIVO" || val === "CONFIRMADA" || val === "PAGADA" || val === "ATENDIDA") badgeClass = "badge-activo";
+                    if (val === "PENDIENTE" || val === "PENDIENTE_PAGO") badgeClass = "badge-pendiente";
+                    if (val === "INACTIVO" || val === "CANCELADA" || val === "BLOQUEADO" || val === "FALLECIDO") badgeClass = "badge-inactivo";
+                    td.innerHTML = `<span class="badge ${badgeClass}">${val}</span>`;
+                } else if (typeof val === "string" && val.length > 40) {
+                    td.textContent = val.substring(0, 37) + "...";
+                    td.title = val;
+                } else {
+                    td.textContent = val;
+                }
+                tr.appendChild(td);
+            });
+
+            // Celda de Acciones
+            const tdAcciones = document.createElement("td");
+            tdAcciones.style.textAlign = "center";
+            tdAcciones.style.whiteSpace = "nowrap";
+
+            const pkVal = item[config.pk];
+
+            if (config.isLog) {
+                // SOLO LECTURA: Solo botón de detalle
+                tdAcciones.innerHTML = `
+                    <button class="btn-secundario btn-sm" onclick="verDetalleRegistro('${pkVal}')" title="Ver detalle completo">
+                        👁️ Detalle
+                    </button>
+                `;
+            } else {
+                // CRUD: Botones de Editar, Eliminar y Detalle
+                tdAcciones.innerHTML = `
+                    <button class="btn-secundario btn-sm" onclick="abrirModalEditar('${pkVal}')" title="Editar registro" style="margin-right: 4px;">
+                        ✏️
+                    </button>
+                    <button class="btn-eliminar btn-sm" onclick="abrirModalEliminar('${pkVal}')" title="Eliminar registro" style="margin-right: 4px;">
+                        🗑️
+                    </button>
+                    <button class="btn-secundario btn-sm" onclick="verDetalleRegistro('${pkVal}')" title="Ver detalle">
+                        👁️
+                    </button>
+                `;
+            }
+
+            tr.appendChild(tdAcciones);
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Filtrar registros en vivo según la caja de texto
+    function filtrarRegistrosTabla() {
+        const query = document.getElementById("busquedaRegistrosInput").value.toLowerCase().trim();
+        if (!query) {
+            registrosFiltrados = [...registrosActuales];
+        } else {
+            registrosFiltrados = registrosActuales.filter(item => {
+                return Object.values(item).some(val => 
+                    val !== null && val !== undefined && String(val).toLowerCase().includes(query)
+                );
+            });
+        }
+        paginaActual = 1;
+        renderizarCuerpoTabla();
+    }
+
+    // Paginación
+    function cambiarPagina(delta) {
+        paginaActual += delta;
+        renderizarCuerpoTabla();
+    }
+
+    function cambiarRegistrosPorPagina(val) {
+        registrosPorPagina = parseInt(val, 10);
+        paginaActual = 1;
+        renderizarCuerpoTabla();
+    }
+
+    // ============================================================
+    // MODAL DE CREACIÓN / EDICIÓN
+    // ============================================================
+    function abrirModalCrear() {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (!config || config.isLog) return;
+
+        registroEnEdicionId = null;
+        document.getElementById("modalFormularioTitulo").textContent = `Nuevo Registro en ${config.label}`;
+        document.getElementById("btnGuardarCrud").textContent = "Guardar Registro";
+        document.getElementById("mensajeErrorFormulario").style.display = "none";
+
+        generarCamposFormulario(config, null);
+        const modal = document.getElementById("modalFormularioCrud");
+        modal.showModal();
+    }
+
+    function abrirModalEditar(id) {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (!config || config.isLog) return;
+
+        const registro = registrosActuales.find(r => String(r[config.pk]) === String(id));
+        if (!registro) return;
+
+        registroEnEdicionId = id;
+        document.getElementById("modalFormularioTitulo").textContent = `Editar Registro #${id} en ${config.label}`;
+        document.getElementById("btnGuardarCrud").textContent = "Actualizar Registro";
+        document.getElementById("mensajeErrorFormulario").style.display = "none";
+
+        generarCamposFormulario(config, registro);
+        const modal = document.getElementById("modalFormularioCrud");
+        modal.showModal();
+    }
+
+    function cerrarModalCrud() {
+        document.getElementById("modalFormularioCrud").close();
+    }
+
+    function generarCamposFormulario(config, datos = null) {
+        const container = document.getElementById("camposFormularioContainer");
+        container.innerHTML = "";
+
+        config.fields.forEach(f => {
+            // Omitir campo autoincremental en creación
+            if (f.auto && !datos) return;
+
+            const div = document.createElement("div");
+            if (f.type === "textarea") div.className = "form-full";
+
+            const label = document.createElement("label");
+            label.setAttribute("for", `campo_${f.name}`);
+            label.textContent = f.label + (f.required ? " *" : "");
+            div.appendChild(label);
+
+            let input;
+            const valorActual = datos ? datos[f.name] : "";
+
+            if (f.type === "select") {
+                input = document.createElement("select");
+                input.id = `campo_${f.name}`;
+                input.name = f.name;
+                if (f.required) input.required = true;
+
+                f.options.forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt;
+                    option.textContent = opt;
+                    if (String(valorActual) === String(opt)) option.selected = true;
+                    input.appendChild(option);
+                });
+            } else if (f.type === "textarea") {
+                input = document.createElement("textarea");
+                input.id = `campo_${f.name}`;
+                input.name = f.name;
+                input.rows = 3;
+                input.value = valorActual || "";
+                if (f.required) input.required = true;
+            } else {
+                input = document.createElement("input");
+                input.type = f.type || "text";
+                input.id = `campo_${f.name}`;
+                input.name = f.name;
+                input.value = valorActual !== null && valorActual !== undefined ? valorActual : "";
+                if (f.required) input.required = true;
+                if (f.auto) input.readOnly = true;
+            }
+
+            div.appendChild(input);
+            container.appendChild(div);
+        });
+    }
+
+    function guardarRegistroCrud(e) {
+        e.preventDefault();
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (!config || config.isLog) return;
+
+        const formData = new FormData(e.target);
+        const record = {};
+
+        config.fields.forEach(f => {
+            if (formData.has(f.name)) {
+                let val = formData.get(f.name);
+                if (f.type === "number") {
+                    val = val === "" ? null : Number(val);
+                }
+                record[f.name] = val;
+            }
+        });
+
+        try {
+            if (registroEnEdicionId) {
+                VetcareDB.updateRecord(tablaActivaNombre, registroEnEdicionId, record);
+            } else {
+                VetcareDB.createRecord(tablaActivaNombre, record);
+            }
+
+            cerrarModalCrud();
+            seleccionarTabla(tablaActivaNombre);
+            renderizarDashboardPorRol(); // Actualiza contadores si aplica
+        } catch (err) {
+            const errBox = document.getElementById("mensajeErrorFormulario");
+            errBox.textContent = err.message;
+            errBox.style.display = "block";
+        }
+    }
+
+    // ============================================================
+    // MODAL DE CONFIRMACIÓN DE ELIMINACIÓN
+    // ============================================================
+    function abrirModalEliminar(id) {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (!config || config.isLog) return;
+
+        registroAEliminarId = id;
+        document.getElementById("textoConfirmarEliminacion").textContent = 
+            `¿Estás seguro de eliminar el registro #${id} de la tabla '${config.label}'? Esta acción no se puede deshacer.`;
+        
+        document.getElementById("btnConfirmarEliminarAccion").onclick = () => ejecutarEliminacion();
+        document.getElementById("modalConfirmarEliminacion").showModal();
+    }
+
+    function cerrarModalEliminar() {
+        document.getElementById("modalConfirmarEliminacion").close();
+        registroAEliminarId = null;
+    }
+
+    function ejecutarEliminacion() {
+        if (!registroAEliminarId) return;
+
+        try {
+            VetcareDB.deleteRecord(tablaActivaNombre, registroAEliminarId);
+            cerrarModalEliminar();
+            seleccionarTabla(tablaActivaNombre);
+            renderizarDashboardPorRol();
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
+    // ============================================================
+    // MODAL DE INSPECCIÓN DE DETALLE
+    // ============================================================
+    function verDetalleRegistro(id) {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (!config) return;
+
+        const registro = registrosActuales.find(r => String(r[config.pk]) === String(id));
+        if (!registro) return;
+
+        document.getElementById("modalDetalleTitulo").textContent = `Detalle: ${config.label} (#${id})`;
+        const container = document.getElementById("detalleCamposContainer");
+        container.innerHTML = "";
+
+        config.fields.forEach(f => {
+            const box = document.createElement("div");
+            box.style.background = "var(--vet-input)";
+            box.style.padding = "10px 14px";
+            box.style.borderRadius = "8px";
+            box.style.border = "1px solid var(--vet-border)";
+
+            const val = registro[f.name];
+            box.innerHTML = `
+                <span style="font-size: 11.5px; font-weight: 700; color: var(--vet-muted); text-transform: uppercase;">${f.label}</span>
+                <div style="font-size: 13.5px; font-weight: 600; color: var(--vet-primary); margin-top: 3px; word-break: break-word;">
+                    ${val !== null && val !== undefined ? val : '<span style="color:#aaa; font-style:italic;">null</span>'}
+                </div>
+            `;
+            container.appendChild(box);
+        });
+
+        document.getElementById("detalleJsonRaw").textContent = JSON.stringify(registro, null, 2);
+        document.getElementById("modalDetalleRegistro").showModal();
+    }
+
+    function cerrarModalDetalle() {
+        document.getElementById("modalDetalleRegistro").close();
+    }
+
+    // ============================================================
+    // EXPORTACIÓN & REINICIO
+    // ============================================================
+    function exportarTablaJSON() {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        const data = VetcareDB.getTableData(tablaActivaNombre);
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${config.schema}_${config.name}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function exportarTablaCSV() {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        const data = VetcareDB.getTableData(tablaActivaNombre);
+        if (!data || data.length === 0) {
+            alert("No hay registros para exportar.");
+            return;
+        }
+
+        const headers = config.fields.map(f => f.name);
+        const rows = data.map(item => {
+            return headers.map(h => {
+                let v = item[h];
+                if (v === null || v === undefined) return '""';
+                v = String(v).replace(/"/g, '""');
+                return `"${v}"`;
+            }).join(",");
+        });
+
+        const csvContent = [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${config.schema}_${config.name}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function restablecerTablaActual() {
+        const config = VetcareDB.getTableConfig(tablaActivaNombre);
+        if (confirm(`¿Restablecer los datos semilla originales para la tabla '${config.label}'?`)) {
+            VetcareDB.resetTable(tablaActivaNombre);
+            seleccionarTabla(tablaActivaNombre);
+            renderizarDashboardPorRol();
+        }
     }
 </script>
 
