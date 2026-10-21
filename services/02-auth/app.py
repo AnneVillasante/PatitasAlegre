@@ -32,11 +32,11 @@ if not JWT_SECRET:
 app = Flask(__name__)
 app.config['VERSION'] = '1.0.0'
 __version__ = '1.0.0'
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=False)
 
-# Carpeta principal: Proyecto-Veterinaria
+# Carpeta de interfaz web (frontend/usuario)
 BASE_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
+    os.path.join(os.path.dirname(__file__), "..", "frontend", "usuario")
 )
 
 # Puerto del backend de inicio de sesion
@@ -44,12 +44,17 @@ PUERTO = 5000
 
 
 # =========================================================
-# PAGINA PRINCIPAL: INDEX.HTML
+# PAGINAS HTML
 # =========================================================
 
 @app.route("/", methods=["GET"])
 def inicio():
     return send_from_directory(BASE_DIR, "index.html")
+
+
+@app.route("/<path:pagina>.html", methods=["GET"])
+def servir_html(pagina):
+    return send_from_directory(BASE_DIR, f"{pagina}.html")
 
 
 # =========================================================

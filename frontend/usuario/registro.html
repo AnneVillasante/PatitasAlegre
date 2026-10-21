@@ -96,12 +96,56 @@
 
     <script>
         document.getElementById("formRegistro")
-            .addEventListener("submit", function(event) {
+            .addEventListener("submit", async function(event) {
                 event.preventDefault();
 
-                document.getElementById("mensaje").textContent =
-                    "Formulario validado visualmente. El registro real " +
-                    "se habilitará al conectar el backend.";
+                const nombre = document.getElementById("nombre").value.trim();
+                const correo = document.getElementById("correo").value.trim();
+                const clave = document.getElementById("clave").value;
+                const mensajeEl = document.getElementById("mensaje");
+                const submitBtn = this.querySelector('button[type="submit"]');
+
+                mensajeEl.className = "mt-3 alert alert-info";
+                mensajeEl.textContent = "Conectando con el microservicio de registro...";
+                submitBtn.disabled = true;
+
+                try {
+                    const respuesta = await fetch("http://127.0.0.1:8080/api/registro", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json"
+                        },
+                        body: JSON.stringify({
+                            username: nombre,
+                            email: correo,
+                            password: clave
+                        })
+                    });
+
+                    let datos = {};
+                    try {
+                        datos = await respuesta.json();
+                    } catch (e) {
+                        datos = { mensaje: "Respuesta no válida del servidor." };
+                    }
+
+                    if (respuesta.ok && datos.ok) {
+                        mensajeEl.className = "mt-3 alert alert-success";
+                        mensajeEl.textContent = "¡Registro exitoso! Redirigiendo al inicio de sesión...";
+                        setTimeout(() => {
+                            window.location.href = "index.html";
+                        }, 1500);
+                    } else {
+                        mensajeEl.className = "mt-3 alert alert-danger";
+                        mensajeEl.textContent = datos.mensaje || `Error (${respuesta.status}) al registrar.`;
+                    }
+                } catch (error) {
+                    mensajeEl.className = "mt-3 alert alert-danger";
+                    mensajeEl.textContent = "No se pudo conectar con el microservicio en el puerto 8080 (Spring Boot).";
+                } finally {
+                    submitBtn.disabled = false;
+                }
             });
     </script>
 

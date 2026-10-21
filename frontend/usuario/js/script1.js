@@ -29,10 +29,11 @@ formularioRegistro.addEventListener('submit', async (event) => {
     boton.disabled = true;
 
     try {
-        const respuesta = await fetch('http://localhost:8080/api/registro', {
+        const respuesta = await fetch('http://127.0.0.1:8080/api/registro', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 username: username,
@@ -41,30 +42,33 @@ formularioRegistro.addEventListener('submit', async (event) => {
             })
         });
 
-        const datos = await respuesta.json();
-
-        if (!respuesta.ok || !datos.ok) {
-            alert(datos.mensaje || 'No se pudo registrar la cuenta.');
-            return;
+        let datos = {};
+        try {
+            datos = await respuesta.json();
+        } catch (parseError) {
+            datos = { mensaje: 'Respuesta inválida del servidor.' };
         }
 
-        alert('¡Cuenta creada correctamente! Ya puedes iniciar sesión.');
+        if (respuesta.ok && datos.ok) {
+            alert('¡Cuenta creada correctamente! Ya puedes iniciar sesión.');
+            formularioRegistro.reset();
 
-        formularioRegistro.reset();
+            // Cambiar al formulario de inicio de sesión
+            container.classList.remove('active');
 
-        // Cambiar al formulario de inicio de sesión
-        container.classList.remove('active');
-
-        // Preparar el login con el correo registrado
-        document.getElementById('emailLogin').value = email;
-        document.getElementById('rolLogin').value = 'CLIENTE';
+            // Preparar el login con el correo registrado
+            document.getElementById('emailLogin').value = email;
+            document.getElementById('rolLogin').value = 'CLIENTE';
+        } else {
+            alert(datos.mensaje || `Error al registrar: Código HTTP ${respuesta.status}`);
+        }
 
     } catch (error) {
         console.error('Error al registrar:', error);
 
         alert(
-            'No se pudo conectar con el servidor Java. ' +
-            'Comprueba que Spring Boot esté ejecutándose.'
+            'No se pudo conectar con el microservicio de registro (Spring Boot en puerto 8080). ' +
+            'Asegúrate de que el servicio esté corriendo.'
         );
     } finally {
         boton.disabled = false;
@@ -91,7 +95,8 @@ formularioLogin.addEventListener('submit', async (event) => {
         const respuesta = await fetch('http://127.0.0.1:5000/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             },
             body: JSON.stringify({
                 email: email,
@@ -100,22 +105,40 @@ formularioLogin.addEventListener('submit', async (event) => {
             })
         });
 
-        const datos = await respuesta.json();
+        let datos = {};
+        try {
+            datos = await respuesta.json();
+        } catch (parseError) {
+            datos = { mensaje: 'Respuesta inválida del servidor.' };
+        }
 
-        if (respuesta.ok && datos.ok) {
+        // VALIDACIÓN ESTRICTA: Solo acceder si el servidor respondió HTTP 200 y datos.ok === true
+        if (respuesta.status === 200 && respuesta.ok && datos.ok) {
             localStorage.setItem('patitasAlegreToken', datos.token);
-            alert(`¡Bienvenido a VetCare, ${datos.usuario.nombre}!`);
-            console.log('Usuario autenticado:', datos.usuario);
+            const userRol = (datos.usuario && datos.usuario.rol) ? datos.usuario.rol : rol;
+            localStorage.setItem('vetcare_rol', userRol);
+            localStorage.setItem('vetcare_usuario', JSON.stringify(datos.usuario || {}));
+
+            alert(`¡Bienvenido a VetCare, ${datos.usuario ? datos.usuario.nombre : 'Usuario'}!`);
+            window.location.href = "dashboard.html";
         } else {
-            alert(datos.mensaje || 'No se pudo iniciar sesión.');
+            // Rechazo: Credenciales inválidas (401), rol no correspondiente (403), etc.
+            const mensajeError = datos.mensaje || 
+                (respuesta.status === 401 ? 'Credenciales incorrectas. Verifica tu correo y contraseña.' : 
+                 respuesta.status === 403 ? 'La cuenta no tiene permisos para este rol o está inactiva.' :
+                 'Error al iniciar sesión.');
+
+            alert(mensajeError);
+            document.getElementById('passwordLogin').value = '';
+            // IMPORTANTE: NO se realiza redirección a dashboard.html
         }
 
     } catch (error) {
         console.error('Error al conectar con Flask:', error);
 
         alert(
-            'No se pudo conectar con el servidor Python. ' +
-            'Comprueba que Flask esté ejecutándose.'
+            'No se pudo conectar con el microservicio de autenticación (Python en puerto 5000). ' +
+            'Asegúrate de que Flask esté en ejecución.'
         );
     } finally {
         boton.disabled = false;

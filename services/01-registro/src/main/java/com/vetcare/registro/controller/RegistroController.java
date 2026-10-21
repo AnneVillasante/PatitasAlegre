@@ -16,12 +16,17 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/registro")
-@CrossOrigin(origins = {
-    "http://127.0.0.1:5000",
-    "http://localhost:5000",
-    "http://127.0.0.1:5500",
-    "http://localhost:5500"
-})
+@CrossOrigin(
+    originPatterns = "*",
+    allowedHeaders = "*",
+    methods = {
+        RequestMethod.GET,
+        RequestMethod.POST,
+        RequestMethod.PUT,
+        RequestMethod.DELETE,
+        RequestMethod.OPTIONS
+    }
+)
 public class RegistroController {
 
     private final UsuarioService usuarioService;
@@ -73,6 +78,16 @@ public class RegistroController {
                 "mensaje", e.getMessage()
             ));
         }
+    }
+
+    @GetMapping
+    public ResponseEntity<?> infoRegistro() {
+        return ResponseEntity.ok(Map.of(
+            "servicio", "VetCare - Registro",
+            "estado", "activo",
+            "metodoEsperado", "POST",
+            "mensaje", "Endpoint disponible para creación de cuentas de clientes vía POST."
+        ));
     }
 
     @GetMapping("/estado")

@@ -102,14 +102,6 @@ function entrarDemo() {
     localStorage.setItem("vetcare_rol", rol);
     window.location.href = "dashboard.html";
 }
-
-document.getElementById('loginForm').addEventListener('submit', function(e) {
-    const rol = document.getElementById("rolLogin").value;
-    localStorage.setItem("vetcare_rol", rol);
-    setTimeout(() => {
-        window.location.href = "dashboard.html";
-    }, 1000);
-});
 </script>
 
 </body>
