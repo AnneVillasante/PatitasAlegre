@@ -1,0 +1,130 @@
+# ==========================================
+# 1. Python (02-auth, 05-personal, scripts)
+# ==========================================
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# ==========================================
+# 2. Java / Maven (01-registro, 04-mascotas, 08-farmacia)
+# ==========================================
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.iml
+.mvn/timing.properties
+# NOTA: deja mvnw, mvnw.cmd y .mvn/wrapper/maven-wrapper.properties COMMITEADOS
+# (son necesarios para que el build funcione en otra máquina)
+
+# ==========================================
+# 3. Node.js (06-venta-node)
+# ==========================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+coverage/
+.npm/
+dist/
+build/
+
+# ==========================================
+# 4. PHP / Composer (03-propietarios, 07-citas, 10-notificaciones)
+# ==========================================
+vendor/
+composer.phar
+.phpunit.result.cache
+.phpunit.cache/
+# NOTA: composer.lock SÍ se commitea (fija versiones para producción)
+# NOTA: bin/ y public/ SÍ se commitean (son parte del código)
+
+# ==========================================
+# 5. Secretos y entornos
+# ==========================================
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.p12
+*.jks
+secrets/
+# NOTA: asegúrate de que cada servicio tenga su .env.example commiteado
+
+# ==========================================
+# 6. IDEs y editores
+# ==========================================
+.idea/
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+*.sw?
+.classpath
+.project
+.settings/
+*.suo
+*.ntvs*
+*.njsproj
+
+# ==========================================
+# 7. Sistema operativo
+# ==========================================
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# ==========================================
+# 8. Logs y temporales
+# ==========================================
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# ==========================================
+# 9. Bases de datos y dumps
+# ==========================================
+*.sqlite
+*.sqlite3
+*.db
+# Los dumps de esquema intencionales (database/schema.sql) SÍ se commitean
+# Solo ignora dumps locales grandes:
+database/dumps/*.sql
+!database/schema.sql
+!database/seeds/*.sql
+
+# ==========================================
+# 10. Docker
+# ==========================================
+docker-compose.override.yml
+.docker/
+
+# ==========================================
+# 11. Postman (workspace local)
+# ==========================================
+.postman/
+postman/.resources/
+# NOTA: las colecciones .json SÍ se commitean

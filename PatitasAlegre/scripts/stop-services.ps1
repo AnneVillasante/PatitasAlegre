@@ -40,17 +40,17 @@ foreach ($svc in $servicePorts) {
                 if ($proc) {
                     $procName = $proc.ProcessName
                     Stop-Process -Id $p -Force -ErrorAction SilentlyContinue
-                    Write-Host "  🛑 [$port] $name: Proceso $procName (PID $p) detenido." -ForegroundColor Green
+                    Write-Host "  🛑 [$port] ${name}: Proceso $procName (PID $p) detenido." -ForegroundColor Green
                     $stoppedCount++
                 }
             }
         }
         else {
-            Write-Host "  ⚪ [$port] $name: No estaba activo." -ForegroundColor DarkGray
+            Write-Host "  ⚪ [$port] ${name}: No estaba activo." -ForegroundColor DarkGray
         }
     }
     catch {
-        Write-Warning "No se pudo detener el proceso en el puerto $port: $_"
+        Write-Warning "No se pudo detener el proceso en el puerto ${port}: $_"
     }
 }
 

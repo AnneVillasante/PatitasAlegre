@@ -195,7 +195,7 @@ php -S localhost:8007 -t public
 - **Tecnología:** Java 17 + Spring Boot + Jackson XML
 ```powershell
 cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\08-farmacia
-mvn spring-boot:run
+mvn clean spring-boot:run
 ```
 
 ---
