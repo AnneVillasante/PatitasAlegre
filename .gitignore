@@ -128,3 +128,12 @@ docker-compose.override.yml
 .postman/
 postman/.resources/
 # NOTA: las colecciones .json SÍ se commitean
+
+# ==========================================
+# 12. WSO2 / Infraestructura
+# ==========================================
+wso2ei-*/
+wso2bps-*/
+repository/
+*.car
+*.pid

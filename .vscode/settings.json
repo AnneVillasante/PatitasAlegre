@@ -1,4 +1,13 @@
 {
+    "python.defaultInterpreterPath": "${workspaceFolder}/services/02-auth/.venv/Scripts/python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/services/02-auth",
+        "${workspaceFolder}/services/05-personal"
+    ],
+    "python.autoComplete.extraPaths": [
+        "${workspaceFolder}/services/02-auth",
+        "${workspaceFolder}/services/05-personal"
+    ],
     "Codegeex.CommitMessage.LanguagePreference": "English",
     "Codegeex.SidebarUI.LanguagePreference": "English",
     "Codegeex.Chat.LanguagePreference": "English",

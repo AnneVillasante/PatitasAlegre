@@ -23,7 +23,7 @@ Asegúrate de contar con las siguientes herramientas instaladas en tu sistema:
 
 ## 🗄️ 2. Configuración de la Base de Datos MySQL
 
-El proyecto cuenta con scripts en la carpeta [`database/`](file:///c:/Users/suemy/OneDrive/Escritorio/PatitasAlegre/PatitasAlegre/database) que deben ejecutarse en el siguiente orden estricto:
+El proyecto cuenta con scripts en la carpeta [`database/`](file:///c:/PatitasAlegre/database) que deben ejecutarse en el siguiente orden estricto:
 
 ### Paso 2.1: Iniciar el servicio de MySQL
 Verifica que el servicio esté corriendo en el puerto por defecto `3306`:
@@ -32,10 +32,10 @@ Get-Service -Name MySQL* | Start-Service
 ```
 
 ### Paso 2.2: Ejecutar los scripts SQL
-Abre una terminal en la carpeta raíz del proyecto (`PatitasAlegre/`) y ejecuta con tu usuario `root` de MySQL:
+Abre una terminal en la carpeta raíz del proyecto (`C:\PatitasAlegre`) y ejecuta con tu usuario `root` de MySQL:
 
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\database
+cd database
 
 # 1. Crear todas las bases de datos y tablas de la clínica
 mysql -u root -p < database.sql
@@ -113,7 +113,7 @@ Para la **Fase 1 (Pruebas Individuales / Desarrollo)**, cada servicio se ejecuta
 - **Puerto:** `8080`
 - **Tecnología:** Java 17 + Spring Boot
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\01-registro
+cd services\01-registro
 .\mvnw.cmd spring-boot:run
 ```
 
@@ -123,7 +123,7 @@ cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\01-re
 - **Puerto:** `5000`
 - **Tecnología:** Python 3 + Flask + PyJWT
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\02-auth
+cd services\02-auth
 # Si tienes entorno virtual:
 .\.venv\Scripts\Activate.ps1
 # Instalar dependencias si es la primera vez:
@@ -138,7 +138,7 @@ python app.py
 - **Puerto:** `8003`
 - **Tecnología:** PHP 8 + PDO
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\03-propietarios
+cd services\03-propietarios
 # Instalar dependencias si no está la carpeta vendor:
 composer install
 # Iniciar servidor embebido PHP:
@@ -151,7 +151,7 @@ php -S localhost:8003 -t public
 - **Puerto:** `8081`
 - **Tecnología:** Java 17 + Spring Boot
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\04-mascotas
+cd services\04-mascotas
 .\mvnw.cmd spring-boot:run
 ```
 
@@ -161,7 +161,7 @@ cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\04-ma
 - **Puerto:** `8005`
 - **Tecnología:** Python 3 + Flask + XML
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\05-personal
+cd services\05-personal
 pip install -r requirements.txt
 python app.py
 ```
@@ -172,7 +172,7 @@ python app.py
 - **Puerto:** `3000`
 - **Tecnología:** Node.js + Express + MySQL2
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\06-venta-node
+cd services\06-venta-node
 npm install
 node server.js
 ```
@@ -183,7 +183,7 @@ node server.js
 - **Puerto:** `8007`
 - **Tecnología:** PHP 8 + PDO
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\07-citas
+cd services\07-citas
 composer install
 php -S localhost:8007 -t public
 ```
@@ -194,7 +194,7 @@ php -S localhost:8007 -t public
 - **Puerto:** `8008`
 - **Tecnología:** Java 17 + Spring Boot + Jackson XML
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\08-farmacia
+cd services\08-farmacia
 mvn clean spring-boot:run
 ```
 
@@ -204,7 +204,7 @@ mvn clean spring-boot:run
 - **Puerto:** `8010`
 - **Tecnología:** PHP 8 + PHPMailer
 ```powershell
-cd c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\services\10-notificaciones
+cd services\10-notificaciones
 composer install
 php -S localhost:8010 -t public
 ```
@@ -216,7 +216,7 @@ php -S localhost:8010 -t public
 Una vez que tengas los servicios levantados, ejecuta el script de verificación automatizada:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\PatitasAlegre\scripts\phase1-smoke.ps1
+powershell -ExecutionPolicy Bypass -File .\scripts\phase1-smoke.ps1
 ```
 
 El script validará la conectividad en los puertos y respuestas XML esperadas:
@@ -230,7 +230,7 @@ El script validará la conectividad en los puertos y respuestas XML esperadas:
 
 ## 💻 6. Acceso al Frontend y Dashboard
 
-Las interfaces de usuario se encuentran en [`frontend/usuario/`](file:///c:/Users/suemy/OneDrive/Escritorio/PatitasAlegre/PatitasAlegre/frontend/usuario/):
+Las interfaces de usuario se encuentran en [`frontend/usuario/`](file:///c:/PatitasAlegre/frontend/usuario/):
 
 | Módulo / Interfaz | Archivo | Descripción |
 | :--- | :--- | :--- |
@@ -248,5 +248,5 @@ Las interfaces de usuario se encuentran en [`frontend/usuario/`](file:///c:/User
 ### Para abrirlas en el navegador:
 Simplemente haz doble clic en cualquier archivo `.html` o ejecuta desde PowerShell:
 ```powershell
-Start-Process "c:\Users\suemy\OneDrive\Escritorio\PatitasAlegre\PatitasAlegre\frontend\usuario\dashboard.html"
+Start-Process "frontend\usuario\dashboard.html"
 ```

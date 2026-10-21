@@ -1,6 +1,0 @@
-$kind: http-request
-url: "{{base_farmacia}}/farmacia/productos"
-method: GET
-headers:
-  Accept: application/xml
-order: 1000

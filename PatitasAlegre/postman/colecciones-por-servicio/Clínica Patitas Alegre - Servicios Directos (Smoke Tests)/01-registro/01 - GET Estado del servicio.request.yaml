@@ -1,4 +1,0 @@
-$kind: http-request
-url: "{{base_registro}}/api/registro/estado"
-method: GET
-order: 1000
