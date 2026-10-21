@@ -392,6 +392,7 @@
                             <h2 id="dbTablaTitulo" style="margin-bottom: 0;">Mascotas</h2>
                             <span id="dbTablaBadgeTipo" class="badge-tabla-crud">CRUD COMPLETO</span>
                             <span id="dbTablaSchemaTag" style="font-size: 12px; color: var(--vet-muted); font-family: monospace;">clinica_mascotas.mascotas</span>
+                            <span id="dbConexionBadge" class="badge badge-activo" style="font-size: 11px; padding: 4px 10px;">🟢 Conectado a MySQL</span>
                         </div>
                         <p id="dbTablaDescripcion" style="margin-top: 6px; margin-bottom: 0;">Catálogo principal de pacientes caninos, felinos y especies registradas.</p>
                     </div>
@@ -731,9 +732,9 @@
     // ============================================================
     // MOTOR DE INTERFAZ DEL GESTOR DE BASE DE DATOS
     // ============================================================
-    function inicializarGestorBD() {
+    async function inicializarGestorBD() {
         renderizarArbolTablas();
-        seleccionarTabla("mascotas");
+        await seleccionarTabla("mascotas");
     }
 
     // Renderizar lista de esquemas y tablas en la barra lateral
@@ -791,8 +792,24 @@
         renderizarArbolTablas(val);
     }
 
+    // Actualizar badge de conexión con MySQL
+    function actualizarBadgeConexion() {
+        const badge = document.getElementById("dbConexionBadge");
+        if (!badge) return;
+        if (VetcareDB.isLive) {
+            badge.className = "badge badge-activo";
+            badge.textContent = "🟢 Conectado a MySQL en Vivo";
+            badge.title = "Conectado a MySQL mediante los usuarios asignados en DB_users.sql";
+        } else {
+            badge.className = "badge";
+            badge.style.background = "#fff3cd";
+            badge.style.color = "#856404";
+            badge.textContent = "🟠 Modo Offline (Cache Local)";
+        }
+    }
+
     // Seleccionar una tabla y cargar sus datos
-    function seleccionarTabla(nombreTabla) {
+    async function seleccionarTabla(nombreTabla) {
         tablaActivaNombre = nombreTabla;
         const config = VetcareDB.getTableConfig(nombreTabla);
         if (!config) return;
@@ -822,8 +839,9 @@
             alertaLog.style.display = "none";
         }
 
-        // Cargar registros
-        registrosActuales = VetcareDB.getTableData(nombreTabla);
+        // Cargar registros reales de MySQL mediante VetcareDB
+        registrosActuales = await VetcareDB.fetchTableData(nombreTabla);
+        actualizarBadgeConexion();
         registrosFiltrados = [...registrosActuales];
         paginaActual = 1;
         document.getElementById("busquedaRegistrosInput").value = "";
@@ -1067,7 +1085,7 @@
         });
     }
 
-    function guardarRegistroCrud(e) {
+    async function guardarRegistroCrud(e) {
         e.preventDefault();
         const config = VetcareDB.getTableConfig(tablaActivaNombre);
         if (!config || config.isLog) return;
@@ -1087,13 +1105,13 @@
 
         try {
             if (registroEnEdicionId) {
-                VetcareDB.updateRecord(tablaActivaNombre, registroEnEdicionId, record);
+                await VetcareDB.updateRecord(tablaActivaNombre, registroEnEdicionId, record);
             } else {
-                VetcareDB.createRecord(tablaActivaNombre, record);
+                await VetcareDB.createRecord(tablaActivaNombre, record);
             }
 
             cerrarModalCrud();
-            seleccionarTabla(tablaActivaNombre);
+            await seleccionarTabla(tablaActivaNombre);
             renderizarDashboardPorRol(); // Actualiza contadores si aplica
         } catch (err) {
             const errBox = document.getElementById("mensajeErrorFormulario");
@@ -1122,13 +1140,13 @@
         registroAEliminarId = null;
     }
 
-    function ejecutarEliminacion() {
+    async function ejecutarEliminacion() {
         if (!registroAEliminarId) return;
 
         try {
-            VetcareDB.deleteRecord(tablaActivaNombre, registroAEliminarId);
+            await VetcareDB.deleteRecord(tablaActivaNombre, registroAEliminarId);
             cerrarModalEliminar();
-            seleccionarTabla(tablaActivaNombre);
+            await seleccionarTabla(tablaActivaNombre);
             renderizarDashboardPorRol();
         } catch (err) {
             alert(err.message);

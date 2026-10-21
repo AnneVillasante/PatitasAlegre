@@ -212,8 +212,8 @@
         cargarMascotas();
     });
 
-    function cargarMascotas() {
-        listaMascotas = VetcareDB.getTableData("mascotas");
+    async function cargarMascotas() {
+        listaMascotas = await VetcareDB.fetchTableData("mascotas");
         renderizarMascotas();
     }
 
@@ -373,7 +373,7 @@
         actualizarSelectRazas();
     }
 
-    function guardarMascota(e) {
+    async function guardarMascota(e) {
         e.preventDefault();
         const idEdit = document.getElementById("editMascotaId").value;
 
@@ -392,20 +392,20 @@
         };
 
         if (idEdit) {
-            VetcareDB.updateRecord("mascotas", idEdit, record);
+            await VetcareDB.updateRecord("mascotas", idEdit, record);
         } else {
             record.codigo = "MAS-" + String(listaMascotas.length + 1).padStart(3, "0");
-            VetcareDB.createRecord("mascotas", record);
+            await VetcareDB.createRecord("mascotas", record);
         }
 
         limpiarFormulario();
-        cargarMascotas();
+        await cargarMascotas();
     }
 
-    function eliminarMascota(id, nombre) {
+    async function eliminarMascota(id, nombre) {
         if (confirm(`¿Estás seguro de dar de baja o eliminar el expediente de ${nombre}?`)) {
-            VetcareDB.deleteRecord("mascotas", id);
-            cargarMascotas();
+            await VetcareDB.deleteRecord("mascotas", id);
+            await cargarMascotas();
         }
     }
 </script>

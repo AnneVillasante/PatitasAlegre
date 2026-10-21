@@ -9,7 +9,12 @@ import java.util.Map;
 @Component
 public class XmlBuilder {
 
-    private final XmlMapper xmlMapper = new XmlMapper();
+    private final XmlMapper xmlMapper;
+
+    public XmlBuilder() {
+        this.xmlMapper = new XmlMapper();
+        this.xmlMapper.findAndRegisterModules();
+    }
 
     public String buildSuccess(String rootName, Map<String, Object> data) {
         return serialize(rootName, data);

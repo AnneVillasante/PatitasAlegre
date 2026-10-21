@@ -160,9 +160,9 @@
 
 <script src="js/roles.js"></script>
 <script>
-const URL_SERVICIO = "http://localhost:8008/farmacia";
+const URL_SERVICIO = "http://127.0.0.1:8008/farmacia";
 
-const CATALOGO = [
+const CATALOGO_DEFAULT = [
     { id: 1, codigo: "MED-001", nombre: "Amoxicilina + Ác. Clavulánico", categoria: "Antibióticos", presentacion: "Caja 20 comprimidos 250mg", stock: 45, precio: 38.50, ventaLibre: false },
     { id: 2, codigo: "MED-002", nombre: "Meloxicam Gotas 0.5%", categoria: "Antiinflamatorios", presentacion: "Frasco gotero 10ml", stock: 22, precio: 29.00, ventaLibre: true },
     { id: 3, codigo: "MED-003", nombre: "Bravecto Antiparasitario", categoria: "Antiparasitarios", presentacion: "Comprimido masticable (10-20kg)", stock: 15, precio: 110.00, ventaLibre: true },
@@ -173,13 +173,42 @@ const CATALOGO = [
     { id: 8, codigo: "MED-008", nombre: "Complejo B + Hierro Inyectable", categoria: "Vitaminas", presentacion: "Frasco ampolla 50ml", stock: 12, precio: 32.00, ventaLibre: true }
 ];
 
+let catalogoActivo = [...CATALOGO_DEFAULT];
 let itemsOrden = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     inicializarRolesUI("farmacia");
     configurarModoSegunRol();
-    renderizarCatalogo();
+    renderizarCatalogo(catalogoActivo);
+    cargarProductosDesdeServicio();
 });
+
+async function cargarProductosDesdeServicio() {
+    try {
+        const resp = await fetch(`${URL_SERVICIO}/productos`);
+        if (resp.ok) {
+            const xmlText = await resp.text();
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+            const prodsXml = Array.from(xmlDoc.querySelectorAll("producto"));
+            if (prodsXml.length > 0) {
+                catalogoActivo = prodsXml.map(p => ({
+                    id: parseInt(p.querySelector("idProducto")?.textContent || "0", 10),
+                    codigo: p.querySelector("codigo")?.textContent || "",
+                    nombre: p.querySelector("nombre")?.textContent || "",
+                    categoria: "Fármaco",
+                    presentacion: p.querySelector("presentacion")?.textContent || "Estándar",
+                    stock: parseInt(p.querySelector("stock")?.textContent || "0", 10),
+                    precio: parseFloat(p.querySelector("precio")?.textContent || "0"),
+                    ventaLibre: p.querySelector("requiereReceta")?.textContent === "false"
+                }));
+                renderizarCatalogo(catalogoActivo);
+            }
+        }
+    } catch (e) {
+        console.warn("Fallo carga en vivo de farmacia desde MySQL (8008), usando catálogo local:", e);
+    }
+}
 
 function configurarModoSegunRol() {
     const rol = obtenerRolActual();
@@ -264,7 +293,7 @@ function filtrarFarmacos() {
     const q = document.getElementById("buscadorFarmacos").value.toLowerCase().trim();
     const cat = document.getElementById("filtroCategoria").value;
 
-    const filtrados = CATALOGO.filter(p => {
+    const filtrados = catalogoActivo.filter(p => {
         const coincideTexto = p.nombre.toLowerCase().includes(q) || p.codigo.toLowerCase().includes(q);
         const coincideCat = cat ? p.categoria === cat : true;
         return coincideTexto && coincideCat;
@@ -274,7 +303,7 @@ function filtrarFarmacos() {
 }
 
 function agregarItem(idProducto) {
-    const p = CATALOGO.find(item => item.id === idProducto);
+    const p = catalogoActivo.find(item => item.id === idProducto);
     if (!p) return;
 
     const itemExistente = itemsOrden.find(item => item.idProducto === idProducto);

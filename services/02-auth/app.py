@@ -315,16 +315,76 @@ def iniciar_sesion():
 
 
 # =========================================================
+# API PUENTE UNIVERSAL DE BASE DE DATOS (CRUD & LOGS)
+# Conexión directa a MySQL con los usuarios de DB_users.sql
+# =========================================================
+import db_bridge
+
+@app.route("/api/db/<tabla>", methods=["GET"])
+def api_db_listar(tabla):
+    try:
+        registros = db_bridge.listar_registros(tabla)
+        return jsonify({"ok": True, "origen": "mysql", "tabla": tabla, "datos": registros}), 200
+    except ValueError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 404
+    except Exception as e:
+        app.logger.exception(f"Error al consultar tabla {tabla}")
+        return jsonify({"ok": False, "mensaje": str(e)}), 500
+
+@app.route("/api/db/<tabla>", methods=["POST"])
+def api_db_insertar(tabla):
+    datos = request.get_json(silent=True) or {}
+    try:
+        resultado = db_bridge.insertar_registro(tabla, datos)
+        return jsonify({"ok": True, "mensaje": "Registro creado en MySQL.", "registro": resultado}), 201
+    except PermissionError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 403
+    except ValueError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 404
+    except Exception as e:
+        app.logger.exception(f"Error al insertar en tabla {tabla}")
+        return jsonify({"ok": False, "mensaje": str(e)}), 500
+
+@app.route("/api/db/<tabla>/<id_registro>", methods=["PUT"])
+def api_db_actualizar(tabla, id_registro):
+    datos = request.get_json(silent=True) or {}
+    try:
+        resultado = db_bridge.actualizar_registro(tabla, id_registro, datos)
+        return jsonify({"ok": True, "mensaje": "Registro actualizado en MySQL.", "registro": resultado}), 200
+    except PermissionError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 403
+    except ValueError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 404
+    except Exception as e:
+        app.logger.exception(f"Error al actualizar en tabla {tabla}")
+        return jsonify({"ok": False, "mensaje": str(e)}), 500
+
+@app.route("/api/db/<tabla>/<id_registro>", methods=["DELETE"])
+def api_db_eliminar(tabla, id_registro):
+    try:
+        db_bridge.eliminar_registro(tabla, id_registro)
+        return jsonify({"ok": True, "mensaje": f"Registro #{id_registro} eliminado de MySQL."}), 200
+    except PermissionError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 403
+    except ValueError as e:
+        return jsonify({"ok": False, "mensaje": str(e)}), 404
+    except Exception as e:
+        app.logger.exception(f"Error al eliminar en tabla {tabla}")
+        return jsonify({"ok": False, "mensaje": str(e)}), 500
+
+
+# =========================================================
 # EJECUTAR FLASK Y ABRIR VETCARE AUTOMATICAMENTE
 # =========================================================
 
 if __name__ == "__main__":
-    Timer(
-        1.5,
-        lambda: webbrowser.open(
-            f"http://127.0.0.1:{PUERTO}/"
-        )
-    ).start()
+    if not os.getenv("NO_BROWSER"):
+        Timer(
+            1.5,
+            lambda: webbrowser.open(
+                f"http://127.0.0.1:{PUERTO}/"
+            )
+        ).start()
 
     app.run(
         host="127.0.0.1",

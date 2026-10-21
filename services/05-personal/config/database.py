@@ -12,11 +12,11 @@ def conectar():
     if _connection is None or not _connection.is_connected():
         try:
             _connection = mysql.connector.connect(
-                host=os.getenv('DB_HOST', 'localhost'),
+                host=os.getenv('DB_HOST', '127.0.0.1'),
                 port=int(os.getenv('DB_PORT', '3306')),
                 database=os.getenv('DB_NAME', 'clinica_veterinarios'),
                 user=os.getenv('DB_USER', 'svc_veterinarios'),
-                password=os.getenv('DB_PASS', ''),
+                password=os.getenv('DB_PASS', 'Vet2026!'),
                 charset='utf8mb4',
             )
         except Error as error:

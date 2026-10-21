@@ -12,11 +12,11 @@ class Database
     public static function conectar(): PDO
     {
         if (self::$pdo === null) {
-            $host = $_ENV['DB_HOST'] ?? 'localhost';
+            $host = $_ENV['DB_HOST'] ?? '127.0.0.1';
             $port = $_ENV['DB_PORT'] ?? '3306';
             $name = $_ENV['DB_NAME'] ?? 'clinica_propietarios';
             $user = $_ENV['DB_USER'] ?? 'svc_propietarios';
-            $pass = $_ENV['DB_PASS'] ?? '';
+            $pass = $_ENV['DB_PASS'] ?? 'Prop2026!';
 
             try {
                 self::$pdo = new PDO(

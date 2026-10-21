@@ -103,7 +103,7 @@ public class VentaController {
         item.put("stock", producto.getStock());
         item.put("stockMinimo", producto.getStockMinimo());
         item.put("requiereReceta", producto.getRequiereReceta());
-        item.put("fechaVencimiento", producto.getFechaVencimiento());
+        item.put("fechaVencimiento", producto.getFechaVencimiento() != null ? producto.getFechaVencimiento().toString() : "");
         return item;
     }
 

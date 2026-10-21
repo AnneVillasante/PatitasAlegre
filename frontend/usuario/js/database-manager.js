@@ -956,6 +956,31 @@ const VetcareDB = {
         return Object.values(DB_CATALOG.tables).filter(t => t.schema === schemaId);
     },
 
+    API_BASE_URL: "http://127.0.0.1:5000/api/db",
+    isLive: false,
+
+    async fetchTableData(tableName) {
+        const config = this.getTableConfig(tableName);
+        if (!config) return [];
+
+        try {
+            const resp = await fetch(`${this.API_BASE_URL}/${tableName}`);
+            if (resp.ok) {
+                const resJson = await resp.json();
+                if (resJson && resJson.ok && Array.isArray(resJson.datos)) {
+                    this.isLive = true;
+                    this.saveTableData(tableName, resJson.datos);
+                    return resJson.datos;
+                }
+            }
+        } catch (e) {
+            // El backend no está accesible, fallback a localStorage/semilla
+            this.isLive = false;
+        }
+
+        return this.getTableData(tableName);
+    },
+
     getTableData(tableName) {
         const config = this.getTableConfig(tableName);
         if (!config) return [];
@@ -977,13 +1002,30 @@ const VetcareDB = {
         localStorage.setItem(this.getStorageKey(tableName), JSON.stringify(data));
     },
 
-    createRecord(tableName, record) {
+    async createRecord(tableName, record) {
         const config = this.getTableConfig(tableName);
         if (!config) throw new Error("Tabla no encontrada");
 
         // VALIDACIÓN ESTRICTA: Tablas de logs son de solo lectura
         if (config.isLog) {
             throw new Error(`OPERACIÓN DENEGADA: La tabla '${tableName}' es un LOG DE AUDITORÍA y no permite inserciones manuales.`);
+        }
+
+        // Si hay conexión viva, guardar en MySQL primero
+        if (this.isLive) {
+            try {
+                const resp = await fetch(`${this.API_BASE_URL}/${tableName}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(record)
+                });
+                const resJson = await resp.json();
+                if (resp.ok && resJson.ok) {
+                    return await this.fetchTableData(tableName);
+                }
+            } catch (e) {
+                console.warn("Fallo guardado en MySQL, guardando localmente:", e);
+            }
         }
 
         const data = this.getTableData(tableName);
@@ -1003,13 +1045,29 @@ const VetcareDB = {
         return record;
     },
 
-    updateRecord(tableName, id, updatedFields) {
+    async updateRecord(tableName, id, updatedFields) {
         const config = this.getTableConfig(tableName);
         if (!config) throw new Error("Tabla no encontrada");
 
         // VALIDACIÓN ESTRICTA: Tablas de logs no se pueden modificar
         if (config.isLog) {
             throw new Error(`OPERACIÓN DENEGADA: La tabla '${tableName}' es un LOG DE AUDITORÍA y es inmutable.`);
+        }
+
+        if (this.isLive) {
+            try {
+                const resp = await fetch(`${this.API_BASE_URL}/${tableName}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(updatedFields)
+                });
+                const resJson = await resp.json();
+                if (resp.ok && resJson.ok) {
+                    return await this.fetchTableData(tableName);
+                }
+            } catch (e) {
+                console.warn("Fallo actualización en MySQL, actualizando local:", e);
+            }
         }
 
         const data = this.getTableData(tableName);
@@ -1025,13 +1083,28 @@ const VetcareDB = {
         return data[index];
     },
 
-    deleteRecord(tableName, id) {
+    async deleteRecord(tableName, id) {
         const config = this.getTableConfig(tableName);
         if (!config) throw new Error("Tabla no encontrada");
 
         // VALIDACIÓN ESTRICTA: Tablas de logs no se pueden eliminar
         if (config.isLog) {
             throw new Error(`OPERACIÓN DENEGADA: La tabla '${tableName}' es un LOG DE AUDITORÍA y sus registros no se pueden borrar.`);
+        }
+
+        if (this.isLive) {
+            try {
+                const resp = await fetch(`${this.API_BASE_URL}/${tableName}/${id}`, {
+                    method: "DELETE"
+                });
+                const resJson = await resp.json();
+                if (resp.ok && resJson.ok) {
+                    await this.fetchTableData(tableName);
+                    return true;
+                }
+            } catch (e) {
+                console.warn("Fallo eliminación en MySQL, eliminando local:", e);
+            }
         }
 
         let data = this.getTableData(tableName);
