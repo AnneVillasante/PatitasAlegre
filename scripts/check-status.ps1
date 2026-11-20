@@ -27,32 +27,36 @@ $sections = @(
         )
     },
     @{
-        Title = "[2] MICROSERVICIOS INDIVIDUALES"
+        Title = "[2] MICROSERVICIOS INTERNOS Y ENTIDADES EXTERNAS"
         Items = @(
             @{ Name = "01-registro (Spring Boot)"; Port = 8080; Role = "Registro usuarios" },
             @{ Name = "02-auth (Python Flask)"; Port = 5000; Role = "Autenticacion JWT" },
-            @{ Name = "03-propietarios (PHP)"; Port = 8003; Role = "Gestion de dueños" },
+            @{ Name = "03-propietarios (PHP)"; Port = 8003; Role = "Gestion de duenos" },
             @{ Name = "04-mascotas (Spring Boot)"; Port = 8081; Role = "Expediente mascotas" },
             @{ Name = "05-personal (Python Flask)"; Port = 8005; Role = "Personal medico" },
             @{ Name = "06-venta-node (Node.js)"; Port = 3000; Role = "Pet shop / accesorios" },
             @{ Name = "07-citas (PHP)"; Port = 8007; Role = "Agenda medica" },
             @{ Name = "08-farmacia (Spring Boot)"; Port = 8008; Role = "Farmacia veterinaria" },
-            @{ Name = "10-notificaciones (PHP)"; Port = 8010; Role = "Alertas y emails" }
+            @{ Name = "09-pagos (Node.js)"; Port = 8089; Role = "Procesamiento de pagos" },
+            @{ Name = "10-notificaciones (PHP)"; Port = 8010; Role = "Alertas y emails" },
+            @{ Name = "PseudoRENIEC (B2B Externo)"; Port = 8091; Role = "Padron DNI / Ciudadanos" },
+            @{ Name = "PseudoSUNAT (B2B Externo)"; Port = 8092; Role = "Facturacion CPE y RUC" }
         )
     },
     @{
-        Title = "[3] ORQUESTACION (ESB / WSO2)"
+        Title = "[3] ORQUESTACION Y GATEWAY SOA"
         Items = @(
-            @{ Name = "WSO2 ESB Gateway"; Port = 8280; Role = "Proxy / Synapse Services" },
-            @{ Name = "WSO2 Carbon Admin Console"; Port = 9443; Role = "BPS / Admin Console" }
+            @{ Name = "ESB Gateway & Orquestador"; Port = 8290; Role = "Mediador, Proxies B2B y Sagas" },
+            @{ Name = "WSO2 ESB Gateway (Opcional)"; Port = 8280; Role = "Synapse Services clasico" }
         )
     },
     @{
-        Title = "[4] COREOGRAFIA (ActiveMQ Broker)"
+        Title = "[4] MENSAJERIA Y BROKERS"
         Items = @(
-            @{ Name = "ActiveMQ OpenWire (Java JMS)"; Port = 61616; Role = "Eventos Farmacia / Pagos" },
-            @{ Name = "ActiveMQ STOMP (PHP Listener)"; Port = 61613; Role = "Eventos Notificaciones" },
-            @{ Name = "ActiveMQ Web Console"; Port = 8161; Role = "Panel de Topics / Colas" }
+            @{ Name = "RabbitMQ AMQP"; Port = 5672; Role = "Broker de eventos SOA (patitas.eventos)" },
+            @{ Name = "RabbitMQ Panel Web"; Port = 15672; Role = "Administracion RabbitMQ" },
+            @{ Name = "ActiveMQ OpenWire"; Port = 61616; Role = "Eventos Farmacia / Pagos" },
+            @{ Name = "ActiveMQ Web Console"; Port = 8161; Role = "Panel ActiveMQ" }
         )
     }
 )

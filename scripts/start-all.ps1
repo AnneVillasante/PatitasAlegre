@@ -111,7 +111,7 @@ Write-Host "🌐 Levantando servicios externos B2B..." -ForegroundColor Yellow
 
 $parentDir = Split-Path -Parent $root
 
-$rutaPseudoReniec = Join-Path $parentDir "PseudoReniec"
+$rutaPseudoReniec = if (Test-Path (Join-Path $root "PseudoReniec")) { Join-Path $root "PseudoReniec" } else { Join-Path $parentDir "PseudoReniec" }
 if (Test-Path $rutaPseudoReniec) {
     Write-Host "  ▶  PseudoRENIEC (Node.js - puerto 8091)..." -ForegroundColor Magenta
     $cmdReniec = "cd '$rutaPseudoReniec'; Write-Host '=== PseudoRENIEC (B2B Externo - 8091) ===' -ForegroundColor Magenta; npm start"
@@ -119,7 +119,7 @@ if (Test-Path $rutaPseudoReniec) {
     if (-not $SkipWait) { Start-Sleep -Seconds 1 }
 }
 
-$rutaPseudoSunat = Join-Path $parentDir "PseudoSunat"
+$rutaPseudoSunat = if (Test-Path (Join-Path $root "PseudoSunat")) { Join-Path $root "PseudoSunat" } else { Join-Path $parentDir "PseudoSunat" }
 if (Test-Path $rutaPseudoSunat) {
     Write-Host "  ▶  PseudoSUNAT (PHP - puerto 8092)..." -ForegroundColor Magenta
     $cmdSunat = "cd '$rutaPseudoSunat'; Write-Host '=== PseudoSUNAT (B2B Externo - 8092) ===' -ForegroundColor Magenta; php -S 0.0.0.0:8092 -t public public/router.php"

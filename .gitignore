@@ -136,4 +136,5 @@ wso2ei-*/
 wso2bps-*/
 repository/
 *.car
-*.pid
+*.pid
+DEMOSTRACION_PROYECTO_SOA_B2B.txt
