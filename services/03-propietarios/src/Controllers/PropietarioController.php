@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Services\PropietarioService;
+use App\Services\EsbClient;
 use App\Validators\PropietarioValidator;
 use App\Xml\XmlBuilder;
 use App\Xml\XmlParser;
@@ -75,6 +76,30 @@ class PropietarioController
                 $this->service->eliminar($datos['dni'])
             );
         }, 'eliminarPropietarioResponse');
+    }
+
+    /** Delega la consulta B2B de RUC al ESB Gateway (puerto 8290) -> PseudoSunat (puerto 8091). */
+    public function consultarRucDemo(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        try {
+            $entrada = json_decode((string) file_get_contents('php://input'), true);
+            if (!is_array($entrada)) {
+                throw new InvalidArgumentException('Envía un JSON válido con el campo ruc.');
+            }
+            $ruc = (string) ($entrada['ruc'] ?? '');
+            $resEsb = (new EsbClient())->consultarRucSunat($ruc);
+
+            http_response_code($resEsb['httpCode']);
+            echo json_encode($resEsb['body'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        } catch (InvalidArgumentException $e) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'modo' => 'B2B-ESB', 'mensaje' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+        } catch (\Throwable $e) {
+            http_response_code(500);
+            error_log($e->getMessage());
+            echo json_encode(['success' => false, 'modo' => 'B2B-ESB', 'mensaje' => 'No se pudo procesar la consulta B2B.'], JSON_UNESCAPED_UNICODE);
+        }
     }
 
     private function responder(callable $logica, string $rootName): void

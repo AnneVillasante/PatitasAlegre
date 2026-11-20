@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/test-db"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Conexión con MySQL exitosa', function () {
+          pm.expect(pm.response.code).to.eql(200);
+          var data = pm.response.json();
+          pm.expect(data.conectado).to.be.true;
+      });
+order: 1000

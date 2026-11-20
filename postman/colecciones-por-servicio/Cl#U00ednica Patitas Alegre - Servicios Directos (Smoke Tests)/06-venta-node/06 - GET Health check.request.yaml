@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_venta}}/api/salud"
+method: GET
+order: 1000

@@ -1,20 +1,32 @@
 {
   "esb": {
-    "baseUrl": "http://localhost:8280/services",
-    "managementUrl": "https://localhost:9443/carbon"
+    "baseUrl": "http://localhost:8290/services"
   },
   "services": {
+    "registro": "http://localhost:8080",
+    "auth": "http://localhost:5000",
     "propietarios": "http://localhost:8003",
-    "veterinarios": "http://localhost:8005",
+    "mascotas": "http://localhost:8081",
+    "personal": "http://localhost:8005",
+    "venta": "http://localhost:3000",
     "citas": "http://localhost:8007",
     "farmacia": "http://localhost:8008",
+    "pagos": "http://localhost:8089",
     "notificaciones": "http://localhost:8010"
+  },
+  "externalB2B": {
+    "PseudoReniec": {
+      "baseUrl": "http://localhost:8091/ws/reniec/consultar"
+    },
+    "PseudoSunat": {
+      "baseUrl": "http://localhost:8092/ws/sunat/facturacion",
+      "consultaRucUrl": "http://localhost:8092/sunat/consultar-ruc",
+      "apiKey": "SUNAT-B2B-SECRET-2026"
+    }
   },
   "proxies": {
     "PropietariosProxy": ["/propietarios/registrar", "/propietarios/consultar", "/propietarios/listar", "/propietarios/actualizar", "/propietarios/eliminar"],
-    "VeterinariosProxy": ["/veterinarios/registrar", "/veterinarios/consultar", "/veterinarios/listar", "/veterinarios/disponibles", "/veterinarios/especialidades", "/veterinarios/disponibilidad"],
-    "CitasProxy": ["/citas/crear", "/citas/consultar", "/citas/listar", "/citas/cancelar"],
-    "FarmaciaProxy": ["/farmacia/ventas/iniciar"],
-    "NotificacionesProxy": ["/notificaciones/enviar"]
+    "SunatProxy": ["/sunat/consultar-ruc"],
+    "ReniecProxy": ["/ws/reniec/consultar"]
   }
 }

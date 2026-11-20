@@ -1,0 +1,12 @@
+$kind: http-request
+url: "{{baseUrl}}/veterinarios/registrar"
+method: POST
+headers:
+  Content-Type: text/xml
+body:
+  type: text
+  content: <registrarVeterinarioRequest><nombres>Ana</nombres><apellidos>Prueba</apellidos><colegiatura>AB</colegiatura></registrarVeterinarioRequest>
+scripts:
+  - type: afterResponse
+    code: pm.test('Devuelve error de validación', function () { pm.expect(pm.response.status).to.eql('BAD REQUEST'); });
+order: 4000

@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/notificaciones/consultar/{{codigo}}"
+method: GET
+order: 2000

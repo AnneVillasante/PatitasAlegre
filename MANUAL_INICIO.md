@@ -107,7 +107,66 @@ Revisa o copia los archivos `.env.example` en cada carpeta de servicio donde exi
 
 ## 🚀 4. Guía de Ejecución de los Microservicios
 
-Para la **Fase 1 (Pruebas Individuales / Desarrollo)**, cada servicio se ejecuta en su propia ventana de terminal PowerShell.
+Para la ejecución del sistema completo, se recomienda iniciar primero los servicios externos B2B autónomos y el ESB Gateway, seguidos de los microservicios internos.
+
+### 🌐 4.0 Servicios Externos B2B (Entorno Autónomo)
+
+Antes de levantar el ESB Gateway o los microservicios internos, levantar los servicios B2B independientes:
+
+#### 🆔 PseudoRENIEC (B2B Externo)
+- **Ubicación:** `PatitasAlegres/PseudoReniec`
+- **Puerto:** `8091`
+- **Tecnología:** Node.js + Express + xml2js (SOAP/XML)
+- **Contrato:** `POST /ws/reniec/consultar` (XML: `<ConsultarDNIRequest><dni>...</dni></ConsultarDNIRequest>`)
+- **Datos demo:** `72345678` (Juan Carlos Perez), `45678912` (Maria Elena Torres), `00000000` (Fallecido - 422)
+```powershell
+cd ..\PseudoReniec
+npm install
+npm start
+```
+
+#### 🏛️ PseudoSUNAT (PHP Puro B2B)
+- **Ubicación:** `PatitasAlegres/PseudoSunat`
+- **Puerto:** `8092`
+- **Tecnología:** PHP 8 nativo
+- **Contratos:**
+  - Facturación Electrónica: `POST /ws/sunat/facturacion` (XML CPE -> CDR)
+  - Consulta RUC: `POST /sunat/consultar-ruc` (X-API-Key: SUNAT-B2B-SECRET-2026)
+- **Datos demo:** RUC activo `20601234567`, RUC rechazado `20000000001` (Baja definitiva - 422)
+```powershell
+cd ..\PseudoSunat
+php -S 0.0.0.0:8092 -t public public/router.php
+```
+
+---
+
+### 🔀 4.0.1 ESB Gateway & Orquestador (Node.js Express)
+- **Ubicación:** `services/esb-gateway`
+- **Puerto:** `8290`
+- **Tecnología:** Node.js + Express + Axios + xml2js + amqplib + cors
+- **Orquestaciones:**
+  - `POST /esb/orquestador/registrar-propietario`: Valida con RENIEC (8091) -> Registra usuario (8080) -> Registra propietario (8003).
+  - `POST /esb/orquestador/procesar-venta`: Registra venta (8008) -> Cobra en pagos (8089) -> Emite CPE en SUNAT (8092) -> Evento RabbitMQ (patitas.eventos) -> Saga compensación ante rechazo.
+- **Proxies Mediadores:** `/esb/proxy/reniec/consultar`, `/esb/proxy/sunat/emitir`
+```powershell
+cd services\esb-gateway
+npm install
+npm start
+```
+
+---
+
+### 💳 4.0.2 Servicio 09: Pagos & Compensación Saga (Node.js)
+- **Puerto:** `8089`
+- **Tecnología:** Node.js + Express
+- **Rutas:** `POST /api/pagos`, `POST /api/pagos/:idPago/anular` (Rollback Saga)
+```powershell
+cd services\09-pagos
+npm install
+npm start
+```
+
+---
 
 ### 🟢 Servicio 01: Registro de Usuarios (Spring Boot)
 - **Puerto:** `8080`
@@ -142,7 +201,7 @@ cd services\03-propietarios
 # Instalar dependencias si no está la carpeta vendor:
 composer install
 # Iniciar servidor embebido PHP:
-php -S localhost:8003 -t public
+php -S localhost:8003 -t public public/router.php
 ```
 
 ---

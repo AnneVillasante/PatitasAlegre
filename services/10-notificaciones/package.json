@@ -1,0 +1,12 @@
+{
+  "name": "10-notificaciones-consumer",
+  "version": "1.0.0",
+  "description": "Consumidor RabbitMQ para Notificaciones",
+  "main": "bin/rabbitmq-consumer.js",
+  "scripts": {
+    "start": "node bin/rabbitmq-consumer.js"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.5"
+  }
+}

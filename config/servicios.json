@@ -36,8 +36,16 @@
 		"baseUrl": "http://localhost:8010"
 	},
 	"esb": {
-		"tecnologia": "WSO2 EI / Synapse",
-		"baseUrl": "http://localhost:8280/services"
+		"tecnologia": "Node.js / Express ESB Gateway",
+		"baseUrl": "http://localhost:8290/services"
+	},
+	"pseudo-reniec": {
+		"tecnologia": "B2B Externo",
+		"baseUrl": "http://localhost:8090"
+	},
+	"pseudo-sunat": {
+		"tecnologia": "PHP Puro B2B Externo",
+		"baseUrl": "http://localhost:8091"
 	},
 	"bpm-engine": {
 		"tecnologia": "Apache ODE / BPEL",

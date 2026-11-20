@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/registro"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "username": "usuario_pass_corta",
+      "email": "pass_corta@clinica.com",
+      "password": "123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Respuesta 400 por contraseña corta', function () {
+          pm.expect(pm.response.code).to.eql(400);
+      });
+order: 4000

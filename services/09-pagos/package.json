@@ -1,0 +1,13 @@
+{
+  "name": "09-pagos",
+  "version": "1.0.0",
+  "description": "Servicio de Pagos y Facturacion - Clinica Patitas Alegre",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

@@ -121,6 +121,9 @@
 
                     <label for="idReceta">N° de Receta Médica</label>
                     <input type="number" id="idReceta" placeholder="Ej. 1042">
+
+                    <label for="rucFactura">RUC Comprobante Electrónico (SUNAT B2B)</label>
+                    <input type="text" id="rucFactura" placeholder="20601234567 (éxito) o 20000000001 (Saga rollback)" value="20601234567">
                 </div>
 
                 <!-- Campo de cliente si es necesario -->
@@ -414,40 +417,52 @@ async function procesarVentaFarmacia(event) {
     const idPropietario = document.getElementById("idPropietario").value.trim() || 1;
     const idMascota = document.getElementById("idMascota").value.trim() || 1;
     const idReceta = document.getElementById("idReceta").value.trim() || 10;
-
-    const xmlItems = itemsOrden.map(i => `
-        <item>
-            <idProducto>${i.idProducto}</idProducto>
-            <cantidad>${i.cantidad}</cantidad>
-        </item>
-    `).join("");
-
-    const xmlPayload = `
-        <iniciarVentaRequest>
-            <idPropietario>${parseInt(idPropietario) || 1}</idPropietario>
-            <idMascota>${parseInt(idMascota) || 1}</idMascota>
-            <idReceta>${parseInt(idReceta) || 10}</idReceta>
-            ${xmlItems}
-        </iniciarVentaRequest>
-    `;
-
-    try {
-        await fetch(`${URL_SERVICIO}/ventas/iniciar`, {
-            method: "POST",
-            headers: { 
-                "Content-Type": "application/xml",
-                "Accept": "application/xml"
-            },
-            body: xmlPayload
-        });
-    } catch (e) {
-        console.warn("Backend 8008 no disponible o CORS, procesando localmente.");
-    }
+    const rucCliente = document.getElementById("rucFactura")?.value.trim() || "20601234567";
 
     const resBox = document.getElementById("resultadoVenta");
     const det = document.getElementById("detalleResultado");
     resBox.style.display = "block";
-    det.innerHTML = `Código: <strong>${codigoGenerado}</strong><br>Paciente: ${idMascota} · Receta N° ${idReceta}<br>Total Dispensado: <strong>S/ ${totalCalculado.toFixed(2)}</strong>`;
+    det.innerHTML = "⏳ Procesando Orquestación ESB (Farmacia + Pagos + SUNAT + RabbitMQ)...";
+
+    try {
+        const resp = await fetch("http://localhost:8290/esb/orquestador/procesar-venta", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                idPropietario: parseInt(idPropietario) || 1,
+                documentoCliente: rucCliente,
+                emailCliente: "cliente@patitasalegre.pe",
+                items: itemsOrden,
+                total: totalCalculado,
+                metodoPago: "TARJETA"
+            })
+        });
+
+        const resJson = await resp.json();
+
+        if (resp.ok && resJson.estado === "COMPLETADO") {
+            resBox.style.background = "#e1f5eb";
+            resBox.style.borderColor = "#b7e8d0";
+            det.innerHTML = `✅ <strong>ORQUESTACIÓN COMPLETADA EXITOSAMENTE</strong><br>
+                Venta ID: <strong>${resJson.idVenta}</strong> · Pago: <strong>${resJson.pago.idPago}</strong> (S/ ${totalCalculado.toFixed(2)})<br>
+                Comprobante SUNAT: <strong>${resJson.sunat.serieCorrelativo}</strong> (${resJson.sunat.estado})<br>
+                CDR Hash: <code>${resJson.sunat.hashCdr}</code><br>
+                <em>📢 Notificación asíncrona publicada en RabbitMQ (patitas.eventos)</em>`;
+        } else {
+            // SAGA ROLLBACK
+            resBox.style.background = "#ffebee";
+            resBox.style.borderColor = "#ffcdd2";
+            det.innerHTML = `⚠️ <strong style="color:#c62828;">COMPENSACIÓN SAGA EN VIVO (ROLLBACK)</strong><br>
+                Estado: <strong>${resJson.estado || 'COMPENSADO_ROLLBACK'}</strong><br>
+                Motivo: <strong>${resJson.detalleError || resJson.motivo || 'Rechazo en validación SUNAT'}</strong><br>
+                Acción ejecutada: Pago <strong>${resJson.idPagoAnulado || 'anulado'}</strong> revertido y stock liberado en Farmacia.`;
+        }
+    } catch (e) {
+        console.warn("ESB no disponible, procesando simulación local:", e);
+        resBox.style.background = "#e1f5eb";
+        resBox.style.borderColor = "#b7e8d0";
+        det.innerHTML = `Código: <strong>${codigoGenerado}</strong><br>Paciente: ${idMascota} · Receta N° ${idReceta}<br>Total Dispensado: <strong>S/ ${totalCalculado.toFixed(2)}</strong> (Modo Local)`;
+    }
 
     itemsOrden = [];
     renderizarItemsOrden();

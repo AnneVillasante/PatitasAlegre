@@ -62,6 +62,18 @@
             <p id="contadorPropietarios" style="color: #66716e; font-size: 13px; margin-top: 15px;">Total: 0 propietarios</p>
         </section>
 
+        <!-- CONSULTA RUC SUNAT (MODO DEMOSTRACIÓN) -->
+        <section class="panel" style="margin-top: 20px;">
+            <h2>Consulta de RUC · SUNAT (Demo)</h2>
+            <p>Simula la consulta de un RUC y muestra datos tributarios de ejemplo. No consulta SUNAT ni guarda estos datos como propietario.</p>
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:end;">
+                <div style="flex:1; min-width:220px;"><label for="rucSunat">Número de RUC (11 dígitos)</label><input type="text" id="rucSunat" inputmode="numeric" maxlength="11" pattern="[0-9]{11}" placeholder="Ej. 20600000001"></div>
+                <button type="button" id="btnConsultarRuc" onclick="consultarRucDemo()">Consultar RUC</button>
+            </div>
+            <p style="font-size:12px;color:#66716e;margin-top:8px;">RUC de prueba: <strong>20600000001</strong> y <strong>20100000002</strong>. Son registros ficticios.</p>
+            <div id="resultadoSunat" aria-live="polite" style="display:none; margin-top:15px;"></div>
+        </section>
+
         <!-- FORMULARIO DE REGISTRO / EDICIÓN -->
         <aside class="panel">
             <h2 id="formTitle">Registrar propietario</h2>
@@ -105,6 +117,28 @@
 <script src="js/roles.js"></script>
 <script>
 const URL_SERVICIO = "http://localhost:8003/propietarios";
+
+
+async function consultarRucDemo() {
+    const input=document.getElementById("rucSunat"), boton=document.getElementById("btnConsultarRuc"), resultado=document.getElementById("resultadoSunat"), ruc=input.value.trim();
+    resultado.style.display="block";
+    if (!/^\d{11}$/.test(ruc)) { resultado.textContent="Ingresa un RUC de exactamente 11 dígitos."; resultado.className="mensaje mensaje-info"; return; }
+    boton.disabled=true; boton.textContent="Consultando...";
+    try {
+        const respuesta=await fetch("http://localhost:8003/sunat/consultar-ruc",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({ruc})});
+        const datos=await respuesta.json();
+        if (!respuesta.ok || !datos.success) { resultado.textContent=datos.mensaje||"No se encontró el RUC en el padrón demo."; resultado.className="mensaje mensaje-info"; return; }
+        const d=datos.datos; resultado.className="mensaje mensaje-exito";
+        resultado.innerHTML=`<div style="font-weight:700;margin-bottom:8px;">✓ ${escapeHtml(datos.mensaje)}</div>
+          <div><strong>RUC:</strong> ${escapeHtml(d.ruc)}</div><div><strong>Razón social:</strong> ${escapeHtml(d.razon_social)}</div>
+          <div><strong>Estado:</strong> ${escapeHtml(d.estado)}</div><div><strong>Condición:</strong> ${escapeHtml(d.condicion)}</div>
+          <div><strong>Domicilio fiscal:</strong> ${escapeHtml(d.direccion)}</div><div><strong>Tipo de contribuyente:</strong> ${escapeHtml(d.tipo_contribuyente)}</div>
+          <div><strong>Actividad económica:</strong> ${escapeHtml(d.actividad_economica)}</div>
+          <div style="margin-top:8px;font-size:12px;font-weight:700;">ORIGEN: ${escapeHtml(d.origen)} · NO ES INFORMACIÓN OFICIAL</div>`;
+    } catch(e) { resultado.textContent="No se pudo conectar con el servicio PHP (puerto 8003). Verifica que esté iniciado."; resultado.className="mensaje mensaje-info"; }
+    finally { boton.disabled=false; boton.textContent="Consultar RUC"; }
+}
+function escapeHtml(valor) { return String(valor??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c])); }
 
 let propietarios = JSON.parse(localStorage.getItem("vetcare_propietarios")) || [
     { id: 1, dni: "72345678", nombres: "Ana María", apellidos: "Villasante", telefono: "987112233", email: "ana.v@example.com", direccion: "Av. Las Flores 450, Lima" },
@@ -157,44 +191,61 @@ async function guardarPropietario(event) {
     event.preventDefault();
 
     const dni = document.getElementById("dni").value.trim();
-    const nombres = document.getElementById("nombres").value.trim();
-    const apellidos = document.getElementById("apellidos").value.trim();
+    let nombres = document.getElementById("nombres").value.trim();
+    let apellidos = document.getElementById("apellidos").value.trim();
     const telefono = document.getElementById("telefono").value.trim();
     const email = document.getElementById("email").value.trim();
-    const direccion = document.getElementById("direccion").value.trim();
+    let direccion = document.getElementById("direccion").value.trim();
 
-    const xmlPayload = `
-        <registrarPropietarioRequest>
-            <dni>${dni}</dni>
-            <nombres>${nombres}</nombres>
-            <apellidos>${apellidos}</apellidos>
-            <telefono>${telefono}</telefono>
-            <email>${email}</email>
-            <direccion>${direccion}</direccion>
-        </registrarPropietarioRequest>
-    `;
+    mostrarMensaje("Validando identidad con RENIEC a través del ESB Gateway...", "info");
 
     try {
-        await fetch(`${URL_SERVICIO}/registrar`, {
+        const respuesta = await fetch("http://localhost:8290/esb/orquestador/registrar-propietario", {
             method: "POST",
-            headers: { "Content-Type": "text/xml" },
-            body: xmlPayload
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dni, email, telefono, password: "Password2026!" })
         });
+        const resJson = await respuesta.json();
+
+        if (!respuesta.ok || resJson.estado === "ABORTADO") {
+            const motivo = resJson.motivo?.mensaje || resJson.motivo || "DNI rechazado por RENIEC";
+            mostrarMensaje(`⛔ Registro bloqueado por RENIEC: ${motivo}`, "error");
+            alert(`⛔ Registro rechazado por RENIEC (Estado: ${respuesta.status}):\n${motivo}`);
+            return;
+        }
+
+        // Si RENIEC validó exitosamente:
+        if (resJson.validacionReniec) {
+            const reniec = resJson.validacionReniec;
+            nombres = reniec.nombres || nombres;
+            apellidos = `${reniec.apellidoPaterno || ''} ${reniec.apellidoMaterno || ''}`.trim() || apellidos;
+            direccion = reniec.direccion || direccion;
+        }
+
+        const index = propietarios.findIndex(p => p.dni === dni);
+        if (index >= 0) {
+            propietarios[index] = { ...propietarios[index], nombres, apellidos, telefono, email, direccion };
+        } else {
+            propietarios.unshift({ id: Date.now(), dni, nombres, apellidos, telefono, email, direccion });
+        }
+
+        localStorage.setItem("vetcare_propietarios", JSON.stringify(propietarios));
+        limpiarFormulario();
+        renderizarTabla();
+        mostrarMensaje(`✅ ¡Propietario validado con RENIEC (${nombres} ${apellidos}) y registrado exitosamente!`, "exito");
     } catch (e) {
-        console.warn("Backend 8003 no disponible o CORS, guardando localmente.");
+        console.warn("ESB 8290 no disponible o error de red, guardando localmente:", e);
+        const index = propietarios.findIndex(p => p.dni === dni);
+        if (index >= 0) {
+            propietarios[index] = { ...propietarios[index], nombres, apellidos, telefono, email, direccion };
+        } else {
+            propietarios.unshift({ id: Date.now(), dni, nombres, apellidos, telefono, email, direccion });
+        }
+        localStorage.setItem("vetcare_propietarios", JSON.stringify(propietarios));
+        limpiarFormulario();
+        renderizarTabla();
+        mostrarMensaje("⚠️ Guardado local (ESB no disponible).", "info");
     }
-
-    const index = propietarios.findIndex(p => p.dni === dni);
-    if (index >= 0) {
-        propietarios[index] = { ...propietarios[index], nombres, apellidos, telefono, email, direccion };
-    } else {
-        propietarios.unshift({ id: Date.now(), dni, nombres, apellidos, telefono, email, direccion });
-    }
-
-    localStorage.setItem("vetcare_propietarios", JSON.stringify(propietarios));
-    limpiarFormulario();
-    renderizarTabla();
-    mostrarMensaje("¡Propietario guardado exitosamente!", "exito");
 }
 
 function editarPropietario(dni) {

@@ -12,6 +12,7 @@ class Rutas
         'POST /propietarios/listar' => ['PropietarioController', 'listar'],
         'POST /propietarios/actualizar' => ['PropietarioController', 'actualizar'],
         'POST /propietarios/eliminar' => ['PropietarioController', 'eliminar'],
+        'POST /sunat/consultar-ruc' => ['PropietarioController', 'consultarRucDemo'],
     ];
 
     public function despachar(): void

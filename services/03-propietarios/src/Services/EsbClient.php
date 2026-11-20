@@ -10,7 +10,7 @@ class EsbClient
 
     public function __construct()
     {
-        $this->baseUrl = rtrim($_ENV['ESB_URL'] ?? 'http://localhost:8280/services', '/');
+        $this->baseUrl = rtrim($_ENV['ESB_URL'] ?? 'http://localhost:8290/services', '/');
     }
 
     public function enviar(string $proxyName, string $xmlPayload, string $soapAction = ''): string
@@ -41,5 +41,34 @@ class EsbClient
         }
 
         return $respuesta;
+    }
+
+    public function consultarRucSunat(string $ruc): array
+    {
+        $url = "{$this->baseUrl}/SunatProxy/sunat/consultar-ruc";
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => json_encode(['ruc' => $ruc]),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => [
+                'Content-Type: application/json; charset=utf-8',
+                'X-Source-Service: 03-propietarios'
+            ],
+            CURLOPT_TIMEOUT => 10,
+        ]);
+
+        $respuesta = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($respuesta === false) {
+            return ['httpCode' => 502, 'body' => ['success' => false, 'mensaje' => 'ESB no disponible']];
+        }
+
+        return [
+            'httpCode' => $httpCode,
+            'body' => json_decode($respuesta, true) ?? ['success' => false, 'mensaje' => 'Respuesta inválida del ESB']
+        ];
     }
 }

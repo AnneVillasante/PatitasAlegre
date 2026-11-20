@@ -1,0 +1,24 @@
+{
+  "name": "esb-gateway",
+  "version": "1.0.0",
+  "description": "ESB Gateway - Clinica Veterinaria Patitas Alegre",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "esb",
+    "gateway",
+    "soa"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^2.4.0",
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "uuid": "^11.0.3",
+    "xml2js": "^0.6.2"
+  }
+}

@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{esbUrl}}/AuthProxy"
+method: POST
+headers:
+  Content-Type: text/xml; charset=utf-8
+  SOAPAction: urn:validarToken
+body:
+  type: text
+  content: |-
+    <validarTokenRequest xmlns="http://clinica.com/auth">
+      <token>token_de_prueba_jwt</token>
+    </validarTokenRequest>
+order: 2000

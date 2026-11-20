@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{base_mascotas}}/api/mascotas"
+method: GET
+order: 3000

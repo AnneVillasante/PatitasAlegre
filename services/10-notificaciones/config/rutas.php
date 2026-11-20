@@ -10,6 +10,15 @@ return function (string $metodo, string $ruta): void {
         return;
     }
 
+    if ($metodo === 'POST' && ($ruta === '/api/notificaciones' || $ruta === '/notificaciones/evento')) {
+        header('Content-Type: application/json; charset=UTF-8');
+        $raw = file_get_contents('php://input');
+        $data = json_decode($raw, true);
+        error_log("[NOTIFICACIONES HTTP FALLBACK] Recibido: " . $raw);
+        echo json_encode(['ok' => true, 'mensaje' => 'Notificacion procesada via HTTP fallback', 'datos' => $data]);
+        return;
+    }
+
     if ($metodo === 'GET' && preg_match('#^/notificaciones/consultar/([A-Za-z0-9-]+)$#', $ruta, $matches)) {
         $controller->consultar($matches[1]);
         return;
